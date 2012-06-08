@@ -1,21 +1,12 @@
 diff -ur xchat-2.8.8.orig/configure.in xchat-2.8.8/configure.in
---- xchat-2.8.8.orig/configure.in	2012-06-08 11:35:12.000000000 -0400
-+++ xchat-2.8.8/configure.in	2012-06-08 11:38:02.000000000 -0400
-@@ -156,8 +156,15 @@
+--- xchat-2.8.8.orig/configure.in	2012-06-08 15:22:38.000000000 -0400
++++ xchat-2.8.8/configure.in	2012-06-08 15:23:27.000000000 -0400
+@@ -151,7 +151,7 @@
+ dnl ** GLIB *************************************************************
+ dnl *********************************************************************
+ 
+-AM_PATH_GLIB_2_0(2.0.3, glib=yes, glib=no)
++AM_PATH_GLIB_2_0(2.0.3, glib=yes, glib=no, gmodule)
+ if test "$glib" = no; then
  	AC_MSG_ERROR("Cannot find glib")
  fi
- 
--COMMON_CFLAGS="$GLIB_CFLAGS"
--COMMON_LIBS="$GLIB_LIBS"
-+AC_SEARCH_LIBS([g_module_symbol], [glib-2.0], glib_gms=yes, glib_gms=no)
-+
-+if test "glib_gms" = no; then
-+        COMMON_CFLAGS="$GLIB_CFLAGS"
-+        COMMON_LIBS="$GLIB_LIBS"
-+else
-+        COMMON_CFLAGS="$GLIB_CFLAGS"
-+        COMMON_LIBS="$GLIB_LIBS -lgmodule-2.0"
-+fi        
- 
- dnl *********************************************************************
- dnl ** GTK **************************************************************
