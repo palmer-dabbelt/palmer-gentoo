@@ -2,7 +2,7 @@ EAPI="4"
 
 DESCRIPTION="Palmer Dabbelt's script collection"
 HOMEPAGE="http://dabbelt.com/~palmer/software/scripts/"
-SRC_URI="http://www.dabbelt.com/~palmer/software/scripts/release/palmer-scripts-${PV}.tar.bz2"
+SRC_URI="http://www.dabbelt.com/~palmer/software/scripts/release/${P}.tar.bz2"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -14,7 +14,6 @@ RDEPEND="sys-devel/pconfigure
 	 media-libs/libv4l"
 
 DEPEND="${RDEPEND}"
-S="${WORKDIR}/scripts-20120414"
 
 src_configure() {
 	cd "${S}"
