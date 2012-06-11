@@ -1,0 +1,25 @@
+diff -ur nmh-1.5.orig//uip/inc.c nmh-1.5/uip/inc.c
+--- nmh-1.5.orig//uip/inc.c	2012-06-11 13:46:35.086533240 -0700
++++ nmh-1.5/uip/inc.c	2012-06-11 13:47:37.976146809 -0700
+@@ -407,14 +407,19 @@
+      * a POP server?
+      */
+     if (inc_type == INC_POP) {
+-	if (user == NULL)
+-	    user = getusername ();
+ 	if (sasl)
+ 	    pass = getusername ();
+ 	else
+ 	    ruserpass (host, &user, &pass);
+ 
+ 	/*
++	 * Do this _after_ ruserpass, otherwise the login field will be
++	 * unusable.
++	 */
++	if (user == NULL)
++	    user = getusername ();
++
++	/*
+ 	 * initialize POP connection
+ 	 */
+ 	if (pop_init (host, port, user, pass, proxy, snoop, sasl,
