@@ -54,6 +54,8 @@ RESTRICT="test"
 DOCS=( ChangeLog INSTALL README NEWS )
 
 src_prepare() {
+        epatch "${FILESDIR}"/${P}-c99.patch
+
 	# fix OSX loadable module filename extension
 	sed -i -e 's/\.dylib/.bundle/' configure.ac || die
 	# don't require Apple's OpenCL on versions of OSX that don't have it
