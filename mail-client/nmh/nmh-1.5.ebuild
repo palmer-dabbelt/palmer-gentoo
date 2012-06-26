@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/mail-client/nmh/nmh-1.3-r3.ebuild,v 1.3 2011/08/11 11:04:01 ulm Exp $
 
-EAPI="2"
+EAPI="4"
 
 inherit eutils base
 
@@ -12,7 +12,7 @@ SRC_URI="http://savannah.nongnu.org/download/nmh/${P}.tar.gz"
 
 LICENSE="as-is"
 SLOT="0"
-KEYWORDS="~amd64"
+KEYWORDS="~amd64 ~amd64-linux"
 IUSE="gdbm"
 
 DEPEND="gdbm? ( sys-libs/gdbm )
@@ -42,7 +42,7 @@ src_configure() {
 	# problems with cross-compiling, so we use, eg., /usr/lib64.
 	# Users may use /usr/lib/nmh in scripts needing these support
 	# programs in normal environments.
-	local myconf="--libdir=/usr/$(get_libdir)/nmh"
+	local myconf="--libdir=${EPREFIX}/usr/$(get_libdir)/nmh"
 
 	# Have gdbm use flag actually control which version of db in use
 	if use gdbm; then
@@ -60,11 +60,11 @@ src_configure() {
 	PAGER=/usr/libexec/pager
 
 	econf \
-		--prefix=/usr \
-		--mandir=/usr/share/man \
+		--prefix=${EPREFIX}/usr \
+		--mandir=${EPREFIX}/usr/share/man \
 		--with-editor="${EDITOR}" \
 		--with-pager="${PAGER}" \
 		--enable-nmh-pop \
-		--sysconfdir=/etc/nmh \
+		--sysconfdir=${EPREFIX}/etc/nmh \
 		${myconf}
 }
