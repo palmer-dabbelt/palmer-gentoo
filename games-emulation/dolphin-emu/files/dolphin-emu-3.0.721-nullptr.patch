@@ -1,0 +1,31 @@
+From 4d1dbd40bad8d02d5ccbf139610cbf1be881cbf1 Mon Sep 17 00:00:00 2001
+From: Palmer Dabbelt <palmer@dabbelt.com>
+Date: Wed, 18 Jul 2012 10:22:42 -0400
+Subject: [PATCH] Defines nullptr on non-win32 arches
+
+The windows-specific constant "nullptr" was being used in this code.
+While I'm not sure if it's better to change the few uses of "nullptr"
+to NULL or to just define NULL, but the smallest change was to just
+define "nullptr" on non-WIN32 platforms.
+---
+ Source/Core/Common/Src/MemArena.h |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
+
+diff --git a/Source/Core/Common/Src/MemArena.h b/Source/Core/Common/Src/MemArena.h
+index 6951082..2f1ffbf 100644
+--- a/Source/Core/Common/Src/MemArena.h
++++ b/Source/Core/Common/Src/MemArena.h
+@@ -22,6 +22,10 @@
+ #include <windows.h>
+ #endif
+ 
++#ifndef _WIN32
++#define nullptr NULL
++#endif
++
+ #include "Common.h"
+ 
+ // This class lets you create a block of anonymous RAM, and then arbitrarily map views into it.
+-- 
+1.7.8.6
+
