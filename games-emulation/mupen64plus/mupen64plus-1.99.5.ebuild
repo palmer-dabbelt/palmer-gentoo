@@ -27,7 +27,6 @@ RDEPEND="virtual/opengl
 	sys-libs/zlib[minizip]
 	x11-libs/gtk+:2
 	media-libs/libsamplerate
-	app-misc/lirc
 	app-arch/xz-utils"
 
 DEPEND="${RDEPEND}
