@@ -14,7 +14,6 @@ RDEPEND="sys-devel/pconfigure
 	 media-libs/libv4l"
 
 DEPEND="${RDEPEND}"
-S="${WORKDIR}/scripts-20120512"
 
 src_configure() {
 	cd "${S}"
