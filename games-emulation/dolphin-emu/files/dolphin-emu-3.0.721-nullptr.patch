@@ -1,0 +1,52 @@
+From 0e1a95925f92b66b427e8ac0eda2d1ac133eceb7 Mon Sep 17 00:00:00 2001
+From: Palmer Dabbelt <palmer@dabbelt.com>
+Date: Wed, 18 Jul 2012 13:14:49 -0400
+Subject: [PATCH] Uses NULL instead of nullptr
+
+According to dolphin's bug tracker (linked below) "nullptr" is better
+than NULL, but the code seems to build fine and runs the single game I
+care about when I just "s/nullptr/NULL/", which is what this patch
+does.
+
+http://code.google.com/p/dolphin-emu/issues/detail?id=5538
+---
+ Source/Core/Common/Src/MemArena.cpp |    4 ++--
+ Source/Core/Common/Src/MemArena.h   |    2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/Source/Core/Common/Src/MemArena.cpp b/Source/Core/Common/Src/MemArena.cpp
+index 782e124..02df6bd 100644
+--- a/Source/Core/Common/Src/MemArena.cpp
++++ b/Source/Core/Common/Src/MemArena.cpp
+@@ -66,13 +66,13 @@ void *MemArena::CreateView(s64 offset, size_t size, void *base)
+ 	void *retval = mmap(
+ 		base, size,
+ 		PROT_READ | PROT_WRITE,
+-		MAP_SHARED | ((base == nullptr) ? 0 : MAP_FIXED),
++		MAP_SHARED | ((base == NULL) ? 0 : MAP_FIXED),
+ 		fd, offset);
+ 
+ 	if (retval == MAP_FAILED)
+ 	{
+ 		NOTICE_LOG(MEMMAP, "mmap on %s failed", ram_temp_file);
+-		return nullptr;
++		return NULL;
+ 	}
+ 	else
+ 	{
+diff --git a/Source/Core/Common/Src/MemArena.h b/Source/Core/Common/Src/MemArena.h
+index 6951082..3eecddc 100644
+--- a/Source/Core/Common/Src/MemArena.h
++++ b/Source/Core/Common/Src/MemArena.h
+@@ -33,7 +33,7 @@ class MemArena
+ public:
+ 	void GrabLowMemSpace(size_t size);
+ 	void ReleaseSpace();
+-	void *CreateView(s64 offset, size_t size, void *base = nullptr);
++	void *CreateView(s64 offset, size_t size, void *base = NULL);
+ 	void ReleaseView(void *view, size_t size);
+ 
+ 	// This only finds 1 GB in 32-bit
+-- 
+1.7.8.6
+
