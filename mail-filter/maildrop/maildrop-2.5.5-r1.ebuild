@@ -121,21 +121,21 @@ src_install() {
 	# bugs #61116 #374009
 	if ! use tools ; then
 		for tool in "maildirmake" "deliverquota"; do
-			rm "${ED}/usr/bin/${tool}"
-			rm "${ED}/usr/share/man/man"[0-9]"/${tool}."[0-9]
-			rm "${ED}/usr/share/maildrop/html/${tool}.html"
+			rm "${D}/usr/bin/${tool}"
+			rm "${D}/usr/share/man/man"[0-9]"/${tool}."[0-9]
+			rm "${D}/usr/share/maildrop/html/${tool}.html"
 		done
-		rm "${ED}/usr/share/man/man5/maildir.5"
+		rm "${D}/usr/share/man/man5/maildir.5"
 	fi
 
 	dodir "/usr/share/doc/${PF}"
-	mv "${ED}/usr/share/maildrop/html" "${ED}/usr/share/doc/${PF}/" || die
-	rm -rf "${ED}"/usr/share/maildrop
+	mv "${D}/usr/share/maildrop/html" "${D}/usr/share/doc/${PF}/" || die
+	rm -rf "${D}"/usr/share/maildrop
 
 	dohtml *.html maildir/*.html
 
 	insinto /etc
 	doins "${FILESDIR}"/maildroprc
 
-	use static-libs || find "${ED}"/usr/lib* -name '*.la' -delete
+	use static-libs || find "${D}"/usr/lib* -name '*.la' -delete
 }
