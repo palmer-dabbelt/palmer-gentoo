@@ -1,0 +1,11 @@
+diff -ur nmh-1.5.orig//Makefile.in nmh-1.5/Makefile.in
+--- nmh-1.5.orig//Makefile.in	2012-06-11 13:49:24.685491866 -0700
++++ nmh-1.5/Makefile.in	2012-06-11 13:49:37.695412075 -0700
+@@ -41,7 +41,6 @@
+ bin_PROGRAMS = uip/ali$(EXEEXT) uip/anno$(EXEEXT) uip/burst$(EXEEXT) \
+ 	uip/comp$(EXEEXT) uip/dist$(EXEEXT) uip/flist$(EXEEXT) \
+ 	uip/folder$(EXEEXT) uip/forw$(EXEEXT) uip/inc$(EXEEXT) \
+-	uip/install-mh$(EXEEXT) uip/mark$(EXEEXT) uip/mhbuild$(EXEEXT) \
+ 	uip/mhlist$(EXEEXT) uip/mhmail$(EXEEXT) uip/mhn$(EXEEXT) \
+ 	uip/mhparam$(EXEEXT) uip/mhpath$(EXEEXT) uip/mhshow$(EXEEXT) \
+ 	uip/mhstore$(EXEEXT) uip/msgchk$(EXEEXT) uip/msh$(EXEEXT) \
