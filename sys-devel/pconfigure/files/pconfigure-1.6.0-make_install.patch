@@ -1,0 +1,12 @@
+diff --git a/bootstrap.sh b/bootstrap.sh
+index cb7baa3..5981cd0 100644
+--- a/bootstrap.sh
++++ b/bootstrap.sh
+@@ -32,6 +32,7 @@ fi
+ 
+ # Actually builds itself
+ env PATH="$BOOTSTRAP_DIR:$PATH" make || exit $?
++env PATH="$BOOTSTRAP_DIR:$PATH" make all_install || exit $?
+ 
+ # Cleans up from the bootstrap process
+ rm -rf $BOOTSTRAP_DIR
