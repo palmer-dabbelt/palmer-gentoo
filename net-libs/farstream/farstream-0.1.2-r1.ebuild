@@ -50,6 +50,7 @@ pkg_setup() {
 src_prepare() {
 	# Fix building with gobject-introspection-1.33.x, bug #425096
 	epatch "${FILESDIR}/${P}-introspection-tag-order.patch"
+	epatch_user
 }
 
 src_configure() {
