@@ -1,4 +1,4 @@
-commit 904d6e4bfb2c4c7d154def53a2c600079ed524cd
+commit f6aed4af4b3798a590fad969cf4a7ff6edde2fc1
 Author: Palmer Dabbelt <palmer@dabbelt.com>
 Date:   Thu Sep 6 11:18:28 2012 -0700
 
@@ -11,38 +11,19 @@ Date:   Thu Sep 6 11:18:28 2012 -0700
     implicitly falling through.
 
 diff --git a/src/pconfigure/lang/cxx.c b/src/pconfigure/lang/cxx.c
-index 7748c1a..654d9f4 100644
+index 7748c1a..779e882 100644
 --- a/src/pconfigure/lang/cxx.c
 +++ b/src/pconfigure/lang/cxx.c
-@@ -78,6 +78,10 @@ struct language *language_cxx_search(struct language *l_uncast,
-     return l_uncast;
- }
- 
-+static void language_cxx_debug_breakpoint(void)
-+{
-+}
-+
- void language_cxx_extras(struct language *l_uncast, struct context *c,
-                          void *context, void (*func) (const char *))
- {
-@@ -89,11 +93,15 @@ void language_cxx_extras(struct language *l_uncast, struct context *c,
- 			     char *cfile;
- 			     char *cxxfile;
- 
-+			     language_cxx_debug_breakpoint();
-+
- 			     va_start(args, NULL);
+@@ -93,7 +93,7 @@ void language_cxx_extras(struct language *l_uncast, struct context *c,
  
  			     cfile = talloc_vasprintf(context, format, args);
  			     cxxfile = talloc_array(context, char,
 -						    strlen(cfile) + 10);
 +						    strlen(cfile) + 20);
-+
-+			     fprintf(stderr, "cfile: '%s'\n", cfile);
  
  			     memset(cxxfile, 0, strlen(cfile) + 10);
  			     strncpy(cxxfile, cfile, strlen(cfile) - 2);
-@@ -122,7 +130,8 @@ void language_cxx_extras(struct language *l_uncast, struct context *c,
+@@ -122,7 +122,8 @@ void language_cxx_extras(struct language *l_uncast, struct context *c,
  			     if (strcmp(cfile + strlen(cfile) - 4, ".hpp") == 0)
  				 cfile[strlen(cfile)-3] = 'c';
  			     if (access(cfile, R_OK) == 0)
