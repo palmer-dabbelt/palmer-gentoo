@@ -1,0 +1,35 @@
+From 45401fbd65e54523c44d89ef319b54aaa546f53a Mon Sep 17 00:00:00 2001
+From: Palmer Dabbelt <palmer@dabbelt.com>
+Date: Sun, 23 Sep 2012 13:56:18 -0700
+Subject: [PATCH] winex11: Fix Brood War mouse grabbing
+
+I'm not entirely sure why this patch works because I don't actually
+know anything about Wine.  This fixes the bug where Starcraft: Brood
+War will no longer lock the mouse inside its window when using the
+ICCup launcher's W-Mode plugin.
+
+Note that I found this line by bisection, which points to commit
+ff60249cab238bed124b98a7624ccfe415f8648e "winex11: Use the labels to
+find the mouse motion valuators for XInput2".  Again, I have no idea
+what that does or why removing this line makes my problem go away -- I
+just removed lines at random from the offending commit until things
+started working for me.
+---
+ dlls/winex11.drv/mouse.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/dlls/winex11.drv/mouse.c b/dlls/winex11.drv/mouse.c
+index 5808420..ed1c653 100644
+--- a/dlls/winex11.drv/mouse.c
++++ b/dlls/winex11.drv/mouse.c
+@@ -287,7 +287,6 @@ static void enable_xinput2(void)
+                    XGetAtomName( data->display, class->label ));
+             if (class->label == x11drv_atom( Rel_X ) || class->label == x11drv_atom( Rel_Y )) count++;
+         }
+-        if (count < 2) continue;
+         TRACE( "Using %u (%s) as core pointer\n",
+                devices[i].deviceid, debugstr_a(devices[i].name) );
+         data->xi2_core_pointer = devices[i].deviceid;
+-- 
+1.7.12
+
