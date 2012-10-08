@@ -22,7 +22,7 @@ src_configure() {
 	rm Configfile.local >& /dev/null || true
 	touch Configfile.local
 
-	echo "PREFIX = ${D}${EPREFIX}/usr" >> Configfile.local
+	echo "PREFIX = ${EPREFIX}/usr" >> Configfile.local
 
 	echo "LANGUAGES += c" >> Configfile.local
 	for i in $(echo ${CFLAGS}); do
