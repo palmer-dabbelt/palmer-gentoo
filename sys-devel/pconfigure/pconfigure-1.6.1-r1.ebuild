@@ -6,7 +6,7 @@ SRC_URI="http://www.dabbelt.com/~palmer/software/pconfigure/release/${P}.tar.bz2
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="amd64 amd64-linux"
 
 RDEPEND="sys-devel/clang
          dev-util/pkgconfig
@@ -37,5 +37,10 @@ src_compile() {
 }
 
 src_install() {
-	emake install || die
+	mkdir -p ${D}${EPREFIX}/usr/bin
+	mkdir -p ${D}${EPREFIX}/usr/lib
+	mkdir -p ${D}${EPREFIX}/usr/include
+	emake install D=${D} || die
+	chmod oug-w ${D}${EPREFIX}/usr/bin/*
+	chmod oug-w ${D}${EPREFIX}/usr/lib/*
 }
