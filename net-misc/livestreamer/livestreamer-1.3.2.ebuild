@@ -11,6 +11,6 @@ LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="amd64"
 
-RDEPEND=""
+RDEPEND="dev-python/requests"
 DEPEND="${RDEPEND}
 	dev-python/setuptools"
