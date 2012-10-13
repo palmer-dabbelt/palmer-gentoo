@@ -8,7 +8,7 @@ SRC_URI="http://www.dabbelt.com/~palmer/software/mirror/dolphin-emu-${PV}.tar.xz
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE=""
+IUSE="pulseaudio"
 
 DEPEND="dev-util/cmake
 	sys-devel/gcc
@@ -17,7 +17,7 @@ DEPEND="dev-util/cmake
 	net-wireless/bluez
 	x11-apps/xrandr
 	sys-libs/readline
-	media-sound/pulseaudio
+	pulseaudio? ( media-sound/pulseaudio )
 	media-video/ffmpeg
 	>=media-libs/glew-1.5
 	>=dev-libs/lzo-2
