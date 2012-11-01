@@ -15,12 +15,10 @@ RDEPEND="sys-devel/pconfigure
 DEPEND="${RDEPEND}"
 
 src_configure() {
-	cd "${S}"
-
 	rm Configfile.local >& /dev/null || true
 	touch Configfile.local
 
-	echo "PREFIX = ${D}${EPREFIX}/usr" >> Configfile.local
+	echo "PREFIX = ${EPREFIX}/usr" >> Configfile.local
 
 	echo "LANGUAGES += c" >> Configfile.local
 	for i in $(echo ${CFLAGS}); do
@@ -32,12 +30,11 @@ src_configure() {
 	pconfigure
 }
 
-src_compile() {
-	cd "${S}"
-	emake || die
-}
-
 src_install() {
-	cd "${S}"
-	emake install || die
+	mkdir -p ${D}${EPREFIX}/usr/bin
+	mkdir -p ${D}${EPREFIX}/usr/lib
+	mkdir -p ${D}${EPREFIX}/usr/include
+	emake install D=${D} || die
+	chmod oug-w ${D}${EPREFIX}/usr/bin/*
+	chmod oug-w ${D}${EPREFIX}/usr/lib/*
 }
