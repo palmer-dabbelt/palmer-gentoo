@@ -11,7 +11,10 @@ IUSE=""
 
 RDEPEND="sys-devel/pconfigure
          sys-devel/make
-	 dev-tex/tex4ht"
+	 dev-tex/tex4ht
+	 media-gfx/xfig
+	 media-gfx/imagemagick
+	 sci-visualization/gnuplot"
 
 DEPEND="${RDEPEND}"
 
