@@ -1,0 +1,37 @@
+commit 96852e4f448de48c72d6ad530e7d62b6f7cb0656
+Author: Palmer Dabbelt <palmer@dabbelt.com>
+Date:   Tue Dec 18 12:59:14 2012 -0800
+
+    Create install directories
+    
+    When these directories don't exist (such as when portage installs to
+    an empty image directory) "install" won't make them.
+
+diff --git a/src/pconfigure/main.c b/src/pconfigure/main.c
+index 8c43345..dc1642b 100644
+--- a/src/pconfigure/main.c
++++ b/src/pconfigure/main.c
+@@ -368,6 +368,7 @@ int parsefunc_prefix(const char *op, const char *right)
+     struct context *c;
+     char *duped;
+     int err;
++    char *cmd;
+ 
+     if (strcmp(op, "=") != 0)
+     {
+@@ -381,6 +382,15 @@ int parsefunc_prefix(const char *op, const char *right)
+     c = contextstack_peek_default(s, context);
+     duped = talloc_strdup(context, right);
+     err = context_set_prefix(c, duped);
++
++    /* Make the necessary directories. */
++    cmd = talloc_asprintf(context, "mkdir -p $D%s/%s", c->prefix, c->bin_dir);
++    makefile_add_install(mf, cmd);
++    cmd = talloc_asprintf(context, "mkdir -p $D%s/%s", c->prefix, c->lib_dir);
++    makefile_add_install(mf, cmd);
++    cmd = talloc_asprintf(context, "mkdir -p $D%s/%s", c->prefix, c->hdr_dir);
++    makefile_add_install(mf, cmd);
++
+     TALLOC_FREE(context);
+ 
+     return err;

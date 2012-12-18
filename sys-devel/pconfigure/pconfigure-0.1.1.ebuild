@@ -2,8 +2,8 @@ EAPI="4"
 inherit eutils
 
 DESCRIPTION="Palmer Dabbelt's Configure Replacement"
-HOMEPAGE="http://dabbelt.com/~palmer/software/pconfigure/"
-SRC_URI="http://www.dabbelt.com/~palmer/software/pconfigure/release/${P}.tar.bz2"
+HOMEPAGE="http://www.dabbelt.com/~palmer/software/pconfigure/"
+SRC_URI="http://www.dabbelt.com/~palmer/software/pconfigure/release/$P.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -18,16 +18,15 @@ RDEPEND="sys-devel/clang
 DEPEND="${RDEPEND}"
 
 src_prepare() {
-	epatch "${FILESDIR}"/${P}-make_install.patch
+        epatch "${FILESDIR}/${P}-bootstrap_version.patch"
+        epatch "${FILESDIR}/${P}-mkdir_install.patch"
 }
 
 src_configure() {
-	cd "${S}"
-
 	rm Configfile.local >& /dev/null || true
 	touch Configfile.local
 
-	echo "PREFIX = ${D}${EPREFIX}/usr" >> Configfile.local
+	echo "PREFIX = ${EPREFIX}/usr" >> Configfile.local
 
 	echo "LANGUAGES += c" >> Configfile.local
 	for i in $(echo ${CFLAGS}); do
@@ -39,8 +38,4 @@ src_configure() {
 
 src_compile() {
 	sh bootstrap.sh || die "Failed to bootstap pconfigure"
-}
-
-src_install() {
-	emake install || die
 }

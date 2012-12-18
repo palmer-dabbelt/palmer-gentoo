@@ -1,0 +1,21 @@
+commit b4085c9b302f9e5b319f3127d1b853f993d8d8da
+Author: Palmer Dabbelt <palmer@dabbelt.com>
+Date:   Tue Dec 18 12:47:48 2012 -0800
+
+    Fix PCONFIGURE_VERSION and bootstrap
+    
+    PCONFIGURE_VERSION needs to be set during bootstrap, this actually
+    defines it.
+
+diff --git a/bootstrap.sh b/bootstrap.sh
+index 5981cd0..8de3f96 100644
+--- a/bootstrap.sh
++++ b/bootstrap.sh
+@@ -14,6 +14,7 @@ gcc --std=gnu99 -Wall -Werror -Wno-trampolines -g \
+     `llvm-config --libs core` \
+     -lclang \
+     `pkg-config talloc --libs` \
++    -DPCONFIGURE_VERSION='"bootstrap"' \
+     -o "$BOOTSTRAP_DIR/pconfigure" || exit $?
+ 
+ gcc --std=gnu99 `find src/pbashc/ -iname "*.c"` -o "$BOOTSTRAP_DIR/pbashc"
