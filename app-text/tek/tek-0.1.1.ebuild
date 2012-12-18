@@ -2,7 +2,7 @@ EAPI="2"
 
 DESCRIPTION="A simple Makefile generator for LaTeX"
 HOMEPAGE="http://dabbelt.com/~palmer/software/tek/"
-SRC_URI="http://www.dabbelt.com/~palmer/software/tek/release/${P}.tar.bz2"
+SRC_URI="http://www.dabbelt.com/~palmer/software/tek/release/$P.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -11,13 +11,11 @@ IUSE=""
 
 RDEPEND="sys-devel/pconfigure
          sys-devel/make
-	 app-text/pandoc"
+	 dev-tex/tex4ht"
 
 DEPEND="${RDEPEND}"
 
 src_configure() {
-	cd "${S}"
-
 	rm Configfile.local >& /dev/null || true
 	touch Configfile.local
 
@@ -30,18 +28,4 @@ src_configure() {
 	echo "COMPILEOPTS += -DNDEBUG" >> Configfile.local
 
 	pconfigure
-}
-
-src_compile() {
-	cd "${S}"
-	emake || die
-}
-
-src_install() {
-	mkdir -p ${D}${EPREFIX}/usr/bin
-	mkdir -p ${D}${EPREFIX}/usr/lib
-	mkdir -p ${D}${EPREFIX}/usr/include
-	emake install D=${D} || die
-	chmod oug-w ${D}${EPREFIX}/usr/bin/*
-	chmod oug-w ${D}${EPREFIX}/usr/lib/*
 }
