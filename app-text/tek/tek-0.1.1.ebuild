@@ -29,3 +29,7 @@ src_configure() {
 
 	pconfigure
 }
+
+src_install() {
+        make D=$D install
+}
