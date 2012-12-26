@@ -11,11 +11,12 @@ SRC_URI="http://freedesktop.org/software/pulseaudio/${PN}/${P}.tar.xz"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="amd64 ~ppc ~ppc64 ~sparc x86 ~x86-fbsd"
-IUSE="nls"
+IUSE="nls gtk2 gtk3"
 
 RDEPEND=">=dev-cpp/gtkmm-3.0:3.0
 	>=dev-libs/libsigc++-2.2:2
-	>=media-libs/libcanberra-0.16[gtk3]
+	gtk3? ( >=media-libs/libcanberra-0.16[gtk3] )
+	gtk2? ( >=media-libs/libcanberra-0.16[gtk] )
 	>=media-sound/pulseaudio-0.9.16[glib]
 	virtual/freedesktop-icon-theme"
 DEPEND="${RDEPEND}
@@ -28,9 +29,15 @@ DEPEND="${RDEPEND}
 DOCS="ChangeLog"
 
 src_configure() {
+        GTKCONF=""
+	if use gtk2; then
+	        GTKCONF="--disable-gtk3"
+	fi
+
 	econf \
 		--docdir=/usr/share/doc/${PF} \
 		--htmldir=/usr/share/doc/${PF}/html \
 		--disable-lynx \
-		$(use_enable nls)
+		$(use_enable nls) \
+		$GTKCONF
 }
