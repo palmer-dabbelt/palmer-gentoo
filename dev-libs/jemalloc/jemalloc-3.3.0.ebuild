@@ -12,7 +12,7 @@ SRC_URI="http://www.canonware.com/download/${PN}/${P}.tar.bz2"
 
 LICENSE="BSD"
 SLOT="0"
-KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~ppc ~ppc64 ~x86 ~amd64-linux"
 
 IUSE="debug static-libs stats"
 
