@@ -4,7 +4,7 @@ DESCRIPTION="jemalloc wrapper for firefox"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="amd64-linux"
+KEYWORDS="amd64-linux ~amd64-linux"
 IUSE=""
 
 DEPEND="dev-libs/jemalloc"
