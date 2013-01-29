@@ -70,7 +70,7 @@ DEPEND="${RDEPEND}
 		virtual/opengl )
 	x86? ( ${ASM_DEPEND}
 		virtual/opengl )
-	amd64-linux? ( dev-libs/jemalloc )"
+	amd64-linux? ( dev-libs/jemalloc-wrapper )"
 
 # No source releases for alpha|beta
 if [[ ${PV} =~ alpha ]]; then
