@@ -35,7 +35,7 @@ src_configure() {
 }
 
 src_install() {
-	emake DESTDIR="${ED}" install || die
+	emake DESTDIR="${D}" install || die
 	dodoc ChangeLog README
 	dohtml doc/jemalloc.html
 
