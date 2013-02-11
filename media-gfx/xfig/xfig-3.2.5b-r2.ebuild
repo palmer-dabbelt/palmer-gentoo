@@ -76,6 +76,7 @@ src_prepare() {
 	epatch "${FILESDIR}/${P}-libpng-1.5.patch" #356753
 	#https://bugzilla.redhat.com/show_bug.cgi?id=657290
 	epatch "${FILESDIR}/xfig-3.2.5b-fix-eps-reading.patch"
+	epatch "${FILESDIR}/xfig-3.2.5b-xaw3d.patch"
 
 	sed_Imakefile Imakefile
 	sed -e "s:/usr/lib/X11/xfig:/usr/share/doc/${PF}:" \
