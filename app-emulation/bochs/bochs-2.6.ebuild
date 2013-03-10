@@ -39,6 +39,8 @@ DEPEND="${RDEPEND}
 src_prepare() {
 	sed -i "s:^docdir.*:docdir = ${EPREFIX}/usr/share/doc/${PF}:" \
 		Makefile.in || die
+
+	epatch "${FILESDIR}/bochs-2.6-page_table.patch"
 }
 
 src_configure() {
