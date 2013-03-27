@@ -28,7 +28,7 @@ index 4f0121d..621dd16 100644
  static void
  pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *alias,
  						const char *message, PurpleMessageFlags flags,
-@@ -5786,11 +5788,28 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
+@@ -5786,11 +5788,25 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
  	char *bracket;
  	int tag_count = 0;
  	gboolean is_rtl_message = FALSE;
@@ -40,18 +40,15 @@ index 4f0121d..621dd16 100644
  	gtkconv = PIDGIN_CONVERSATION(conv);
  	g_return_if_fail(gtkconv != NULL);
  
-+	fprintf(stderr, "name: '%s'\n", name);
-+	fprintf(stderr, "alias: '%s'\n", alias);
-+
 +	limit_nick = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/limit_nick");
 +
 +	if (limit_nick && strlen(alias) < LIMIT_NICK_LENGTH_MAX)
 +	{
-+	limit_nick_length = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/limit_nick_length");
-+	limit_nick_length = (limit_nick_length > LIMIT_NICK_LENGTH_MAX) ? LIMIT_NICK_LENGTH_MAX : limit_nick_length;
++		limit_nick_length = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/limit_nick_length");
++		limit_nick_length = (limit_nick_length > LIMIT_NICK_LENGTH_MAX) ? LIMIT_NICK_LENGTH_MAX : limit_nick_length;
 +
-+	    strncpy(short_alias, alias, limit_nick_length);
-+	    alias = short_alias;
++		strncpy(short_alias, alias, limit_nick_length);
++		alias = short_alias;
 +	}
 +
  	if (gtkconv->attach.timer) {
