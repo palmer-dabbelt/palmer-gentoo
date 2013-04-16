@@ -1,75 +1,165 @@
-diff -ur bochs-2.6.old/gui/enh_dbg.cc bochs-2.6/gui/enh_dbg.cc
---- bochs-2.6.old/gui/enh_dbg.cc	2013-03-09 18:45:47.011649712 -0800
-+++ bochs-2.6/gui/enh_dbg.cc	2013-03-09 18:50:13.916951341 -0800
-@@ -1606,7 +1606,8 @@
+commit 482d542af18d0539f382b444dc6b53cea41244fa
+Author: Palmer Dabbelt <palmer@dabbelt.com>
+Date:   Mon Apr 15 23:07:00 2013 -0700
+
+    Add 64-bit page tables to the debugger
+    
+    I was working on a hobby OS of mine, trying to debug paging, and
+    discovered that Bochs doesn't print the full 64-bit page tables but
+    instead only prints the lower 32-bits of the address space.
+    
+    The current implementation of paging in the debugger simply scans the
+    entire address space a page at a time, preforms a virt2phys for each
+    page, and prints the mappings it discovers.  While this is nice and
+    clean, it's way to slow when we have to scan the full 64-bit address
+    space for mappings.
+    
+    This patch adds some code that walks the page table to determine page
+    mappings.  This new code produces a virtual to physical mapping
+    acceptably fast on my machine.  I didn't time anything, but it should
+    be pretty noticable -- it goes from taking minutes draw the mapping to
+    drawing so fast I can't tell how long it takes.
+
+diff --git a/bochs/gui/enh_dbg.cc b/bochs/gui/enh_dbg.cc
+index 154f89a..f4e8589 100644
+--- a/bochs/gui/enh_dbg.cc
++++ b/bochs/gui/enh_dbg.cc
+@@ -1611,8 +1611,20 @@ void AddPagingLine(int LC, char *pa_lin, char *pa_phy)
+     InsertListRow(cols, 18, DUMP_WND, LC, 8);   // 18 cols, "no group"
+ }
+ 
++#define FILLPAGE_LINE(v, p, s)						\
++    do									\
++    {									\
++	char virt[64], phys[64];					\
++	Bit64u vs;							\
++	vs = (v & 0x0000FFFFFFFFFFFFL) |				\
++	    ((v & 0x0000800000000000L) ? 0xFFFF000000000000L : 0);	\
++	sprintf(virt, "0x%016lX - 0x%016lX", (vs), (vs) + (s));		\
++	sprintf(phys, "0x%016lX - 0x%016lX", (p), (p) + (s));		\
++	AddPagingLine(line_count, virt, phys);				\
++    } while (0)
++
  // lifted from bx_dbg_dump_table in dbg_main of the internal debugger
- void FillPAGE()
+-void FillPAGE()
++static void FillPAGE32()
  {
--    Bit32u lin, start_lin, curlin; // show only low 32 bit
-+    Bit64u lin, start_lin, curlin;
-+    const Bit64u maxlin = In64Mode ? 0x0000fffffffff000 : 0xfffff000;
+     Bit32u lin, start_lin, curlin; // show only low 32 bit
      bx_phy_address phy;
-     Bit64u start_phy, phy64;
-     int LineCount = 0;
-@@ -1618,9 +1619,31 @@
-     curlin = lin = 0;   // always start at linear address 0
-     start_lin = 1;      // force a mismatch on the first line
-     start_phy = 2;
--    while (LineCount < 1024 && curlin != 0xfffff000)
-+    while (LineCount < 1024 && curlin < maxlin)
-     {
-         // get translation lin -> phys, and verify mapping is legal
+@@ -1672,6 +1684,116 @@ void FillPAGE()
+     EndListUpdate(DUMP_WND);
+ }
+ 
++static void FillPAGE64()
++{
++    Bit64u addr;
 +
-+#if BX_SUPPORT_X86_64
-+      if (In64Mode)
-+      {
-+	Bit64u entry;
-+	BX_MEM(0)->readPhysicalPage(BX_CPU_THIS, (BX_CPU_THIS_PTR cr3 & 0x000ffffffffff000) + (lin >> 39) * 8, 8, &entry);
-+	if (!(entry & 1))
-+	{
-+	  curlin = lin;
-+	  lin += 1ll << 39;
-+	  continue;
-+	}
-+	BX_MEM(0)->readPhysicalPage(BX_CPU_THIS, (entry & 0x000ffffffffff000) + (lin >> 30 & 511) * 8, 8, &entry);
-+	if (!(entry & 1))
-+	{
-+	  curlin = lin;
-+	  lin += 1ll << 30;
-+	  continue;
-+	}
-+      }
-+#endif
++    Bit64u pml4_base;
++    Bit64u pml4_offset;
++    Bit64u pml4_entry;
 +
-         if (BX_CPU(CurrentCPU)->dbg_xlate_linear2phy(lin, &phy) != FALSE)
-         {
-             phy64 = phy;
-@@ -1628,7 +1651,8 @@
-             {
-                 if (start_lin != 1)
-                 {
--                    sprintf (pa_lin,"0x%08X - 0x%08X",start_lin, lin - 1);
-+                    sprintf (pa_lin,"0x" FMT_LLCAPX " - 0x" FMT_LLCAPX,
-+			     start_lin, lin - 1);
-                     sprintf (pa_phy,"0x" FMT_LLCAPX " - 0x" FMT_LLCAPX,
-                         start_phy, start_phy + (lin-1-start_lin));
-                     AddPagingLine (LineCount,pa_lin,pa_phy);
-@@ -1642,7 +1666,8 @@
-         {
-             if (start_lin != 1)
-             {
--                sprintf (pa_lin,"0x%08X - 0x%08X",start_lin, lin - 1);
-+	      sprintf (pa_lin,"0x" FMT_LLCAPX " - 0x" FMT_LLCAPX,
-+		       start_lin, lin - 1);
-                 sprintf (pa_phy,"0x" FMT_LLCAPX " - 0x" FMT_LLCAPX,
-                     start_phy, start_phy + (lin-1-start_lin));
-                 AddPagingLine (LineCount,pa_lin,pa_phy);
-@@ -1656,7 +1681,7 @@
-     }
-     if (start_lin != 1)     // need to output one last line?
-     {
--        sprintf (pa_lin,"0x%08X - 0x%08X", start_lin, -1);
-+      sprintf (pa_lin,"0x" FMT_LLCAPX " - 0x" FMT_LLCAPX,start_lin, -1);
-         sprintf (pa_phy,"0x" FMT_LLCAPX " - 0x" FMT_LLCAPX,start_phy, start_phy + (lin-1-start_lin));
-         AddPagingLine (LineCount,pa_lin,pa_phy);
-     }
++    Bit64u pdpt_base;
++    Bit64u pdpt_offset;
++    Bit64u pdpt_entry;
++
++    Bit64u pd_base;
++    Bit64u pd_offset;
++    Bit64u pd_entry;
++
++    Bit64u pt_base;
++    Bit64u pt_offset;
++    Bit64u pt_entry;
++
++    Bit64u p_base;
++
++    int line_count;
++
++    line_count = 0;
++    StartListUpdate(DUMP_WND);
++
++    pml4_base = BX_CPU(CurrentCPU)->cr3 & 0x000ffffffffff000L;
++
++    for (pml4_offset = 0; pml4_offset < 512; pml4_offset++)
++    {
++	addr = pml4_base + (pml4_offset * 8);
++	BX_MEM(CurrentCPU)->readPhysicalPage(BX_CPU(0), addr,
++                                             sizeof(pml4_entry),
++                                             &pml4_entry);
++	pdpt_base = pml4_entry & 0x000ffffffffff000L;
++	if ((pml4_entry & 1) == 0)
++	    continue;
++
++	if (pml4_entry & (1 << 7))
++	    continue;
++
++	for (pdpt_offset = 0; pdpt_offset < 512; pdpt_offset++)
++	{
++	    addr = pdpt_base + (pdpt_offset * 8);
++	    BX_MEM(CurrentCPU)->readPhysicalPage(BX_CPU(0), addr,
++                                                 sizeof(pdpt_entry),
++                                                 &pdpt_entry);
++	    pd_base = pdpt_entry & 0x000ffffffffff000L;
++	    if ((pdpt_entry & 1) == 0)
++		continue;
++
++	    if (pdpt_entry & (1 << 7))
++	    {
++		FILLPAGE_LINE((pml4_offset << 39) + (pdpt_offset << 30),
++			      pd_base & 0x000ffffffffff000L,
++			      1024 * 1024 * 1024);
++		continue;
++	    }
++
++	    for (pd_offset = 0; pd_offset < 512; pd_offset++)
++	    {
++		addr = pd_base + (pd_offset * 8);
++		BX_MEM(CurrentCPU)->readPhysicalPage(BX_CPU(0), addr,
++                                                     sizeof(pd_entry),
++                                                     &pd_entry);
++		pt_base = pd_entry & 0x000ffffffffff000L;
++		if ((pd_entry & 1) == 0)
++		    continue;
++
++		if (pd_entry & (1 << 7))
++		{
++		    FILLPAGE_LINE((pml4_offset << 39) + (pdpt_offset << 30)
++				  + (pd_offset << 21),
++				  pt_base & 0x000ffffffffff000L,
++				  0x200000L);
++		    continue;
++		}
++
++		for (pt_offset = 0; pt_offset < 512; pt_offset++)
++		{
++		    addr = pt_base + (pt_offset * 8);
++		    BX_MEM(CurrentCPU)->readPhysicalPage(BX_CPU(0), addr,
++                                                         sizeof(pt_entry),
++                                                         &pt_entry);
++		    p_base = pt_entry & 0x000ffffffffff000L;
++		    if ((pt_entry & 1) == 0)
++			continue;
++
++		    FILLPAGE_LINE((pml4_offset << 39) + (pdpt_offset << 30)
++				  + (pd_offset << 21) + (pt_offset << 12),
++				  p_base & 0x000ffffffffff000L,
++				  0x1000L);
++		}
++	    }
++	}
++    }
++
++    RedrawColumns(DUMP_WND);
++    EndListUpdate(DUMP_WND);
++}
++
++void FillPAGE()
++{
++    if (BX_CPU(CurrentCPU)->long_mode())
++        FillPAGE64();
++    else
++        FillPAGE32();
++}
++
+ // build the stack display
+ void FillStack()
+ {
