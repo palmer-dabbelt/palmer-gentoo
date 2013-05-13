@@ -13,7 +13,8 @@ SLOT="0"
 KEYWORDS="amd64 ~ppc ~ppc64 ~sparc x86 ~x86-fbsd"
 IUSE="nls gtk2 gtk3"
 
-RDEPEND=">=dev-cpp/gtkmm-3.0:3.0
+RDEPEND="gtk3? ( >=dev-cpp/gtkmm-3.0:3.0 )
+	 gtk2? ( >=dev-cpp/gtkmm-2.16:2.4 )
 	>=dev-libs/libsigc++-2.2:2
 	gtk3? ( >=media-libs/libcanberra-0.16[gtk3] )
 	gtk2? ( >=media-libs/libcanberra-0.16[gtk] )
