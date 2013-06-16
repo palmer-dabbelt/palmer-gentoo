@@ -16,7 +16,7 @@ index 78b00ed..3697af4 100644
  		"N\t\t-- find previous search result\n"
  		"c\t\t-- toggle between color and grayscale\n"
  		"i\t\t-- toggle inverted color mode\n"
-+		"P\t\t-- dump image to PNM\n"
++		"I\t\t-- dump image to PNM\n"
  		"q\t\t-- quit\n"
  	;
  }
@@ -28,7 +28,7 @@ index 78b00ed..3697af4 100644
 +	 * Dumping images
 +	 */
 +
-+	case 'P':
++	case 'I':
 +	{
 +		int x0, y0, x1, y1;
 +		unsigned char *image_samples;
