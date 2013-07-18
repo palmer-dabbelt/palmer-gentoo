@@ -1,0 +1,31 @@
+commit 0fbfaa63b13847552c5d9363c7c5e76d9ff21b08
+Author: Palmer Dabbelt <palmer@dabbelt.com>
+Date:   Thu Jul 18 16:06:32 2013 -0700
+
+    Always fit canvas to drawing on save
+    
+    This eliminates the need to constantly click into "Document
+    Properties" and manually hit the button to resize the canvas.
+    Whenever I forget to click that button my drawings will end up cropped
+    or (probably worse off!) slightly miscentered.
+
+diff --git a/src/verbs.cpp b/src/verbs.cpp
+index 44d0377..4146291 100644
+--- a/src/verbs.cpp
++++ b/src/verbs.cpp
+@@ -807,6 +807,15 @@ FileVerb::perform(SPAction *action, void *data, void */*pdata*/)
+             sp_file_revert_dialog();
+             break;
+         case SP_VERB_FILE_SAVE:
++        {
++            Verb *verb = Verb::get( SP_VERB_FIT_CANVAS_TO_DRAWING );
++            if (verb) {
++                SPAction *action = verb->get_action(SP_ACTIVE_DESKTOP);
++                if (action) {
++                    sp_action_perform(action, NULL);
++                }
++            }
++        }
+             sp_file_save(*parent, NULL, NULL);
+             break;
+         case SP_VERB_FILE_SAVE_AS:

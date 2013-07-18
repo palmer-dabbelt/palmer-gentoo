@@ -78,7 +78,8 @@ src_prepare() {
 		"${FILESDIR}"/${PN}-0.48.3.1-desktop.patch \
 		"${FILESDIR}"/${PN}-0.48.4-epython.patch \
 		"${FILESDIR}"/${PN}-0.48.4-fix-member-decl.patch \
-		"${FILESDIR}"/${PN}-0.48.4-automake-1.13.patch
+		"${FILESDIR}"/${PN}-0.48.4-automake-1.13.patch \
+                "${FILESDIR}"/${PN}-0.48.4-resize_canvas.patch
 
 	sed -i \
 		-e "s#@EPYTHON@#${EPYTHON}#" \
