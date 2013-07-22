@@ -8,8 +8,7 @@ DESCRIPTION="Scala 2.10.1 release"
 HOMEPAGE="http://www.scala-lang.org"
 SRC_URI="http://www.scala-lang.org/downloads/distrib/files/${PROJECT_DISTR}.tgz"
 
-DEPEND=">=virtual/jdk-1.5
-        app-admin/eselect-scala"
+DEPEND=">=virtual/jdk-1.5"
 
 S=${WORKDIR}
 
