@@ -10,7 +10,7 @@ SRC_URI=""
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="~x86"
+KEYWORDS="amd64"
 IUSE=""
 
 DEPEND=">=app-admin/eselect-1.0.10
