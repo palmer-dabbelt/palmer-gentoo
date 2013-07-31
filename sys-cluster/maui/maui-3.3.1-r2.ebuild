@@ -36,6 +36,7 @@ pkg_setup() {
 src_prepare() {
 	sed -e "s:\$(INST_DIR)/lib:\$(INST_DIR)/$(get_libdir):" \
 		-i src/{moab,server,mcom}/Makefile || die
+        epatch "${FILESDIR}"/"${P}"-torque_4.patch
 }
 
 src_configure() {
