@@ -2,7 +2,7 @@ EAPI="4"
 
 DESCRIPTION="Palmer Dabbelt's script collection"
 HOMEPAGE="http://dabbelt.com/~palmer/software/scripts/"
-SRC_URI="http://www.dabbelt.com/~palmer/software/scripts/release/palmer-scripts-${PV}.tar.bz2"
+SRC_URI="http://www.dabbelt.com/~palmer/software/palmer-scripts/release/palmer-scripts-2012-11-11.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -15,6 +15,8 @@ RDEPEND="sys-devel/pconfigure
          net-dns/bind-tools"
 
 DEPEND="${RDEPEND}"
+
+S="${WORKDIR}"/palmer-scripts-2012-11-11
 
 src_configure() {
 	cd "${S}"
