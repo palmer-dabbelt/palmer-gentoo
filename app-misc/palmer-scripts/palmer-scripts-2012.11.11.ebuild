@@ -12,7 +12,8 @@ IUSE=""
 RDEPEND="sys-devel/pconfigure
 	 sys-devel/make
 	 media-libs/libv4l
-         net-dns/bind-tools"
+         net-dns/bind-tools
+         net-analyzer/traceroute"
 
 DEPEND="${RDEPEND}"
 
