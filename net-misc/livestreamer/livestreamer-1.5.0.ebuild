@@ -11,7 +11,8 @@ LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="amd64"
 
-RDEPEND="dev-python/requests
+RDEPEND=">=dev-python/requests-1.0
+        <dev-python/requests-2.0
 	dev-python/pbs"
 DEPEND="${RDEPEND}
 	dev-python/setuptools"
