@@ -10,7 +10,7 @@ HOMEPAGE="http://glfw.sourceforge.net/"
 SRC_URI="mirror://sourceforge/${PN}/${P}.tar.bz2"
 
 LICENSE="ZLIB"
-SLOT="0"
+SLOT="3"
 KEYWORDS="amd64 x86"
 IUSE="examples"
 

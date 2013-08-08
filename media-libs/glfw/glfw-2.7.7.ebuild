@@ -10,8 +10,8 @@ HOMEPAGE="http://glfw.sourceforge.net/"
 SRC_URI="mirror://sourceforge/${PN}/${P}.tar.bz2"
 
 LICENSE="ZLIB"
-SLOT="0"
-KEYWORDS="~amd64 ~x86"
+SLOT="2"
+KEYWORDS="amd64 x86"
 IUSE="examples static-libs"
 
 DEPEND="x11-libs/libX11
