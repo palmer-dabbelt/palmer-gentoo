@@ -1,9 +1,8 @@
-EAPI="4"
-inherit eutils
+EAPI="2"
 
 DESCRIPTION="A simple Makefile generator for LaTeX"
 HOMEPAGE="http://dabbelt.com/~palmer/software/tek/"
-SRC_URI="http://www.dabbelt.com/~palmer/software/tek/release/$P.tar.gz"
+SRC_URI="https://github.com/palmer-dabbelt/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -18,10 +17,6 @@ RDEPEND="sys-devel/pconfigure
 	 sci-visualization/gnuplot"
 
 DEPEND="${RDEPEND}"
-
-src_prepare() {
-	epatch "${FILESDIR}"/${P}-dir_of_file.patch
-}
 
 src_configure() {
 	rm Configfile.local >& /dev/null || true
