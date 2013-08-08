@@ -1,0 +1,12 @@
+diff -ur glfw-3.0.1.orig/CMakeLists.txt glfw-3.0.1/CMakeLists.txt
+--- glfw-3.0.1.orig/CMakeLists.txt	2013-08-08 15:36:14.055020217 -0700
++++ glfw-3.0.1/CMakeLists.txt	2013-08-08 15:37:40.434644009 -0700
+@@ -359,7 +359,7 @@
+ #--------------------------------------------------------------------
+ if (BUILD_SHARED_LIBS AND UNIX)
+     # On Unix-like systems, shared libraries can use the soname system.
+-    set(GLFW_LIB_NAME glfw)
++    set(GLFW_LIB_NAME glfw3)
+ else()
+     set(GLFW_LIB_NAME glfw3)
+ endif()

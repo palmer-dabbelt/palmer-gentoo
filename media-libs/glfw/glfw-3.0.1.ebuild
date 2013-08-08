@@ -19,3 +19,7 @@ DEPEND="x11-libs/libXrandr
 	virtual/opengl"
 
 mycmakeargs="-DBUILD_SHARED_LIBS=1"
+
+src_prepare() {
+              epatch "${FILESDIR}"/${P}-slot.patch
+}
