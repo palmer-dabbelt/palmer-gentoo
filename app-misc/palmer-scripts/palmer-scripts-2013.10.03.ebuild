@@ -2,7 +2,7 @@ EAPI="4"
 
 DESCRIPTION="Palmer Dabbelt's script collection"
 HOMEPAGE="http://dabbelt.com/~palmer/software/scripts/"
-SRC_URI="http://www.dabbelt.com/~palmer/software/palmer-scripts/release/palmer-scripts-2012-11-11.tar.gz"
+SRC_URI="https://github.com/palmer-dabbelt/scrpits/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -17,7 +17,7 @@ RDEPEND="sys-devel/pconfigure
 
 DEPEND="${RDEPEND}"
 
-S="${WORKDIR}"/palmer-scripts-2012-11-11
+S="${WORKDIR}"/scrpits-${PV}
 
 src_configure() {
 	cd "${S}"
@@ -34,18 +34,5 @@ src_configure() {
 	echo "COMPILEOPTS += -DNDEBUG" >> Configfile.local
 	echo "COMPILEOPTS += -DPROCESSORS=\\\"$(grep -c "physical id" /proc/cpuinfo)\\\"" >> Configfile.local
 
-	pconfigure
-}
-
-src_compile() {
-	emake || die
-}
-
-src_install() {
-	mkdir -p ${D}${EPREFIX}/usr/bin
-	mkdir -p ${D}${EPREFIX}/usr/lib
-	mkdir -p ${D}${EPREFIX}/usr/include
-	emake install D=${D} || die
-	chmod oug-w ${D}${EPREFIX}/usr/bin/*
-	chmod oug-w ${D}${EPREFIX}/usr/lib/*
+	pconfigure || die "pconfigure failed"
 }
