@@ -41,6 +41,6 @@ src_compile() {
 }
 
 src_install() {
-        mkdir -p "${EPREFIX}"/usr/lib/pkgconfig
+        mkdir -p "${ED}"/usr/lib/pkgconfig
         make install
 }
