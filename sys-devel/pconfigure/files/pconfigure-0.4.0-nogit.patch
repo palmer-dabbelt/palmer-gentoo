@@ -1,0 +1,53 @@
+commit 9fdf1b2a288ecf935fec823f87358526240ec175
+Author: Palmer Dabbelt <palmer@dabbelt.com>
+Date:   Wed Oct 2 13:20:47 2013 -0700
+
+    Fix build from tarballs
+    
+    It turns out my new version detection scheme didn't work when there
+    wasn't a git version attached.  This has been fixed.
+
+diff --git a/src/version.h.proc b/src/version.h.proc
+index ad29f6f..18dea25 100755
+--- a/src/version.h.proc
++++ b/src/version.h.proc
+@@ -4,6 +4,11 @@ version="v0.4.0"
+ 
+ if [[ "$1" == "--deps" ]]
+ then
++    if ! test -d .git
++    then
++	exit 0
++    fi
++
+     ref="$(cat .git/HEAD | cut -d' ' -f2)"
+     if [[ "$?" != "0" ]]
+     then
+@@ -21,16 +26,19 @@ fi
+ 
+ if [[ "$1" == "--generate" ]]
+ then
+-    gv=`git describe`
+-    if [[ "$?" == "0" ]]
++    if test -d .git
+     then
+-        if [[ "$(echo "$gv" | cut -d'-' -f1)" != "$version" ]]
+-        then
+-            echo "$0 has mismatched version" >&2
+-            exit 1
+-        fi
++	gv=`git describe`
++	if [[ "$?" == "0" ]]
++	then
++            if [[ "$(echo "$gv" | cut -d'-' -f1)" != "$version" ]]
++            then
++		echo "$0 has mismatched version" >&2
++		exit 1
++            fi
+ 
+-        version="${gv}-git"
++            version="${gv}-git"
++	fi
+     fi
+ 
+     echo "#define PCONFIGURE_VERSION \"${version}\""
