@@ -39,3 +39,8 @@ src_compile() {
 	sh bootstrap.sh || die "Failed to bootstap pconfigure"
         make
 }
+
+src_install() {
+        mkdir -p "${EPREFIX}"/usr/lib/pkgconfig
+        make install
+}
