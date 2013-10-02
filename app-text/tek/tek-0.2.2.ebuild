@@ -14,6 +14,7 @@ RDEPEND="sys-devel/pconfigure
 	 dev-tex/tex4ht
 	 media-gfx/xfig
 	 media-gfx/imagemagick
+         media-gfx/inkscape
 	 sci-visualization/gnuplot"
 
 DEPEND="${RDEPEND}"
