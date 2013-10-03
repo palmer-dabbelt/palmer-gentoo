@@ -19,3 +19,8 @@ DEPEND="${RDEPEND}"
 src_configure() {
         :
 }
+
+src_install() {
+        mkdir -p "${ED}"/usr/bin
+        cp ./bin/lmctfy/cli/lmctfy "${ED}"/usr/bin
+}
