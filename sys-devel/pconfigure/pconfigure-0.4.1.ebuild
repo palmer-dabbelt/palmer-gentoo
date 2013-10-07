@@ -10,16 +10,14 @@ SLOT="0"
 KEYWORDS="amd64 amd64-linux"
 
 RDEPEND="sys-devel/clang
+         dev-lang/scala-bin
          dev-util/pkgconfig
+         dev-util/strace
 	 sys-devel/make
          sys-devel/gcc
          sys-libs/talloc"
 
 DEPEND="${RDEPEND}"
-
-src_prepare() {
-        epatch "${FILESDIR}"/${P}-nogit.patch
-}
 
 src_configure() {
 	rm Configfile.local >& /dev/null || true
@@ -33,14 +31,6 @@ src_configure() {
 	done
 	echo "COMPILEOPTS += -DPBASHC_SHEBANG=\\\"\#\!${EPREFIX}/bin/bash\\\""\
 	     >> Configfile.local
-}
 
-src_compile() {
-	sh bootstrap.sh || die "Failed to bootstap pconfigure"
-        make
-}
-
-src_install() {
-        mkdir -p "${ED}"/usr/lib/pkgconfig
-        make install
+        sh bootstrap.sh || die "Failed to bootstap pconfigure"
 }
