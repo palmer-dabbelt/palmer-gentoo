@@ -21,6 +21,7 @@ src_compile() {
 src_install() {
         mkdir -p ${ED}/usr/bin
         cp bin/zinc ${ED}/usr/bin
+        cp bin/nailgun ${ED}/usr/bin
 
         mkdir -p ${ED}/usr/lib
         cp lib/*.jar ${ED}/usr/lib
