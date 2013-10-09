@@ -23,5 +23,5 @@ src_install() {
         cp bin/zinc ${ED}/usr/bin
 
         mkdir -p ${ED}/usr/lib
-        cp lib/zinc.jar ${ED}/usr/lib
+        cp lib/*.jar ${ED}/usr/lib
 }
