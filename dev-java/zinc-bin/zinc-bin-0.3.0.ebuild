@@ -11,7 +11,7 @@ S="${WORKDIR}/zinc-${PV}"
 
 SLOT="0"
 KEYWORDS="~amd64"
-DEPEND=""
+DEPEND="dev-java/nailgun"
 RDEPEND="${DEPEND}"
 
 src_compile() {
