@@ -25,7 +25,7 @@ RDEPEND=">=dev-libs/glib-2.26:2
 	>=sys-apps/dbus-1.4.1
 	>=sys-auth/polkit-0.96-r1
 	gtk3? ( >=x11-libs/gtk+-3:3 )
-        !gtk3? ( >=xll-libs/gtk+-2:2 )
+        !gtk3? ( xll-libs/gtk+:2 )
 	>=x11-libs/libnotify-0.7.0
 
 	app-text/iso-codes
