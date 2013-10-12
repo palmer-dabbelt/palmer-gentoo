@@ -16,7 +16,7 @@ SRC_URI="${SRC_URI}
 
 LICENSE="GPL-2+"
 SLOT="0"
-IUSE="bluetooth gconf"
+IUSE="bluetooth gconf +gtk3"
 KEYWORDS="~alpha amd64 ~arm ~ia64 ppc ppc64 ~sparc x86"
 
 RDEPEND=">=dev-libs/glib-2.26:2
@@ -24,7 +24,8 @@ RDEPEND=">=dev-libs/glib-2.26:2
 	>=gnome-base/gnome-keyring-2.20
 	>=sys-apps/dbus-1.4.1
 	>=sys-auth/polkit-0.96-r1
-	>=x11-libs/gtk+-3:3
+	gtk3? ( >=x11-libs/gtk+-3:3 )
+        !gtk3? ( >=xll-libs/gtk+-2:2 )
 	>=x11-libs/libnotify-0.7.0
 
 	app-text/iso-codes
@@ -41,8 +42,14 @@ DEPEND="${RDEPEND}
 
 src_prepare() {
 	DOCS="AUTHORS ChangeLog NEWS README"
+
+        gtkver=2
+        if use gtk3; then
+               gtkver=3
+        fi
+
 	G2CONF="${G2CONF}
-		--with-gtkver=3
+		--with-gtkver=$gtkver
 		--disable-more-warnings
 		--disable-static
 		--localstatedir=/var
