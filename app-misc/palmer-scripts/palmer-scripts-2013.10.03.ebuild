@@ -14,7 +14,8 @@ RDEPEND="sys-devel/pconfigure
 	 media-libs/libv4l
          net-dns/bind-tools
          net-analyzer/traceroute
-         dev-util/indent"
+         dev-util/indent
+         sys-process/parallel"
 
 DEPEND="${RDEPEND}"
 
