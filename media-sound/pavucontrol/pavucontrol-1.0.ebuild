@@ -13,10 +13,12 @@ SLOT="0"
 KEYWORDS="amd64 ppc ~ppc64 ~sparc x86 ~x86-fbsd"
 IUSE="nls gtk3"
 
-RDEPEND=">=dev-cpp/gtkmm-3.0:3.0
-	>=dev-libs/libsigc++-2.2:2
+RDEPEND=">=dev-libs/libsigc++-2.2:2
 	>=media-sound/pulseaudio-0.9.16[glib]
 	virtual/freedesktop-icon-theme
+
+        gtk3? ( >=dev-cpp/gtkmm-3.0:3.0 )
+        !gtk3? ( dev-cpp/gtkmm:2.4 )
 
 	gtk3? ( >=media-libs/libcanberra-0.16[gtk3] )
 	!gtk3? ( >=media-libs/libcanberra-0.16[gtk] )
