@@ -8,15 +8,17 @@ SRC_URI="https://github.com/palmer-dabbelt/${PN}/archive/v${PV}.tar.gz -> ${P}.t
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="amd64 amd64-linux"
+IUSE="scala"
 
 RDEPEND="sys-devel/clang
-         dev-lang/scala
-         dev-java/zinc-bin
          dev-util/pkgconfig
          dev-util/strace
 	 sys-devel/make
          sys-devel/gcc
-         sys-libs/talloc"
+         sys-libs/talloc
+         scala? ( dev-lang/scala )
+         scala? ( dev-java/zinc-bin )
+         "
 
 DEPEND="${RDEPEND}"
 
