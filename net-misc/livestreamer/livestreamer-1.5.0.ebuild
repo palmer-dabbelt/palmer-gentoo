@@ -13,6 +13,7 @@ KEYWORDS="amd64"
 
 RDEPEND=">=dev-python/requests-1.0
         <dev-python/requests-2.0
-	dev-python/pbs"
+	dev-python/pbs
+        >=media-video/rtmpdump-2.4"
 DEPEND="${RDEPEND}
 	dev-python/setuptools"
