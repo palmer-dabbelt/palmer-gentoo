@@ -25,7 +25,7 @@ src_configure() {
     ${S}/configure \
           --target=riscv-elf \
           --program-prefix=riscv- \
-          --prefix=$EPREFIX/opt/riscv \
+          --prefix=$EPREFIX/usr \
           --disable-shared \
           --disable-threads \
           --enable-tls \
@@ -45,5 +45,6 @@ src_compile() {
 
 src_install() {
     emake install-gcc DESTDIR=${ED}
+    rm -rf ${ED}/usr/share/info
+    rm -rf ${ED}/usr/share/man7
 }
-
