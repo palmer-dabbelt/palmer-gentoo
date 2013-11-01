@@ -28,7 +28,6 @@ src_configure() {
     ${S}/build/../configure \
           --target=riscv-elf \
           --prefix=$EPREFIX/usr \
-          --with-sysroot=$EPREFIX/usr/riscv-elf \
           --disable-shared \
           --disable-threads \
           --enable-tls \
