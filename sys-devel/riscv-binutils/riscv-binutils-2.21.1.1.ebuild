@@ -22,5 +22,5 @@ src_configure() {
           --enable-tls \
           --enable-languages=c \
           --with-newlib \
-          --prefix=$EPREFIX/usr
+          --prefix=$EPREFIX/opt/riscv
 }
