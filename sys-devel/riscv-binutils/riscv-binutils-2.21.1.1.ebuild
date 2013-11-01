@@ -22,5 +22,12 @@ src_configure() {
           --enable-tls \
           --enable-languages=c \
           --with-newlib \
-          --prefix=$EPREFIX/opt/riscv
+          --prefix=$EPREFIX/usr
+}
+
+src_install() {
+    emake install DESTDIR=${ED}
+    rm -rf ${ED}/usr/share/locale
+    rm -rf ${ED}/usr/share/info
+    rm -rf ${ED}/usr/lib64/libiberty.a
 }
