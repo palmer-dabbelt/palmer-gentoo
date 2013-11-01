@@ -17,7 +17,8 @@ DEPEND="${RDEPEND}"
 src_configure() {
     ${S}/configure \
           --target=riscv-elf \
-          --prefix=$EPREFIX/usr
+          --prefix=$EPREFIX/usr \
+          --with-sysroot=$EPREFIX/usr/riscv-elf
 }
 
 src_install() {
