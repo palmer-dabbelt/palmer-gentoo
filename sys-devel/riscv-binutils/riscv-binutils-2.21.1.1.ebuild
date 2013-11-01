@@ -17,11 +17,6 @@ DEPEND="${RDEPEND}"
 src_configure() {
     ${S}/configure \
           --target=riscv-elf \
-          --program-prefix=riscv- \
-          --enable-shared \
-          --enable-tls \
-          --enable-languages=c \
-          --with-newlib \
           --prefix=$EPREFIX/usr
 }
 
