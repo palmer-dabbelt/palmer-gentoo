@@ -1,5 +1,5 @@
 EAPI="4"
-inherit eutils
+inherit eutils flag-o-matic
 
 DESCRIPTION="RISC-V port of GNU Binutils"
 HOMEPAGE="https://github.com/ucb-bar/riscv-gcc"
@@ -20,12 +20,15 @@ src_prepare() {
 }
 
 src_configure() {
-    mkdir ${S}/build
+    filter-flags "-march*"
 
-    ${S}/configure \
+    mkdir ${S}/build
+    cd ${S}/build
+
+    ${S}/build/../configure \
           --target=riscv-elf \
-          --program-prefix=riscv- \
           --prefix=$EPREFIX/usr \
+          --with-sysroot=$EPREFIX/usr/riscv-elf \
           --disable-shared \
           --disable-threads \
           --enable-tls \
@@ -35,16 +38,17 @@ src_configure() {
           --disable-libssp \
           --disable-libquadmath \
           --disable-libgomp \
-          --disable-nls \
-          CFLAGS="-O2 -pipe"
+          --disable-nls
 }
 
 src_compile() {
-    emake inhibit-libc=true all-gcc
+    cd ${S}/build
+    emake inhibit-libc=true
 }
 
 src_install() {
-    emake install-gcc DESTDIR=${ED}
+    cd ${S}/build
+    emake install DESTDIR=${ED}
     rm -rf ${ED}/usr/share/info
     rm -rf ${ED}/usr/share/man7
 }
