@@ -23,7 +23,7 @@ index 1465ff7..7dfb550 100644
        path = test_path;
 +  } else if (targs[0].find('/') == std::string::npos)
 +  {
-+    std::string test_path = PREFIX "/target/bin" + targs[0];
++    std::string test_path = PREFIX "/riscv-elf/target/bin/" + targs[0];
 +    if (access(test_path.c_str(), F_OK) == 0)
 +      path = test_path;
    }
