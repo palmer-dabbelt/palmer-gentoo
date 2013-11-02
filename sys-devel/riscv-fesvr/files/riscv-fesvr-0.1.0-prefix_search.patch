@@ -1,0 +1,31 @@
+diff --git a/Makefile.in b/Makefile.in
+index eb879c7..9a0117d 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -78,8 +78,8 @@ install_exes_dir := $(DESTDIR)/bin
+ #  - LDFLAGS  : flags for the linker (eg. -L)
+ 
+ CPPFLAGS    := @CPPFLAGS@
+-CFLAGS      := @CFLAGS@
+-CXXFLAGS    := @CXXFLAGS@
++CFLAGS      := @CFLAGS@ -DPREFIX=\"@prefix@\"
++CXXFLAGS    := @CXXFLAGS@ -DPREFIX=\"@prefix@\"
+ LDFLAGS     := @LDFLAGS@
+ 
+ # C compiler and linker
+diff --git a/fesvr/htif.cc b/fesvr/htif.cc
+index 1465ff7..7dfb550 100644
+--- a/fesvr/htif.cc
++++ b/fesvr/htif.cc
+@@ -125,6 +125,11 @@ void htif_t::load_program()
+     std::string test_path = getenv("RISCV") + ("/target/bin/" + targs[0]);
+     if (access(test_path.c_str(), F_OK) == 0)
+       path = test_path;
++  } else if (targs[0].find('/') == std::string::npos)
++  {
++    std::string test_path = PREFIX "/target/bin" + targs[0];
++    if (access(test_path.c_str(), F_OK) == 0)
++      path = test_path;
+   }
+   if (path.empty())
+     throw std::runtime_error("could not open " + targs[0]);

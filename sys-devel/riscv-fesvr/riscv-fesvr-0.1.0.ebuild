@@ -16,10 +16,12 @@ DEPEND="${RDEPEND}"
 
 src_prepare() {
     epatch "${FILESDIR}/${P}-version.patch"
+    epatch "${FILESDIR}/${P}-prefix_search.patch"
 }
 
 src_configure() {
-    econf --prefix=${EPREFIX}/usr
+    econf \
+        --prefix=${EPREFIX}/usr
 }
 
 src_install() {
