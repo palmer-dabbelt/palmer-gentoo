@@ -22,7 +22,7 @@ src_configure() {
     cd "${S}/build"
 
     ../configure \
-        --prefix=${EPREFIX}/usr \
+        --prefix=${EPREFIX}/usr/riscv-elf/target \
         --host=riscv-elf \
         || die "configure failed"
 }
@@ -40,5 +40,6 @@ src_install() {
     cd "${S}/build"
 
     filter-flags "-march*"
-    make DESTDIR=${ED}/usr install || die "make install failed"
+    make DESTDIR=${ED}/usr/riscv-elf/target install \
+        || die "make install failed"
 }
