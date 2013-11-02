@@ -42,7 +42,7 @@ src_configure() {
 
 src_compile() {
     cd ${S}/build
-    make inhibit-libc=true || die "make failed"
+    emake || die "make failed"
 }
 
 src_install() {
