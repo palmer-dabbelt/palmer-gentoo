@@ -10,7 +10,8 @@ SLOT="0"
 KEYWORDS="amd64"
 IUSE=""
 
-RDEPEND="sys-devel/riscv-fesvr"
+RDEPEND="sys-devel/riscv-fesvr
+         sys-devel/riscv-pk"
 
 DEPEND="${RDEPEND}"
 
