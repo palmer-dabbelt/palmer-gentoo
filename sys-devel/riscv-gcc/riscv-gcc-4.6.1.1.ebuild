@@ -14,6 +14,10 @@ RDEPEND=""
 
 DEPEND="${RDEPEND}"
 
+# We can't strip this ebuild because the x86 strip code won't
+# understand these binaries and will therefor output bad values
+RESTRICT="strip"
+
 src_prepare() {
     cp -r ${S}/../riscv-newlib-*/newlib ${S}
     cp -r ${S}/../riscv-newlib-*/libgloss ${S}
@@ -47,7 +51,7 @@ src_compile() {
 
 src_install() {
     cd ${S}/build
-    emake install DESTDIR=${ED}
+    make install DESTDIR=${ED}
     rm -rf ${ED}/usr/share/info
     rm -rf ${ED}/usr/share/man7
 }
