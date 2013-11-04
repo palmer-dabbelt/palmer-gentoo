@@ -10,9 +10,11 @@ SLOT="0"
 KEYWORDS="amd64"
 IUSE=""
 
-RDEPEND="sys-devel/riscv-pk"
+PDEPEND="sys-devel/riscv-pk"
 
-DEPEND="${RDEPEND}
+RDEPEND=""
+
+DEPEND="${PDEPEND}
         sys-devel/riscv-fesvr"
 
 src_configure() {
