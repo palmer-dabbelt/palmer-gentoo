@@ -10,10 +10,10 @@ SLOT="0"
 KEYWORDS="amd64"
 IUSE=""
 
-RDEPEND="sys-devel/riscv-fesvr
-         sys-devel/riscv-pk"
+RDEPEND="sys-devel/riscv-pk"
 
-DEPEND="${RDEPEND}"
+DEPEND="${RDEPEND}
+        sys-devel/riscv-fesvr"
 
 src_configure() {
     econf --prefix=${EPREFIX}/usr

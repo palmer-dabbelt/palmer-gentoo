@@ -11,7 +11,8 @@ KEYWORDS="amd64"
 IUSE=""
 
 RDEPEND="sys-devel/riscv-fesvr
-         sys-devel/riscv-gcc"
+         sys-devel/riscv-gcc
+         sys-devel/riscv-isa-sim"
 
 DEPEND="${RDEPEND}"
 
