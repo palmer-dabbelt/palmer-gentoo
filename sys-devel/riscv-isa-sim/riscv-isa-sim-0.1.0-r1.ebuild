@@ -21,4 +21,5 @@ src_configure() {
 src_install() {
     make DESTDIR=${ED}/usr install
     cp ${S}/riscv/pcr.h ${ED}/usr/include/spike/
+    cp ${S}/config.h ${ED}/usr/include/spike/
 }
