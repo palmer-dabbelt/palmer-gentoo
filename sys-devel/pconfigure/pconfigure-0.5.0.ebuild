@@ -10,8 +10,7 @@ SLOT="0"
 KEYWORDS="amd64 amd64-linux"
 IUSE="scala"
 
-RDEPEND="sys-devel/clang
-         dev-util/pkgconfig
+RDEPEND="dev-util/pkgconfig
          dev-util/strace
 	 sys-devel/make
          sys-devel/gcc
