@@ -22,11 +22,6 @@ RDEPEND="dev-util/pkgconfig
 DEPEND="${RDEPEND}"
 
 src_configure() {
-	rm Configfile.local >& /dev/null || true
-	touch Configfile.local
-
-	echo "PREFIX = ${EPREFIX}/usr" >> Configfile.local
-
 	echo "LANGUAGES += c" >> Configfile.local
 	for i in $(echo ${CFLAGS}); do
 		echo "COMPILEOPTS += ${i}" >> Configfile.local
@@ -34,5 +29,6 @@ src_configure() {
 	echo "COMPILEOPTS += -DPBASHC_SHEBANG=\\\"\#\!${EPREFIX}/bin/bash\\\""\
 	     >> Configfile.local
 
-        sh bootstrap.sh || die "Failed to bootstap pconfigure"
+        sh bootstrap.sh --prefix ${EPREFIX}/usr \
+           || die "Failed to bootstap pconfigure"
 }
