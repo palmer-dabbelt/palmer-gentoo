@@ -1,0 +1,23 @@
+commit 603369b5818e07dcce3b81691c619c175c3c64af
+Author: Palmer Dabbelt <palmer@dabbelt.com>
+Date:   Sun Nov 17 21:16:28 2013 -0800
+
+    Follow symlinks when resolving scala libraries
+    
+    This follows symlinks that come directly on the commandline, but not
+    otherwise.  This handles the case where we have /usr/lib as a symlink,
+    but avoids directory loops (which are apparently common in /usr/lib).
+
+diff --git a/src/pscala/compiler.bash b/src/pscala/compiler.bash
+index 2b697c8..a848765 100644
+--- a/src/pscala/compiler.bash
++++ b/src/pscala/compiler.bash
+@@ -12,7 +12,7 @@ do
+ 	shift
+     elif [[ "$1" == "-l" ]]
+     then
+-	jar="$(find $jarpath -name "$2".jar; find $jarpath -name lib"$2".jar | head -n1)"
++	jar="$(find -L $jarpath -name lib"$2".jar | head -n1)"
+ 	jars="$jar:$jars"
+ 	shift
+ 	shift

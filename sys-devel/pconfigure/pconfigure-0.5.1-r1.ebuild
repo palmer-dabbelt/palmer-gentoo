@@ -21,6 +21,10 @@ RDEPEND="dev-util/pkgconfig
 
 DEPEND="${RDEPEND}"
 
+src_prepare() {
+        epatch "${FILESDIR}/${P}-lib_symlink.patch"
+}
+
 src_configure() {
 	echo "LANGUAGES += c" >> Configfile.local
 	for i in $(echo ${CFLAGS}); do
