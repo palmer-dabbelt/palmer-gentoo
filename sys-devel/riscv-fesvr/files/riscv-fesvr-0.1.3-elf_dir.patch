@@ -19,7 +19,7 @@ index 86390d8..5189c80 100644
 +#endif
 +
 +#ifndef TARGET_DIR
-+#define TARGET_DIR TARGET_ARCH "/target/bin/"
++#define TARGET_DIR "/" TARGET_ARCH "/target/bin/"
 +#endif
 +
  static volatile bool signal_exit = false;
