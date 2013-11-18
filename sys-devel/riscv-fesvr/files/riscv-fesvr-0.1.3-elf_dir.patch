@@ -1,0 +1,36 @@
+commit 2b0faff39d7a7f3a3f3c331eb82006a46758fcd5
+Author: Palmer Dabbelt <palmer.dabbelt@eecs.berkeley.edu>
+Date:   Sun Nov 17 21:45:59 2013 -0800
+
+    Set correct RISCV for autodetection
+    
+    I don't know how this went wrong, but it works now!
+
+diff --git a/src/htif.cc b/src/htif.cc
+index 86390d8..5189c80 100644
+--- a/src/htif.cc
++++ b/src/htif.cc
+@@ -12,6 +12,14 @@
+ #include <unistd.h>
+ #include <signal.h>
+ 
++#ifndef TARGET_ARCH
++#define TARGET_ARCH "riscv-elf"
++#endif
++
++#ifndef TARGET_DIR
++#define TARGET_DIR TARGET_ARCH "/target/bin/"
++#endif
++
+ static volatile bool signal_exit = false;
+ static void handle_signal(int sig)
+ {
+@@ -127,7 +135,7 @@ void htif_t::load_program()
+       path = test_path;
+   } else if (targs[0].find('/') == std::string::npos)
+   {
+-    std::string test_path = __PCONFIGURE__PREFIX "/target/bin" + targs[0];
++    std::string test_path = __PCONFIGURE__PREFIX TARGET_DIR + targs[0];
+     if (access(test_path.c_str(), F_OK) == 0)
+       path = test_path;
+   }
