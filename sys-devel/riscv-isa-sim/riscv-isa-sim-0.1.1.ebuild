@@ -1,5 +1,5 @@
 EAPI="4"
-inherit eutils
+inherit eutils flag-o-matic
 
 DESCRIPTION="Spike: A RISC-V Functional Simulator"
 HOMEPAGE="https://github.com/ucb-bar/riscv-isa-sim"
@@ -15,12 +15,24 @@ PDEPEND="sys-devel/riscv-pk"
 DEPEND="sys-devel/riscv-fesvr"
 
 src_configure() {
-    econf --prefix=${EPREFIX}/usr
+    econf --prefix=${EPREFIX}/usr \
+          CFLAGS="-fPIC $CFLAGS" \
+          CXXFLAGS="-fPIC $CXXFLAGS" \
+          LDFLAGS="-fPIC $LDFLAGS" \
+          CXX="g++ -fPIC"
 }
 
 src_install() {
     make DESTDIR=${ED}/usr install
+
     cp ${S}/riscv/pcr.h ${ED}/usr/include/spike/
     cp ${S}/riscv/disasm.h ${ED}/usr/include/spike/
     cp ${S}/config.h ${ED}/usr/include/spike/
+
+    g++ \
+        -Wl,--whole-archive \
+        ${ED}/usr/lib/spike/libriscv.a \
+        -Wl,--no-whole-archive \
+        -shared \
+        -o ${ED}/usr/lib/libspike.so
 }
