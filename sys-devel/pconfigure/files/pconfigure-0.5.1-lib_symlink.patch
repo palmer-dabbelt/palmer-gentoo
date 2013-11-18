@@ -21,3 +21,22 @@ index 2b697c8..a848765 100644
  	jars="$jar:$jars"
  	shift
  	shift
+commit 2aa409056840bd215cf50647d52c4d216d3b7b00
+Author: Palmer Dabbelt <palmer@dabbelt.com>
+Date:   Sun Nov 17 21:29:46 2013 -0800
+
+    Apply the same library fix to pscalald
+
+diff --git a/src/pscala/linker.bash b/src/pscala/linker.bash
+index 527d67e..9db5990 100644
+--- a/src/pscala/linker.bash
++++ b/src/pscala/linker.bash
+@@ -24,7 +24,7 @@ do
+ 	shift
+     elif [[ "$1" == "-l" ]]
+     then
+-	jar="$(find $jarpath -name "$2".jar; find $jarpath -name lib"$2".jar)"
++	jar="$(find -H $jarpath -name lib"$2".jar)"
+ 	jars="$jar:$jars"
+ 	shift
+ 	shift
