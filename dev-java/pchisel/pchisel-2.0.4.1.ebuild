@@ -9,7 +9,7 @@ SLOT="0"
 KEYWORDS="amd64 amd64-linux"
 IUSE=""
 
-RDEPEND="sys-devel/pconfigure
+RDEPEND=">=sys-devel/pconfigure-0.5.2
          >=dev-lang/scala-2.10.0"
 
 DEPEND="${RDEPEND}"
