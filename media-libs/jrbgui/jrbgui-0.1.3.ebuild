@@ -10,16 +10,16 @@ SLOT="0"
 KEYWORDS="amd64"
 IUSE=""
 
-RDEPEND=""
-
-DEPEND="${RDEPEND}"
-
-BDEPEND=">=sys-devel/pconfigure-0.5.1
-         media-libs/portmidi
+RDEPEND="media-libs/portmidi
+         media-libs/portaudio
          media-libs/freeglut
          media-libs/glu
          media-libs/ilmbase
          media-libs/opencv"
+
+DEPEND="${RDEPEND}"
+
+BDEPEND=">=sys-devel/pconfigure-0.5.1"
 
 src_configure() {
     pconfigure
