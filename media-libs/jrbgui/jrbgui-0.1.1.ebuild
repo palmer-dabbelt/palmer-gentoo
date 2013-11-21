@@ -16,6 +16,7 @@ DEPEND="${RDEPEND}"
 
 BDEPEND=">=sys-devel/pconfigure-0.5.1
          media-libs/portmidi
+         media-libs/portaudio
          media-libs/freeglut
          media-libs/glu
          media-libs/ilmbase
