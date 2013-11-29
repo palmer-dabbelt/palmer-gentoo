@@ -1,0 +1,23 @@
+commit 17c59f5a31a830ed0863e520cdb765392ee2bf4f
+Author: Palmer Dabbelt <palmer@dabbelt.com>
+Date:   Thu Nov 28 20:34:44 2013 -0800
+
+    Don't look at system includes in pinclude
+    
+    This is a bit of a hack: essentially some of these files are hard to
+    parse so I just bail on them.
+
+diff --git a/src/libpinclude/library.c b/src/libpinclude/library.c
+index 1a8774a..ddf6b2d 100644
+--- a/src/libpinclude/library.c
++++ b/src/libpinclude/library.c
+@@ -64,6 +64,9 @@ static int _pinclude_list(const char *input, pinclude_callback_t cb,
+     fprintf(stderr, "input: '%s'\n", input);
+ #endif
+ 
++    if (input[0] == '/')
++        return 0;
++
+     infile = fopen(input, "r");
+ 
+     if (infile == NULL)
