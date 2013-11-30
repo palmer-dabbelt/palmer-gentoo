@@ -18,7 +18,7 @@ src_configure() {
     econf --prefix=${EPREFIX}/usr \
           CFLAGS="-fPIC $CFLAGS" \
           CXXFLAGS="-fPIC $CXXFLAGS" \
-          LDFLAGS="-fPIC $LDFLAGS" \
+          LDFLAGS="-fPIC -rdynamic $LDFLAGS" \
           CXX="g++ -fPIC"
 }
 
@@ -31,6 +31,7 @@ src_install() {
 
     g++ \
         -Wl,--whole-archive \
+        -rdynamic \
         ${ED}/usr/lib/spike/libriscv.a \
         -Wl,--no-whole-archive \
         -shared \
