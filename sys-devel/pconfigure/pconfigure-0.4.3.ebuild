@@ -17,7 +17,6 @@ RDEPEND="sys-devel/clang
          sys-devel/gcc
          sys-libs/talloc
          scala? ( dev-lang/scala )
-         scala? ( dev-java/zinc-bin )
          "
 
 DEPEND="${RDEPEND}"
