@@ -1,0 +1,27 @@
+commit 1bd25241b6cc7b094977fe8db20b83a9cdcf0281
+Author: Palmer Dabbelt <palmer@dabbelt.com>
+Date:   Sun Dec 15 22:38:38 2013 -0800
+
+    Check return from asprintf(...)
+    
+    I guess I just forgot to do this.  I'm not exactly sure why Gentoo
+    throws more errors when building as root than as a regular user -- I
+    just wish I could catch this stuff earlier!
+
+diff --git a/src/longname.c++ b/src/longname.c++
+index 349fa36..e6fecbe 100644
+--- a/src/longname.c++
++++ b/src/longname.c++
+@@ -75,7 +75,11 @@ const char *longname::c_str(const char *ending) const
+     c_str_help(buffer);
+ 
+     char *out;
+-    asprintf(&out, "%s::%s", buffer, ending);
++    if (asprintf(&out, "%s::%s", buffer, ending) == -1) {
++        perror("asprintf falied");
++        abort();
++    }
++
+     return out;
+ }
+ 
