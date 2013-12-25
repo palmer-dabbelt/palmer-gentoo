@@ -24,6 +24,7 @@ IUSE="android +assistant +cryptohash +dbus +dns doc +feed +inotify +pairing +pro
 RDEPEND="dev-vcs/git
 "
 DEPEND="${RDEPEND}
+        dev-haskell/aeson
 	dev-haskell/async
 	dev-haskell/bloomfilter
 	>=dev-haskell/cabal-1.8
