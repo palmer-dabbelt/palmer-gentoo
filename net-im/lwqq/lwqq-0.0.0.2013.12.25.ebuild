@@ -18,4 +18,4 @@ IUSE=""
 
 RDEPEND=""
 DEPEND="${RDEPEND}
-	sys-devel/cmake"
+	dev-util/cmake"
