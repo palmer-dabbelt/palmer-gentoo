@@ -1,0 +1,147 @@
+commit 48b537f7a187d1b6907de4cd045324de157dcd49
+Author: Palmer Dabbelt <palmer@dabbelt.com>
+Date:   Wed Dec 25 19:34:35 2013 -0800
+
+    Use system liblwqq
+    
+    This is a bit of a hack, but I guess it does at least appear to do
+    something... :).
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 4a77c4e..dee0576 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -6,7 +6,6 @@ set(VERSION_PATCH "c")
+ 
+ set(CMAKE_MODULE_PATH 
+     ${CMAKE_SOURCE_DIR}/cmake 
+-    ${CMAKE_SOURCE_DIR}/liblwqq/cmake
+     ${CMAKE_MODULE_PATH}
+     )
+ 
+@@ -85,7 +84,6 @@ set(datadir ${SHARE_DIR}/lwqq)
+ set(version "${VERSION_MAJOR}.${VERSION_MINOR}${VERSION_PATCH}")
+ configure_file(${PROJECT_SOURCE_DIR}/config.h.in ${PROJECT_BINARY_DIR}/src/config.h)
+ 
+-add_subdirectory(liblwqq)
+ add_subdirectory(src)
+ add_subdirectory(res)
+ add_subdirectory(po)
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index cad8c9b..c33056f 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -32,7 +32,7 @@ endif()
+ target_link_libraries(webqq
+     ${LIBPURPLE_LIBRARIES}
+     ${GLIB2_LIBRARIES}
+-	lwqq-static
++	lwqq
+     )
+ if(NLS AND WIN32)
+     target_link_libraries(webqq intl iconv)
+diff --git a/src/async_purple.c b/src/async_purple.c
+index 92f9e11..81b47f8 100644
+--- a/src/async_purple.c
++++ b/src/async_purple.c
+@@ -1,6 +1,6 @@
+-#include "async.h"
+-#include "async_impl.h"
+-#include "smemory.h"
++#include <lwqq/async.h>
++#include <lwqq/async_impl.h>
++#include <lwqq/smemory.h>
+ #include <glib.h>
+ //never add file to build
+ //it would be included in webqq.c directly
+diff --git a/src/cgroup.h b/src/cgroup.h
+index 87870da..2e33568 100644
+--- a/src/cgroup.h
++++ b/src/cgroup.h
+@@ -1,4 +1,4 @@
+-#include "lwqq.h"
++#include <lwqq/lwqq.h>
+ 
+ #include "qq_types.h"
+ 
+diff --git a/src/ft.c b/src/ft.c
+index cdbd2df..288ecce 100644
+--- a/src/ft.c
++++ b/src/ft.c
+@@ -2,11 +2,11 @@
+ #include <ft.h>
+ #include <string.h>
+ #include "qq_types.h"
+-#include "type.h"
+-#include "msg.h"
+-#include "http.h"
+-#include "async.h"
+-#include "smemory.h"
++#include <lwqq/type.h>
++#include <lwqq/msg.h>
++#include <lwqq/http.h>
++#include <lwqq/async.h>
++#include <lwqq/smemory.h>
+ 
+ 
+ static int file_trans_on_progress(void* data,size_t now,size_t total)
+diff --git a/src/qq_types.c b/src/qq_types.c
+index ac1163f..36eab2d 100644
+--- a/src/qq_types.c
++++ b/src/qq_types.c
+@@ -1,6 +1,6 @@
+ #include "qq_types.h"
+-#include "smemory.h"
+-#include "utility.h"
++#include <lwqq/smemory.h>
++#include <lwqq/utility.h>
+ 
+ #include <sys/stat.h>
+ 
+diff --git a/src/qq_types.h b/src/qq_types.h
+index 0c2fe40..d09ec85 100644
+--- a/src/qq_types.h
++++ b/src/qq_types.h
+@@ -3,10 +3,10 @@
+ 
+ 
+ #include <connection.h>
+-#include "lwqq.h"
+-#include "lwdb.h"
++#include <lwqq/lwqq.h>
++#include <lwqq/lwdb.h>
+ #include "config.h"
+-#include "lwjs.h"
++#include <lwqq/lwjs.h>
+ 
+ #ifdef ENABLE_NLS
+ #include <glib/gi18n.h>
+diff --git a/src/translate.h b/src/translate.h
+index 8ce6f41..cc88ad9 100644
+--- a/src/translate.h
++++ b/src/translate.h
+@@ -1,6 +1,6 @@
+ #ifndef INFO_H_H
+ #define INFO_H_H
+-#include <msg.h>
++#include <lwqq/msg.h>
+ #include "qq_types.h"
+ 
+ void translate_global_init();
+diff --git a/src/webqq.c b/src/webqq.c
+index cded228..e971bb0 100644
+--- a/src/webqq.c
++++ b/src/webqq.c
+@@ -15,9 +15,9 @@
+ #include "translate.h"
+ #include "remote.h"
+ #include "cgroup.h"
+-#include "lwqq.h"
+-#include "lwdb.h"
+-#include "lwjs.h"
++#include <lwqq/lwqq.h>
++#include <lwqq/lwdb.h>
++#include <lwqq/lwjs.h>
+ 
+ #ifndef WITH_LIBEV
+ #include "async_purple.c"
