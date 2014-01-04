@@ -32,6 +32,8 @@ src_prepare() {
 	if ! use vanilla ; then
 		epatch "${FILESDIR}"/${PN}-1.1_rc1-zoom-2.patch
 	fi
+
+        epatch_user
 }
 
 src_compile() {

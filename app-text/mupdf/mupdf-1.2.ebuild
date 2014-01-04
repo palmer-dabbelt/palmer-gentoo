@@ -79,6 +79,8 @@ src_prepare() {
 		-e "\$a\\\t\$(QUIET_LINK) \$(CC) \$(LDFLAGS) --shared -Wl,-soname -Wl,${my_soname} -Wl,--no-undefined -o \$@ \$^ \$(LIBS)" \
 		-e "/^FITZ_LIB :=/s:=.*:= build/debug/${my_soname}:" \
 		-i Makefile || die
+
+        epatch_user
 }
 
 src_compile() {
