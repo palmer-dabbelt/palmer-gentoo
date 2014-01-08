@@ -15,11 +15,6 @@ RDEPEND="sys-devel/pconfigure"
 
 DEPEND="${RDEPEND}"
 
-src_prepare() {
-        epatch "${FILESDIR}/${P}-asprintf_return.patch"
-        epatch_user
-}
-
 src_configure() {
 	echo "PREFIX = ${EPREFIX}/usr" > Configfile.local
 
