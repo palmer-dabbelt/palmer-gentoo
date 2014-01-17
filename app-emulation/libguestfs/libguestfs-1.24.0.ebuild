@@ -43,7 +43,7 @@ COMMON_DEPEND="
 	app-emulation/libvirt
 	dev-libs/libxml2:2
 	>=sys-apps/fakechroot-2.8
-	>=app-admin/augeas-0.7.1
+	>=app-admin/augeas-1.0.0
 	sys-fs/squashfs-tools
 	dev-libs/libconfig
 	dev-libs/libpcre
