@@ -1,8 +1,9 @@
 EAPI="2"
+inherit eutils
 
 DESCRIPTION="Chisel wiring language"
 HOMEPAGE="https://chisel.eecs.berkeley.edu/"
-SRC_URI="https://github.com/palmer-dabbelt/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+SRC_URI="https://github.com/ucb-bar/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -14,19 +15,15 @@ RDEPEND=">=sys-devel/pconfigure-0.5.2
 
 DEPEND="${RDEPEND}"
 
+src_prepare() {
+        epatch "${FILESDIR}/${P}-pconfigure.patch"
+        epatch "${FILESDIR}/${P}-emulator_wall.patch"
+}
+
 src_configure() {
 	rm Configfile.local >& /dev/null || true
-	touch Configfile.local
-
 	echo "PREFIX = ${EPREFIX}/usr" >> Configfile.local
-
-	echo "LANGUAGES += c" >> Configfile.local
-	for i in $(echo ${CFLAGS}); do
-		echo "COMPILEOPTS += ${i}" >> Configfile.local
-	done
-	echo "COMPILEOPTS += -DNDEBUG" >> Configfile.local
-
-	pconfigure
+	pconfigure || die "pconfigure failed"
 }
 
 src_install() {
