@@ -1,0 +1,29 @@
+From 63311680871c0bd06b57a9641132b83cf24564d4 Mon Sep 17 00:00:00 2001
+From: Palmer Dabbelt <palmer.dabbelt@eecs.berkeley.edu>
+Date: Wed, 25 Dec 2013 03:43:17 -0800
+Subject: [PATCH] Use "::" as a path seperator in Flo
+
+This allows me to fully demangle a node's name, which is necessary for
+me to be able to convert that name back into the full module
+hierarchy, which is necessary to diff the output from DREAMER the
+output from the C++ emulator.
+---
+ src/main/scala/Flo.scala | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/main/scala/Flo.scala b/src/main/scala/Flo.scala
+index 6622073..60ac8a4 100644
+--- a/src/main/scala/Flo.scala
++++ b/src/main/scala/Flo.scala
+@@ -180,7 +180,7 @@ class FloBackend extends Backend {
+           if (m.name != "" && !(m == c.reset) && !(m.component == null)) {
+             // only modify name if it is not the reset signal or not in top component
+             if(m.name != "reset" || !(m.component == c)) {
+-              m.name = m.component.getPathName + "__" + m.name;
++              m.name = m.component.getPathName("::") + "::" + m.name;
+             }
+           }
+       }
+-- 
+1.8.5.1
+
