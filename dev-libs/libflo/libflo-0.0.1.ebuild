@@ -1,11 +1,11 @@
-EAPI="2"
+EAPI="5"
 
 DESCRIPTION="A Flo file format parser"
 HOMEPAGE="http://github.com/palmer-dabbelt/tek/"
 SRC_URI="https://github.com/palmer-dabbelt/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="GPL-2"
-SLOT="0"
+SLOT="$PV"
 KEYWORDS="amd64 amd64-linux"
 IUSE=""
 
