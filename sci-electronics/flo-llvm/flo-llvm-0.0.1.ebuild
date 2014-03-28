@@ -1,4 +1,4 @@
-EAPI="2"
+EAPI="5"
 
 inherit eutils
 
@@ -7,12 +7,12 @@ HOMEPAGE="http://dabbelt.com/~palmer/software/${PN}/"
 SRC_URI="https://github.com/palmer-dabbelt/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="GPL-2"
-SLOT="0"
+SLOT="0/$PV"
 KEYWORDS="amd64 amd64-linux"
 IUSE=""
 
 RDEPEND="sys-devel/pconfigure
-         dev-libs/libflo
+         dev-libs/libflo:=
          sys-devel/llvm
          sys-devel/clang"
 
