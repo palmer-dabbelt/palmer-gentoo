@@ -18,10 +18,6 @@ RDEPEND="sys-devel/pconfigure
 
 DEPEND="${RDEPEND}"
 
-src_prepare() {
-        epatch "${FILESDIR}/${P}-strncat.bash"
-}
-
 src_configure() {
 	echo "PREFIX = ${EPREFIX}/usr" > Configfile.local
 
