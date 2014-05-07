@@ -11,8 +11,8 @@ IUSE=""
 
 RDEPEND="sys-devel/pconfigure
          sys-devel/make
-         dev-libs/libflo
-         dev-libs/libocn"
+         dev-libs/libflo:=
+         dev-libs/libocn:="
 
 DEPEND="${RDEPEND}"
 
