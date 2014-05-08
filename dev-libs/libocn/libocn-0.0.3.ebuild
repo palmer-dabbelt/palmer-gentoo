@@ -10,7 +10,8 @@ KEYWORDS="amd64 amd64-linux"
 IUSE=""
 
 RDEPEND="sys-devel/pconfigure
-         sys-devel/make"
+         sys-devel/make
+         media-gfx/graphviz"
 
 DEPEND="${RDEPEND}"
 
