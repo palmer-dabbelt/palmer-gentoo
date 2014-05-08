@@ -13,7 +13,8 @@ IUSE=""
 
 RDEPEND="sys-devel/pconfigure
          dev-libs/libflo:=
-         dev-libs/libocn:="
+         dev-libs/libocn:=
+         dev-libs/libdrasm:="
 
 DEPEND="${RDEPEND}"
 
