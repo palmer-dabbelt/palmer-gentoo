@@ -33,7 +33,8 @@ src_configure() {
 	econf \
 		--disable-dependency-tracking \
 		$(use_enable static-libs static) \
-		$(use_enable examples imfexamples)
+		$(use_enable examples imfexamples) \
+                --with-pkg-config=$CHOST-pkg-config
 }
 
 src_install() {
