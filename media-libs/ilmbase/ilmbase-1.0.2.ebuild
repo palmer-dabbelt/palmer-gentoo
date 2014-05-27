@@ -18,9 +18,9 @@ RDEPEND="!<media-libs/openexr-1.5.0"
 DEPEND="${RDEPEND}"
 
 src_prepare() {
-	epatch "${FILESDIR}"/${PN}-1.0.0-asneeded.patch \
-		"${FILESDIR}"/${P}-gcc43.patch
-		"${FILESDIR}"/${P}-cross_compile.patch
+	epatch "${FILESDIR}"/${PN}-1.0.0-asneeded.patch || die
+        epatch "${FILESDIR}"/${P}-gcc43.patch || die
+        epatch "${FILESDIR}"/${P}-cross_compile.patch || die
 	elibtoolize
 }
 
