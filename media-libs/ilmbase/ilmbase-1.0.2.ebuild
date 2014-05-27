@@ -3,7 +3,7 @@
 # $Header: /var/cvsroot/gentoo-x86/media-libs/ilmbase/ilmbase-1.0.2.ebuild,v 1.10 2012/05/09 16:52:21 aballier Exp $
 
 EAPI=2
-inherit eutils libtool
+inherit eutils libtool autotools
 
 DESCRIPTION="OpenEXR ILM Base libraries"
 HOMEPAGE="http://openexr.com/"
@@ -22,6 +22,7 @@ src_prepare() {
         epatch "${FILESDIR}"/${P}-gcc43.patch || die
         epatch "${FILESDIR}"/${P}-cross_compile.patch || die
 	elibtoolize
+        eautoreconf
 }
 
 src_configure() {
