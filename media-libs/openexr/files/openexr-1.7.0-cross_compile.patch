@@ -1,0 +1,13 @@
+diff -ur openexr-1.7.0.orig/IlmImf/Makefile.am openexr-1.7.0/IlmImf/Makefile.am
+--- openexr-1.7.0.orig/IlmImf/Makefile.am	2014-05-27 16:49:19.011842633 -0700
++++ openexr-1.7.0/IlmImf/Makefile.am	2014-05-27 16:50:54.688842621 -0700
+@@ -120,6 +120,9 @@
+ b44ExpLogTable_SOURCES = b44ExpLogTable.cpp
+ b44ExpLogTable_LDADD = @ILMBASE_LDFLAGS@ @ILMBASE_LIBS@
+ 
++b44ExpLogTable$(EXEEXT): $(b44ExpLogTable_SOURCES)
++	c++ `pkg-config IlmBase --cflags --libs` -o $@ $<
++
+ b44ExpLogTable.h: b44ExpLogTable
+ 	./b44ExpLogTable > b44ExpLogTable.h
+ 

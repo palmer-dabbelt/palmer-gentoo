@@ -25,8 +25,10 @@ src_prepare() {
 		IlmImfTest/tmpDir.h || die # Fix path for testsuite
 
 	epatch "${FILESDIR}"/${P}-gcc43.patch
+	epatch "${FILESDIR}"/${P}-cross_compile.patch
 
 	elibtoolize
+        eautoreconf
 }
 
 src_configure() {
