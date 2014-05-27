@@ -1,0 +1,21 @@
+--- origsrc/ilmbase-1.0.3/Half/Makefile.am	2013-11-26 16:57:16.589623400 -0600
++++ src/ilmbase-1.0.3/Half/Makefile.am	2013-11-26 16:58:57.915418900 -0600
+@@ -21,10 +21,16 @@ eLut_SOURCES = eLut.cpp
+ 
+ toFloat_SOURCES = toFloat.cpp
+ 
+-eLut.h:	eLut
++eLut$(EXEEXT): $(eLut_SOURCES)
++	c++ -o $@ $<
++
++eLut.h:	eLut$(EXEEXT)
+ 	./eLut > eLut.h
+ 
+-toFloat.h: toFloat
++toFloat$(EXEEXT): $(toFloat_SOURCES)
++	c++ -o $@ $<
++
++toFloat.h: toFloat$(EXEEXT)
+ 	   ./toFloat > toFloat.h
+ 
+ BUILT_SOURCES = eLut.h toFloat.h

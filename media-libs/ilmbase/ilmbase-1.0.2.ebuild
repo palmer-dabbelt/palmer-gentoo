@@ -20,6 +20,7 @@ DEPEND="${RDEPEND}"
 src_prepare() {
 	epatch "${FILESDIR}"/${PN}-1.0.0-asneeded.patch \
 		"${FILESDIR}"/${P}-gcc43.patch
+		"${FILESDIR}"/${P}-cross_compile.patch
 	elibtoolize
 }
 
