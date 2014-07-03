@@ -13,7 +13,7 @@ IUSE=""
 
 RDEPEND="sys-devel/pconfigure
          dev-libs/libflo:=
-         dev-libs/gmp[c++]"
+         dev-libs/gmp[cxx]"
 
 DEPEND="${RDEPEND}"
 
