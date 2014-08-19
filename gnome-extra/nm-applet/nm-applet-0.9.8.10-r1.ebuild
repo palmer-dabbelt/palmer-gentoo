@@ -14,7 +14,7 @@ HOMEPAGE="https://wiki.gnome.org/Projects/NetworkManager"
 
 LICENSE="GPL-2+"
 SLOT="0"
-IUSE="bluetooth gconf +introspection modemmanager"
+IUSE="bluetooth gconf +introspection modemmanager +gtk3"
 KEYWORDS="~alpha amd64 ~arm ~ia64 ~ppc ~ppc64 ~sparc x86"
 
 RDEPEND="
@@ -23,7 +23,8 @@ RDEPEND="
 	>=dev-libs/dbus-glib-0.88
 	>=sys-apps/dbus-1.4.1
 	>=sys-auth/polkit-0.96-r1
-	>=x11-libs/gtk+-3:3[introspection?]
+        gtk3? ( >=x11-libs/gtk+-3:3[introspection?] )
+        !gtk3? ( x11-libs/gtk+:2[introspection?] )
 	>=x11-libs/libnotify-0.7.0
 
 	app-text/iso-codes
@@ -46,8 +47,13 @@ DEPEND="${RDEPEND}
 "
 
 src_configure() {
+        gtkver=2
+        if use gtk3; then
+               gtkver=3
+        fi
+
 	gnome2_src_configure \
-		--with-gtkver=3 \
+		--with-gtkver=$gtkver \
 		--disable-more-warnings \
 		--disable-static \
 		--localstatedir=/var \
