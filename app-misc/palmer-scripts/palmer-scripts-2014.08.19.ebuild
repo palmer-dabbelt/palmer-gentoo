@@ -15,8 +15,7 @@ RDEPEND="sys-devel/pconfigure
          net-dns/bind-tools
          net-analyzer/traceroute
          dev-util/indent
-         sys-process/parallel
-         !>=x11-terms/xfce4-terminal-0.6.2-r1"
+         sys-process/parallel"
 
 DEPEND="${RDEPEND}"
 
