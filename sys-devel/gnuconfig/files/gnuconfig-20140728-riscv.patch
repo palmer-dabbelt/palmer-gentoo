@@ -1,25 +1,27 @@
-commit c17348cc86e7890b4147f97e91dfad5943ea155c
+commit 8b20faf776e9c078687cf60309d266340f693c80
 Author: Palmer Dabbelt <palmer.dabbelt@eecs.berkeley.edu>
 Date:   Wed Sep 10 15:18:05 2014 -0700
 
-        * config.sub (riscv): New.
+    config.sub patch for RISC-V
+    
+        * config.sub (riscv{32,64}): New.
         * testsuite/config-sub.data: Add test cases.
 
 diff --git a/ChangeLog b/ChangeLog
-index f134bc9..f14ce02 100644
+index f134bc9..6771bca 100644
 --- a/ChangeLog
 +++ b/ChangeLog
 @@ -1,3 +1,8 @@
 +2014-09-10  Palmer Dabbelt <palmer.dabbelt@eecs.berkeley.edu>
 +
-+	* config.sub (riscv): New.
++	* config.sub (riscv{32,64}): New.
 +	* testsuite/config-sub.data: Add test cases.
 +
  2014-07-28  Anthony Green  <green@moxielogic.com>
  	    Ben Elliston  <bje@gnu.org>
  
 diff --git a/config.sub b/config.sub
-index 88a0cb4..dd07a4a 100755
+index 88a0cb4..35adbbe 100755
 --- a/config.sub
 +++ b/config.sub
 @@ -2,7 +2,7 @@
@@ -31,25 +33,26 @@ index 88a0cb4..dd07a4a 100755
  
  # This file is free software; you can redistribute it and/or modify it
  # under the terms of the GNU General Public License as published by
-@@ -302,7 +302,7 @@ case $basic_machine in
+@@ -302,6 +302,7 @@ case $basic_machine in
  	| pdp10 | pdp11 | pj | pjl \
  	| powerpc | powerpc64 | powerpc64le | powerpcle \
  	| pyramid \
--	| rl78 | rx \
-+	| rl78 | riscv | rx \
++	| riscv32 | riscv64 \
+ 	| rl78 | rx \
  	| score \
  	| sh | sh[1234] | sh[24]a | sh[24]aeb | sh[23]e | sh[34]eb | sheb | shbe | shle | sh[1234]le | sh3ele \
- 	| sh64 | sh64le \
 diff --git a/testsuite/config-sub.data b/testsuite/config-sub.data
-index e634227..21a6a5c 100644
+index e634227..7249dc0 100644
 --- a/testsuite/config-sub.data
 +++ b/testsuite/config-sub.data
-@@ -205,6 +205,8 @@ rdos64				x86_64-pc-rdos
+@@ -203,6 +203,10 @@ ppc				powerpc-unknown-none
+ rdos32				i386-pc-rdos
+ rdos64				x86_64-pc-rdos
  rdos				x86_64-pc-rdos
++riscv32-elf			riscv32-unknown-elf
++riscv32-linux			riscv32-unknown-linux-gnu
++riscv64-elf			riscv64-unknown-elf
++riscv64-linux			riscv64-unknown-linux-gnu
  rl78-linux			rl78-unknown-linux-gnu
  rl78				rl78-unknown-none
-+riscv-elf                       riscv-unknown-elf
-+riscv-linux                     riscv-unknown-linux-gnu
  rx-linux			rx-unknown-linux-gnu
- rx				rx-unknown-none
- s390-ibm-zvmoe			s390-ibm-zvmoe
