@@ -241,4 +241,5 @@ toolchain-glibc_src_configure() {
 
 eblit-glibc-src_configure() {
 	foreach_abi toolchain-glibc_src_configure
+        toolchain-glibc_headers_configure
 }
