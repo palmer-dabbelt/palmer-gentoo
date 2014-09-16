@@ -4705,7 +4705,7 @@ index 0000000..7fabe8a
 +#include <sysdeps/unix/sysv/linux/riscv/vfork.S>
 diff --git a/sysdeps/riscv/preconfigure b/sysdeps/riscv/preconfigure
 new file mode 100644
-index 0000000..fad2a47
+index 0000000..ae99dc2
 --- /dev/null
 +++ b/sysdeps/riscv/preconfigure
 @@ -0,0 +1,21 @@
@@ -4729,7 +4729,7 @@ index 0000000..fad2a47
 +  # set this in case configure tests depend on it.
 +  CPPFLAGS="$CPPFLAGS -m$riscv_config_abi"
 +fi
-+
++;;
 diff --git a/sysdeps/riscv/rv32/Implies b/sysdeps/riscv/rv32/Implies
 new file mode 100644
 index 0000000..b2313e9
