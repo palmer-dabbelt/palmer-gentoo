@@ -1,8 +1,178 @@
-commit 6f2d95f5b9aa060edb83ddc58a3020add1f0ca76
-Author: Albert Ou <a_ou@eecs.berkeley.edu>
-Date:   Tue Sep 16 15:28:31 2014 -0700
+From 6f2d95f5b9aa060edb83ddc58a3020add1f0ca76 Mon Sep 17 00:00:00 2001
+From: Albert Ou <a_ou@eecs.berkeley.edu>
+Date: Tue, 16 Sep 2014 15:28:31 -0700
+Subject: [PATCH 1/2] RISC-V Port
 
-    RISC-V Port
+---
+ arch/riscv/.gitignore                   |  35 ++
+ arch/riscv/Kconfig                      | 236 ++++++++
+ arch/riscv/Makefile                     |  48 ++
+ arch/riscv/defconfig                    | 915 ++++++++++++++++++++++++++++++++
+ arch/riscv/htif/Makefile                |   4 +
+ arch/riscv/htif/htif.c                  | 122 +++++
+ arch/riscv/htif/htifbd.c                | 216 ++++++++
+ arch/riscv/htif/htifcons.c              | 325 ++++++++++++
+ arch/riscv/htif/htifrfb.c               | 135 +++++
+ arch/riscv/include/asm/Kbuild           |  70 +++
+ arch/riscv/include/asm/asm-offsets.h    |   1 +
+ arch/riscv/include/asm/atomic.h         | 286 ++++++++++
+ arch/riscv/include/asm/atomic64.h       | 277 ++++++++++
+ arch/riscv/include/asm/barrier.h        |  30 ++
+ arch/riscv/include/asm/bitops.h         | 285 ++++++++++
+ arch/riscv/include/asm/bitsperlong.h    |  38 ++
+ arch/riscv/include/asm/byteorder.h      |  12 +
+ arch/riscv/include/asm/cache.h          |  12 +
+ arch/riscv/include/asm/cmpxchg.h        | 115 ++++
+ arch/riscv/include/asm/csr.h            | 125 +++++
+ arch/riscv/include/asm/current.h        |  15 +
+ arch/riscv/include/asm/elf.h            | 114 ++++
+ arch/riscv/include/asm/htif.h           |  54 ++
+ arch/riscv/include/asm/io.h             |  61 +++
+ arch/riscv/include/asm/irq.h            |  11 +
+ arch/riscv/include/asm/irqflags.h       |  49 ++
+ arch/riscv/include/asm/mmu.h            |  14 +
+ arch/riscv/include/asm/mmu_context.h    |  45 ++
+ arch/riscv/include/asm/page.h           | 116 ++++
+ arch/riscv/include/asm/pgalloc.h        | 104 ++++
+ arch/riscv/include/asm/pgtable-32.h     |  11 +
+ arch/riscv/include/asm/pgtable-64.h     |  64 +++
+ arch/riscv/include/asm/pgtable-bits.h   |  43 ++
+ arch/riscv/include/asm/pgtable.h        | 327 ++++++++++++
+ arch/riscv/include/asm/processor.h      |  86 +++
+ arch/riscv/include/asm/ptrace.h         |  75 +++
+ arch/riscv/include/asm/setup.h          |  12 +
+ arch/riscv/include/asm/sigcontext.h     |  20 +
+ arch/riscv/include/asm/string.h         |  17 +
+ arch/riscv/include/asm/syscalls.h       |  12 +
+ arch/riscv/include/asm/thread_info.h    |  94 ++++
+ arch/riscv/include/asm/timex.h          |  27 +
+ arch/riscv/include/asm/tlb.h            |  27 +
+ arch/riscv/include/asm/tlbflush.h       |  75 +++
+ arch/riscv/include/asm/uaccess.h        | 341 ++++++++++++
+ arch/riscv/include/asm/unistd.h         |  29 +
+ arch/riscv/include/asm/user.h           |  19 +
+ arch/riscv/include/asm/vdso.h           |  15 +
+ arch/riscv/include/asm/word-at-a-time.h |  47 ++
+ arch/riscv/include/uapi/asm/Kbuild      |   2 +
+ arch/riscv/initramfs.txt                |   4 +
+ arch/riscv/kernel/Makefile              |  13 +
+ arch/riscv/kernel/asm-offsets.c         |  63 +++
+ arch/riscv/kernel/cpu.c                 |  35 ++
+ arch/riscv/kernel/early_printk.c        |  44 ++
+ arch/riscv/kernel/entry.S               | 288 ++++++++++
+ arch/riscv/kernel/head_64.S             | 121 +++++
+ arch/riscv/kernel/irq.c                 |  42 ++
+ arch/riscv/kernel/process.c             |  96 ++++
+ arch/riscv/kernel/ptrace.c              |  25 +
+ arch/riscv/kernel/reset.c               |  17 +
+ arch/riscv/kernel/setup.c               |  96 ++++
+ arch/riscv/kernel/signal.c              | 266 ++++++++++
+ arch/riscv/kernel/stacktrace.c          | 163 ++++++
+ arch/riscv/kernel/sys_riscv.c           |  56 ++
+ arch/riscv/kernel/syscall_table.c       |  10 +
+ arch/riscv/kernel/time.c                |  87 +++
+ arch/riscv/kernel/traps.c               | 127 +++++
+ arch/riscv/kernel/vdso.c                | 106 ++++
+ arch/riscv/kernel/vdso/Makefile         |  61 +++
+ arch/riscv/kernel/vdso/sigreturn.S      |  11 +
+ arch/riscv/kernel/vdso/vdso.S           |  14 +
+ arch/riscv/kernel/vdso/vdso.lds.S       |  63 +++
+ arch/riscv/kernel/vmlinux.lds.S         |  64 +++
+ arch/riscv/lib/Makefile                 |   1 +
+ arch/riscv/lib/delay.c                  |  21 +
+ arch/riscv/lib/memcpy.S                 |  92 ++++
+ arch/riscv/lib/memset.S                 | 107 ++++
+ arch/riscv/lib/uaccess.S                |  93 ++++
+ arch/riscv/mm/Makefile                  |   1 +
+ arch/riscv/mm/extable.c                 |  14 +
+ arch/riscv/mm/fault.c                   | 219 ++++++++
+ arch/riscv/mm/init.c                    |  96 ++++
+ arch/riscv/mm/ioremap.c                 |  81 +++
+ 84 files changed, 7810 insertions(+)
+ create mode 100644 arch/riscv/.gitignore
+ create mode 100644 arch/riscv/Kconfig
+ create mode 100644 arch/riscv/Makefile
+ create mode 100644 arch/riscv/defconfig
+ create mode 100644 arch/riscv/htif/Makefile
+ create mode 100644 arch/riscv/htif/htif.c
+ create mode 100644 arch/riscv/htif/htifbd.c
+ create mode 100644 arch/riscv/htif/htifcons.c
+ create mode 100644 arch/riscv/htif/htifrfb.c
+ create mode 100644 arch/riscv/include/asm/Kbuild
+ create mode 100644 arch/riscv/include/asm/asm-offsets.h
+ create mode 100644 arch/riscv/include/asm/atomic.h
+ create mode 100644 arch/riscv/include/asm/atomic64.h
+ create mode 100644 arch/riscv/include/asm/barrier.h
+ create mode 100644 arch/riscv/include/asm/bitops.h
+ create mode 100644 arch/riscv/include/asm/bitsperlong.h
+ create mode 100644 arch/riscv/include/asm/byteorder.h
+ create mode 100644 arch/riscv/include/asm/cache.h
+ create mode 100644 arch/riscv/include/asm/cmpxchg.h
+ create mode 100644 arch/riscv/include/asm/csr.h
+ create mode 100644 arch/riscv/include/asm/current.h
+ create mode 100644 arch/riscv/include/asm/elf.h
+ create mode 100644 arch/riscv/include/asm/htif.h
+ create mode 100644 arch/riscv/include/asm/io.h
+ create mode 100644 arch/riscv/include/asm/irq.h
+ create mode 100644 arch/riscv/include/asm/irqflags.h
+ create mode 100644 arch/riscv/include/asm/mmu.h
+ create mode 100644 arch/riscv/include/asm/mmu_context.h
+ create mode 100644 arch/riscv/include/asm/page.h
+ create mode 100644 arch/riscv/include/asm/pgalloc.h
+ create mode 100644 arch/riscv/include/asm/pgtable-32.h
+ create mode 100644 arch/riscv/include/asm/pgtable-64.h
+ create mode 100644 arch/riscv/include/asm/pgtable-bits.h
+ create mode 100644 arch/riscv/include/asm/pgtable.h
+ create mode 100644 arch/riscv/include/asm/processor.h
+ create mode 100644 arch/riscv/include/asm/ptrace.h
+ create mode 100644 arch/riscv/include/asm/setup.h
+ create mode 100644 arch/riscv/include/asm/sigcontext.h
+ create mode 100644 arch/riscv/include/asm/string.h
+ create mode 100644 arch/riscv/include/asm/syscalls.h
+ create mode 100644 arch/riscv/include/asm/thread_info.h
+ create mode 100644 arch/riscv/include/asm/timex.h
+ create mode 100644 arch/riscv/include/asm/tlb.h
+ create mode 100644 arch/riscv/include/asm/tlbflush.h
+ create mode 100644 arch/riscv/include/asm/uaccess.h
+ create mode 100644 arch/riscv/include/asm/unistd.h
+ create mode 100644 arch/riscv/include/asm/user.h
+ create mode 100644 arch/riscv/include/asm/vdso.h
+ create mode 100644 arch/riscv/include/asm/word-at-a-time.h
+ create mode 100644 arch/riscv/include/uapi/asm/Kbuild
+ create mode 100644 arch/riscv/initramfs.txt
+ create mode 100644 arch/riscv/kernel/Makefile
+ create mode 100644 arch/riscv/kernel/asm-offsets.c
+ create mode 100644 arch/riscv/kernel/cpu.c
+ create mode 100644 arch/riscv/kernel/early_printk.c
+ create mode 100644 arch/riscv/kernel/entry.S
+ create mode 100644 arch/riscv/kernel/head_64.S
+ create mode 100644 arch/riscv/kernel/irq.c
+ create mode 100644 arch/riscv/kernel/process.c
+ create mode 100644 arch/riscv/kernel/ptrace.c
+ create mode 100644 arch/riscv/kernel/reset.c
+ create mode 100644 arch/riscv/kernel/setup.c
+ create mode 100644 arch/riscv/kernel/signal.c
+ create mode 100644 arch/riscv/kernel/stacktrace.c
+ create mode 100644 arch/riscv/kernel/sys_riscv.c
+ create mode 100644 arch/riscv/kernel/syscall_table.c
+ create mode 100644 arch/riscv/kernel/time.c
+ create mode 100644 arch/riscv/kernel/traps.c
+ create mode 100644 arch/riscv/kernel/vdso.c
+ create mode 100644 arch/riscv/kernel/vdso/Makefile
+ create mode 100644 arch/riscv/kernel/vdso/sigreturn.S
+ create mode 100644 arch/riscv/kernel/vdso/vdso.S
+ create mode 100644 arch/riscv/kernel/vdso/vdso.lds.S
+ create mode 100644 arch/riscv/kernel/vmlinux.lds.S
+ create mode 100644 arch/riscv/lib/Makefile
+ create mode 100644 arch/riscv/lib/delay.c
+ create mode 100644 arch/riscv/lib/memcpy.S
+ create mode 100644 arch/riscv/lib/memset.S
+ create mode 100644 arch/riscv/lib/uaccess.S
+ create mode 100644 arch/riscv/mm/Makefile
+ create mode 100644 arch/riscv/mm/extable.c
+ create mode 100644 arch/riscv/mm/fault.c
+ create mode 100644 arch/riscv/mm/init.c
+ create mode 100644 arch/riscv/mm/ioremap.c
 
 diff --git a/arch/riscv/.gitignore b/arch/riscv/.gitignore
 new file mode 100644
@@ -8318,3 +8488,42 @@ index 0000000..362da4b
 +}
 +EXPORT_SYMBOL(iounmap);
 +
+-- 
+1.8.5.5
+
+
+From 544ef9a278d19ee728663782d13ca68172b318e4 Mon Sep 17 00:00:00 2001
+From: Palmer Dabbelt <palmer@dabbelt.com>
+Date: Tue, 16 Sep 2014 16:00:30 -0700
+Subject: [PATCH 2/2] Support the new riscv{32,64}-linux RISC-V tuples
+
+This causes riscv64 to use the riscv directory, which means that the
+other RISC-V variants will probably end up using that as well.  This
+appears to be what everyone else but ARM does, so I'm just going to go
+with it.
+---
+ Makefile | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/Makefile b/Makefile
+index 188523e..1f38d9e 100644
+--- a/Makefile
++++ b/Makefile
+@@ -210,6 +210,14 @@ ifeq ($(ARCH),x86_64)
+         SRCARCH := x86
+ endif
+ 
++# Additional ARCH settings for riscv
++ifeq ($(ARCH),riscv64)
++	SRCARCH := riscv
++endif
++ifeq ($(ARCH),riscv32)
++	SRCARCH := riscv
++endif
++
+ # Additional ARCH settings for sparc
+ ifeq ($(ARCH),sparc32)
+        SRCARCH := sparc
+-- 
+1.8.5.5
+
