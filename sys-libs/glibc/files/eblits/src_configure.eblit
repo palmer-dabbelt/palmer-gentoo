@@ -211,7 +211,7 @@ toolchain-glibc_headers_configure() {
 	# Pick out the correct location for build headers
 	local ports="" myconf=()
         local nptl="nptl,"
-        version_is_at_least 2.20 || nptl=""
+        version_is_at_least 2.20 && nptl=""
 	myconf+=(
 		--disable-sanity-checks
 		--enable-hacker-mode
