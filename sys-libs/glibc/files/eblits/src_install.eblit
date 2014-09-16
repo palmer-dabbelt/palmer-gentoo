@@ -73,6 +73,9 @@ toolchain-glibc_src_install() {
 		# powerpc
 		ppc     /lib/ld.so.1
 		ppc64   /lib64/ld64.so.1
+		# riscv
+		riscv32 /lib/ld-linux.so.2
+		riscv64 /lib/ld-linux.so.2
 		# s390
 		s390    /lib/ld.so.1
 		s390x   /lib/ld64.so.1
