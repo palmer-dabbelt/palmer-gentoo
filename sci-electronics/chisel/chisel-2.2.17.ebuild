@@ -23,7 +23,7 @@ PREFIX = ${EPREFIX}/usr
 LANGUAGES += scala
 LANGUAGES += pkgconfig
 
-LIBRARIES += chisel.jar
+LIBRARIES += libchisel.jar
 SOURCES += main/scala/Driver.scala
 
 LIBRARIES += pkgconfig/chisel.pc
