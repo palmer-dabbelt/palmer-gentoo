@@ -22,12 +22,22 @@ PREFIX = ${EPREFIX}/usr
 
 LANGUAGES += scala
 LANGUAGES += pkgconfig
+LANGUAGES += h
 
 LIBRARIES += libchisel.jar
 SOURCES += main/scala/Driver.scala
 
 LIBRARIES += pkgconfig/chisel.pc
 SOURCES += chisel.pc
+
+HEADERS += chisel/emulator.h
+SOURCES += main/resources/emulator.h
+
+HEADERS += chisel/emulator_mod.h
+SOURCES += main/resources/emulator_mod.h
+
+HEADERS += chisel/emulator_api.h
+SOURCES += main/resources/emulator_api.h
 EOF
 
         cat > src/chisel.pc <<EOF
@@ -40,6 +50,7 @@ Name: chisel
 Description: A HDL
 Version: $PV
 Libs: -lchisel
+Cflags: -I\${includedir}/chisel
 URL: http://github.com/ucb-bar/chisel
 EOF
 
