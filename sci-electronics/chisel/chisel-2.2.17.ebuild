@@ -39,8 +39,7 @@ includedir=\${prefix}/@@pconfigure_hdrdir@@
 Name: chisel
 Description: A HDL
 Version: $PV
-Libs: -Wl,-rpath,\${libdir} -L\${libdir} -lchisel
-Cflags: -I\${includedir} 
+Libs: -lchisel
 URL: http://github.com/ucb-bar/chisel
 EOF
 
