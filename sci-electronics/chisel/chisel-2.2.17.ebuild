@@ -18,7 +18,7 @@ DEPEND="${RDEPEND}"
 
 src_configure() {
         cat >Configfile <<EOF
-PREFIX = $EPREFIX
+PREFIX = ${EPREFIX}/usr
 
 LANGUAGES += scala
 LANGUAGES += pkgconfig
