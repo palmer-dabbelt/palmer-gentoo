@@ -1,61 +1,15 @@
-diff --git a/.gitattributes b/.gitattributes
-new file mode 100644
-index 0000000..8947e72
---- /dev/null
-+++ b/.gitattributes
-@@ -0,0 +1 @@
-+timezone/* -whitespace
-diff --git a/.gitignore b/.gitignore
-new file mode 100644
-index 0000000..93c2e54
---- /dev/null
-+++ b/.gitignore
-@@ -0,0 +1,45 @@
-+*~
-+*.gz
-+*.Z
-+*.tar
-+*.tgz
-+*.bz2
-+*.rej
-+*.orig
-+=*
-+TAGS
-+TODO
-+AUTHORS
-+copyr-*
-+copying.*
-+glibc-*
-+
-+configparms
-+
-+ieeetest
-+regex
-+
-+gpl2lgpl.sed
-+distinfo
-+
-+test-include
-+analysis
-+docs
-+releases
-+
-+libc.prj
-+.libc.prcs_aux
-+libc.proj
-+.snprj
-+
-+TODO.html
-+
-+autom4te*.cache
-+
-+core
-+.gdb_history
-+.gdbinit
-+
-+/linuxthreads
-+/linuxthreads_db
-+/rtkaio
+diff --git a/shlib-versions b/shlib-versions
+index 40469bd..2077b26 100644
+--- a/shlib-versions
++++ b/shlib-versions
+@@ -25,6 +25,7 @@ s390x-.*-linux.*        DEFAULT			GLIBC_2.2
+ powerpc64-.*-linux.*	DEFAULT			GLIBC_2.3
+ powerpc.*le-.*-linux.*	DEFAULT			GLIBC_2.17
+ .*-.*-gnu-gnu.*		DEFAULT			GLIBC_2.2.6
++riscv-.*-linux.*	DEFAULT			GLIBC_2.20
+ 
+ # Configuration		Library=version		Earliest symbol set (optional)
+ # -------------		---------------		------------------------------
 diff --git a/sysdeps/riscv/Implies b/sysdeps/riscv/Implies
 new file mode 100644
 index 0000000..b1da7b4
