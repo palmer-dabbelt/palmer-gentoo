@@ -832,34 +832,6 @@ index 0000000..dbd3051
 +#endif /* __GNUC__ && !__cplusplus */
 +
 +#endif /* bits/string.h */
-diff --git a/sysdeps/riscv/bits/wordsize.h b/sysdeps/riscv/bits/wordsize.h
-new file mode 100644
-index 0000000..f956c87
---- /dev/null
-+++ b/sysdeps/riscv/bits/wordsize.h
-@@ -0,0 +1,22 @@
-+/* Copyright (C) 2002, 2003 Free Software Foundation, Inc.
-+   This file is part of the GNU C Library.
-+
-+   The GNU C Library is free software; you can redistribute it and/or
-+   modify it under the terms of the GNU Lesser General Public
-+   License as published by the Free Software Foundation; either
-+   version 2.1 of the License, or (at your option) any later version.
-+
-+   The GNU C Library is distributed in the hope that it will be useful,
-+   but WITHOUT ANY WARRANTY; without even the implied warranty of
-+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+   Lesser General Public License for more details.
-+
-+   You should have received a copy of the GNU Lesser General Public
-+   License along with the GNU C Library; if not, write to the Free
-+   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
-+   02111-1307 USA.  */
-+
-+#define __WORDSIZE	_RISCV_SZPTR
-+#if _RISCV_SIM == _ABI64
-+# define __WORDSIZE_COMPAT32	1
-+#endif
 diff --git a/sysdeps/riscv/bsd-_setjmp.c b/sysdeps/riscv/bsd-_setjmp.c
 new file mode 100644
 index 0000000..0d41310
@@ -4611,23 +4583,19 @@ index 0000000..7fabe8a
 +#include <sysdeps/unix/sysv/linux/riscv/vfork.S>
 diff --git a/sysdeps/riscv/preconfigure b/sysdeps/riscv/preconfigure
 new file mode 100644
-index 0000000..62054a0
+index 0000000..5eb0a22
 --- /dev/null
 +++ b/sysdeps/riscv/preconfigure
-@@ -0,0 +1,15 @@
+@@ -0,0 +1,11 @@
 +# This is a -*- sh -*-
 +case "$machine" in
 +    riscv32)
 +        base_machine=riscv
 +        machine=riscv/rv32
-+        riscv_cc_abi=32
-+        CPPFLAGS="$CPPFLAGS -m32"
 +        ;;
 +    riscv64)
 +        base_machine=riscv
 +        machine=riscv/rv64
-+        riscv_cc_abi=32
-+        CPPFLAGS="$CPPFLAGS -m64"
 +        ;;
 +esac
 diff --git a/sysdeps/riscv/rv32/Implies b/sysdeps/riscv/rv32/Implies
