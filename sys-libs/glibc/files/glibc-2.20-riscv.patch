@@ -1,3 +1,15 @@
+diff --git a/scripts/config.sub b/scripts/config.sub
+index d654d03..5d14ffc 100755
+--- a/scripts/config.sub
++++ b/scripts/config.sub
+@@ -302,6 +302,7 @@ case $basic_machine in
+ 	| pdp10 | pdp11 | pj | pjl \
+ 	| powerpc | powerpc64 | powerpc64le | powerpcle \
+ 	| pyramid \
++	| riscv \
+ 	| rl78 | rx \
+ 	| score \
+ 	| sh | sh[1234] | sh[24]a | sh[24]aeb | sh[23]e | sh[34]eb | sheb | shbe | shle | sh[1234]le | sh3ele \
 diff --git a/shlib-versions b/shlib-versions
 index 40469bd..2077b26 100644
 --- a/shlib-versions
@@ -4599,31 +4611,25 @@ index 0000000..7fabe8a
 +#include <sysdeps/unix/sysv/linux/riscv/vfork.S>
 diff --git a/sysdeps/riscv/preconfigure b/sysdeps/riscv/preconfigure
 new file mode 100644
-index 0000000..2a5a109
+index 0000000..62054a0
 --- /dev/null
 +++ b/sysdeps/riscv/preconfigure
-@@ -0,0 +1,21 @@
-+case "$CC $CFLAGS $CPPFLAGS " in
-+*" -m32 "*) riscv_cc_abi=32 ;;
-+*" -m64 "*) riscv_cc_abi=64 ;;
-+*) riscv_cc_abi=default ;;
+@@ -0,0 +1,15 @@
++# This is a -*- sh -*-
++case "$machine" in
++    riscv32)
++        base_machine=riscv
++        machine=riscv/rv32
++        riscv_cc_abi=32
++        CPPFLAGS="$CPPFLAGS -m32"
++        ;;
++    riscv64)
++        base_machine=riscv
++        machine=riscv/rv64
++        riscv_cc_abi=32
++        CPPFLAGS="$CPPFLAGS -m64"
++        ;;
 +esac
-+case $config_os in
-+*64*) riscv_config_abi=64 ;;
-+*32*) riscv_config_abi=32 ;;
-+*) riscv_config_abi=$riscv_cc_abi ;;
-+esac
-+case $riscv_config_abi in
-+default) base_machine=riscv machine=riscv/rv64 ;;
-+32) base_machine=riscv machine=riscv/rv32 ;;
-+64) base_machine=riscv machine=riscv/rv64 ;;
-+esac
-+machine=$machine/$config_machine
-+if test $riscv_config_abi != $riscv_cc_abi; then
-+  # This won't make it to config.make, but we want to
-+  # set this in case configure tests depend on it.
-+  CPPFLAGS="$CPPFLAGS -m$riscv_config_abi"
-+fi
 diff --git a/sysdeps/riscv/rv32/Implies b/sysdeps/riscv/rv32/Implies
 new file mode 100644
 index 0000000..b2313e9
