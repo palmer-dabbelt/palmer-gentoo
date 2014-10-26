@@ -78,10 +78,20 @@ index 0000000..e3cc55a
 +
 +struct gcc_targetm_common targetm_common = TARGETM_COMMON_INITIALIZER;
 diff --git a/gcc/config.gcc b/gcc/config.gcc
-index 63e1222..cd12365 100644
+index 63e1222..830533e 100644
 --- a/gcc/config.gcc
 +++ b/gcc/config.gcc
-@@ -1944,6 +1944,20 @@ microblaze*-*-elf)
+@@ -447,6 +447,9 @@ powerpc*-*-*)
+ 	esac
+ 	extra_options="${extra_options} g.opt fused-madd.opt rs6000/rs6000-tables.opt"
+ 	;;
++riscv*)
++	cpu_type=riscv
++	;;
+ rs6000*-*-*)
+ 	need_64bit_hwint=yes
+ 	extra_options="${extra_options} g.opt fused-madd.opt rs6000/rs6000-tables.opt"
+@@ -1944,6 +1947,20 @@ microblaze*-*-elf)
  	cxx_target_objs="${cxx_target_objs} microblaze-c.o"
  	tmake_file="${tmake_file} microblaze/t-microblaze"
          ;;
@@ -102,7 +112,7 @@ index 63e1222..cd12365 100644
  mips*-*-netbsd*)			# NetBSD/mips, either endian.
  	target_cpu_default="MASK_ABICALLS"
  	tm_file="elfos.h ${tm_file} mips/elf.h netbsd.h netbsd-elf.h mips/netbsd.h"
-@@ -3750,6 +3764,31 @@ case "${target}" in
+@@ -3750,6 +3767,31 @@ case "${target}" in
  		done
  		;;
  
@@ -10801,10 +10811,20 @@ index a3757ef..516348d 100644
  
    arm*)
 diff --git a/libgcc/config.host b/libgcc/config.host
-index f4a7428..76cd0db 100644
+index f4a7428..2e14897 100644
 --- a/libgcc/config.host
 +++ b/libgcc/config.host
-@@ -1002,6 +1002,14 @@ powerpcle-*-eabi*)
+@@ -167,6 +167,9 @@ powerpc*-*-*)
+ 	;;
+ rs6000*-*-*)
+ 	;;
++riscv*)
++	cpu_type=riscv
++	;;
+ score*-*-*)
+ 	cpu_type=score
+ 	;;
+@@ -1002,6 +1005,14 @@ powerpcle-*-eabi*)
  	tmake_file="${tmake_file} rs6000/t-ppccomm rs6000/t-crtstuff t-crtstuff-pic t-fdpbit"
  	extra_parts="$extra_parts crtbegin.o crtend.o crtbeginS.o crtendS.o crtbeginT.o ecrti.o ecrtn.o ncrti.o ncrtn.o"
  	;;
