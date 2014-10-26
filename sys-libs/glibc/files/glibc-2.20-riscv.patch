@@ -771,10 +771,10 @@ index 0000000..52e2d3d
 +#endif /* _RISCV_BITS_SETJMP_H */
 diff --git a/sysdeps/riscv/bits/string.h b/sysdeps/riscv/bits/string.h
 new file mode 100644
-index 0000000..dbd3051
+index 0000000..9d30fa6
 --- /dev/null
 +++ b/sysdeps/riscv/bits/string.h
-@@ -0,0 +1,57 @@
+@@ -0,0 +1,25 @@
 +/* This file should provide inline versions of string functions.
 +
 +   Surround GCC-specific parts with #ifdef __GNUC__, and use `__extern_inline'.
@@ -796,38 +796,6 @@ index 0000000..dbd3051
 +    mask = ((mask << 16) << 16) | mask;
 +  return ~(((w & mask) + mask) | w | mask);
 +}
-+
-+#define _HAVE_STRING_ARCH_memcpy 1
-+#define __use_memcpy_align(k, d, s, n) \
-+  (__builtin_constant_p(n) && (n) % (k) == 0 && (n) <= 64 && \
-+   __alignof__(*(d)) >= (k) && __alignof__(*(s)) >= (k))
-+#define memcpy(d, s, n) \
-+  (__use_memcpy_align(8, d, s, n) ? __memcpy_align8(d, s, n) : \
-+   __use_memcpy_align(4, d, s, n) ? __memcpy_align4(d, s, n) : \
-+   __memcpy_g(d, s, n))
-+
-+#define __declare_memcpy_align(size, type) \
-+  static inline void *__memcpy_align ## size(void *__restrict __dest, \
-+                        __const void *__restrict __src, size_t __n) { \
-+    type *__d = (type*)__dest; \
-+    const type *__s = (const type*)__src, *__e = (const type*)(__src + __n); \
-+    while (__s < __e) { \
-+      type __t = *__s; \
-+      __d++, __s++; \
-+      *(__d-1) = __t; \
-+    } \
-+    return __dest; \
-+  }
-+__declare_memcpy_align(8, long long)
-+__declare_memcpy_align(4, int)
-+
-+#ifdef _LIBC
-+extern void *__memcpy_g (void *__restrict __dest,
-+                         __const void *__restrict __src, size_t __n);
-+libc_hidden_proto (__memcpy_g)
-+#else
-+# define __memcpy_g memcpy
-+#endif
 +
 +#endif /* __GNUC__ && !__cplusplus */
 +
@@ -949,51 +917,12 @@ index 0000000..34f62d4
 +# Local configure fragment for sysdeps/riscv/elf.
 +
 +AC_DEFINE(PI_STATIC_AND_HIDDEN)
-diff --git a/sysdeps/riscv/dl-dtprocnum.h b/sysdeps/riscv/dl-dtprocnum.h
-new file mode 100644
-index 0000000..adf8dfa
---- /dev/null
-+++ b/sysdeps/riscv/dl-dtprocnum.h
-@@ -0,0 +1,33 @@
-+/* Configuration of lookup functions.  MIPS version.
-+   Copyright (C) 2000 Free Software Foundation, Inc.
-+   This file is part of the GNU C Library.
-+
-+   The GNU C Library is free software; you can redistribute it and/or
-+   modify it under the terms of the GNU Lesser General Public
-+   License as published by the Free Software Foundation; either
-+   version 2.1 of the License, or (at your option) any later version.
-+
-+   The GNU C Library is distributed in the hope that it will be useful,
-+   but WITHOUT ANY WARRANTY; without even the implied warranty of
-+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+   Lesser General Public License for more details.
-+
-+   You should have received a copy of the GNU Lesser General Public
-+   License along with the GNU C Library; if not, write to the Free
-+   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
-+   02111-1307 USA.  */
-+
-+/* Number of local global offset table entries.  */
-+#define DT_RISCV_LOCAL_GOTNO	0x70000000
-+
-+/* Number of entries in the .dynsym section.  */
-+#define DT_RISCV_SYMTABNO	0x70000001
-+
-+/* Index of first dynamic symbol in global offset table.  */
-+#define DT_RISCV_GOTSYM		0x70000002
-+
-+/* Address of the base of the PLTGOT.  */
-+#define DT_RISCV_PLTGOT         0x70000003
-+
-+/* Number of extra dynamic section entries for this architecture. */
-+#define DT_THISPROCNUM	4
 diff --git a/sysdeps/riscv/dl-machine.h b/sysdeps/riscv/dl-machine.h
 new file mode 100644
-index 0000000..dc56c01
+index 0000000..d92c3ac
 --- /dev/null
 +++ b/sysdeps/riscv/dl-machine.h
-@@ -0,0 +1,466 @@
+@@ -0,0 +1,335 @@
 +/* Machine-dependent ELF dynamic relocation inline functions.  MIPS version.
 +   Copyright (C) 1996-2001, 2002, 2003, 2004, 2005, 2006, 2007
 +   Free Software Foundation, Inc.
@@ -1020,16 +949,21 @@ index 0000000..dc56c01
 +#define dl_machine_h
 +
 +#define ELF_MACHINE_NAME "RISC-V"
++#define EM_RISCV 243
 +
 +/* Relocs. */
-+#define R_RISCV_COPY         24
-+#define R_RISCV_JUMP_SLOT    25
-+#define R_RISCV_TLS_DTPMOD32 38
-+#define R_RISCV_TLS_DTPREL32 39
-+#define R_RISCV_TLS_DTPMOD64 40
-+#define R_RISCV_TLS_DTPREL64 41
-+#define R_RISCV_TLS_TPREL32  47
-+#define R_RISCV_TLS_TPREL64  48
++#define R_RISCV_NONE          0
++#define R_RISCV_32            1
++#define R_RISCV_64            2
++#define R_RISCV_RELATIVE      3
++#define R_RISCV_COPY          4
++#define R_RISCV_JUMP_SLOT     5
++#define R_RISCV_TLS_DTPMOD32  6
++#define R_RISCV_TLS_DTPMOD64  7
++#define R_RISCV_TLS_DTPREL32  8
++#define R_RISCV_TLS_DTPREL64  9
++#define R_RISCV_TLS_TPREL32  10
++#define R_RISCV_TLS_TPREL64  11
 +
 +#include <entry.h>
 +
@@ -1066,12 +1000,8 @@ index 0000000..dc56c01
 +     || (_RISCV_SZPTR == 64 && (type) == R_RISCV_TLS_TPREL64)))	\
 +   | (ELF_RTYPE_CLASS_COPY * ((type) == R_RISCV_COPY)))
 +
-+#define ELF_MACHINE_NO_REL 0
-+#define ELF_MACHINE_NO_RELA 1
-+
-+/* Translate a processor specific dynamic tag to the index
-+   in l_info array.  */
-+#define DT_RISCV(x) (DT_RISCV_##x - DT_LOPROC + DT_NUM)
++#define ELF_MACHINE_NO_REL 1
++#define ELF_MACHINE_NO_RELA 0
 +
 +#define ELF_MACHINE_DEBUG_SETUP(l,r)
 +
@@ -1079,17 +1009,17 @@ index 0000000..dc56c01
 +static inline int __attribute_used__
 +elf_machine_matches_host (const ElfW(Ehdr) *ehdr)
 +{
-+  return 1;
++  return ehdr->e_machine == EM_RISCV;
 +}
 +
-+/* Return the link-time address of _DYNAMIC.  Conveniently, this is the
-+   first element of the GOT.  This must be inlined in a function which
-+   uses global data.  */
++/* Return the link-time address of _DYNAMIC.  */
 +static inline ElfW(Addr)
 +elf_machine_dynamic (void)
 +{
-+  extern ElfW(Addr) _GLOBAL_OFFSET_TABLE_ __attribute__ ((visibility("hidden")));
-+  return _GLOBAL_OFFSET_TABLE_;
++  ElfW(Addr) link_addr;
++  asm ("lui %0, %%hi(_DYNAMIC)" : "=r"(link_addr));
++  asm ("addi %0, %0, %%lo(_DYNAMIC)" : "+r"(link_addr));
++  return link_addr;
 +}
 +
 +#define STRINGXP(X) __STRING(X)
@@ -1100,9 +1030,9 @@ index 0000000..dc56c01
 +static inline ElfW(Addr)
 +elf_machine_load_address (void)
 +{
-+  /* Subtract the link-time address of _DYNAMIC from its runtime address. */
-+  extern ElfW(Dyn) _DYNAMIC[] __attribute__ ((visibility("hidden")));
-+  return (ElfW(Addr))((char*)&_DYNAMIC - elf_machine_dynamic ());
++  ElfW(Addr) load_addr;
++  asm ("lla %0, _DYNAMIC" : "=r"(load_addr));
++  return load_addr - elf_machine_dynamic ();
 +}
 +
 +/* Initial entry point code for the dynamic linker.
@@ -1112,9 +1042,6 @@ index 0000000..dc56c01
 +#define RTLD_START asm (\
 +	".text\n\
 +	" _RTLD_PROLOGUE(ENTRY_POINT) "\
-+	# Store &_DYNAMIC in the first entry of the GOT.\n\
-+	la a0, _DYNAMIC\n\
-+	" STRINGXP(REG_S) " a0, _GLOBAL_OFFSET_TABLE_, a1\n\
 +	move a0, sp\n\
 +	jal _dl_start\n\
 +	# Stash user entry point in s0.\n\
@@ -1171,107 +1098,39 @@ index 0000000..dc56c01
 +
 +auto inline void
 +__attribute__ ((always_inline))
-+elf_machine_rel (struct link_map *map, const ElfW(Rel) *reloc,
-+		 const ElfW(Sym) *sym, const struct r_found_version *version,
-+		 void *const reloc_addr, int skip_ifunc)
++elf_machine_rela (struct link_map *map, const ElfW(Rela) *reloc,
++		  const ElfW(Sym) *sym, const struct r_found_version *version,
++		  void *const reloc_addr, int skip_ifunc)
 +{
 +  ElfW(Addr) r_info = reloc->r_info;
 +  const unsigned long int r_type = ELFW(R_TYPE) (r_info);
 +  ElfW(Addr) *addr_field = (ElfW(Addr) *) reloc_addr;
 +  const ElfW(Sym) *const refsym = sym;
 +  struct link_map *sym_map = RESOLVE_MAP (&sym, version, r_type);
-+
-+#if !defined RTLD_BOOTSTRAP && !defined SHARED
-+  /* This is defined in rtld.c, but nowhere in the static libc.a;
-+     make the reference weak so static programs can still link.  This
-+     declaration cannot be done when compiling rtld.c (i.e.  #ifdef
-+     RTLD_BOOTSTRAP) because rtld.c contains the common defn for
-+     _dl_rtld_map, which is incompatible with a weak decl in the same
-+     file.  */
-+  weak_extern (GL(dl_rtld_map));
-+#endif
++  ElfW(Addr) value = 0;
++  if (sym_map != NULL)
++    value = sym_map->l_addr + sym->st_value + reloc->r_addend;
 +
 +  switch (r_type)
 +    {
-+#if defined (USE_TLS) && !defined (RTLD_BOOTSTRAP)
-+    case _RISCV_SIM == _ABI64 ? R_MIPS_TLS_DTPMOD64 : R_MIPS_TLS_DTPMOD32:
++#ifndef RTLD_BOOTSTRAP
++    case _RISCV_SIM == _ABI64 ? R_RISCV_TLS_DTPMOD64 : R_RISCV_TLS_DTPMOD32:
 +      if (sym_map)
 +	*addr_field = sym_map->l_tls_modid;
 +      break;
 +
-+    case _RISCV_SIM == _ABI64 ? R_MIPS_TLS_DTPREL64 : R_MIPS_TLS_DTPREL32:
-+      if (sym)
-+	*addr_field += TLS_DTPREL_VALUE (sym);
++    case _RISCV_SIM == _ABI64 ? R_RISCV_TLS_DTPREL64 : R_RISCV_TLS_DTPREL32:
++      if (sym != NULL)
++	*addr_field = TLS_DTPREL_VALUE (sym) + reloc->r_addend;
 +      break;
 +
-+    case _RISCV_SIM == _ABI64 ? R_MIPS_TLS_TPREL64 : R_MIPS_TLS_TPREL32:
-+      if (sym)
++    case _RISCV_SIM == _ABI64 ? R_RISCV_TLS_TPREL64 : R_RISCV_TLS_TPREL32:
++      if (sym != NULL)
 +	{
 +	  CHECK_STATIC_TLS (map, sym_map);
-+	  *addr_field += TLS_TPREL_VALUE (sym_map, sym);
++	  *addr_field = TLS_TPREL_VALUE (sym_map, sym) + reloc->r_addend;
 +	}
 +      break;
-+#endif
-+
-+    case R_MIPS_REL32:
-+      {
-+	int symidx = ELFW(R_SYM) (r_info);
-+
-+	if (symidx)
-+	  {
-+	    const ElfW(Word) gotsym
-+	      = (const ElfW(Word)) map->l_info[DT_RISCV (GOTSYM)]->d_un.d_val;
-+
-+	    if ((ElfW(Word))symidx < gotsym)
-+	      {
-+		/* This wouldn't work for a symbol imported from other
-+		   libraries for which there's no GOT entry, but MIPS
-+		   requires every symbol referenced in a dynamic
-+		   relocation to have a GOT entry in the primary GOT,
-+		   so we only get here for locally-defined symbols.
-+		   For section symbols, we should *NOT* be adding
-+		   sym->st_value (per the definition of the meaning of
-+		   S in reloc expressions in the ELF64 MIPS ABI),
-+		   since it should have already been added to
-+		   reloc_value by the linker, but older versions of
-+		   GNU ld didn't add it, and newer versions don't emit
-+		   useless relocations to section symbols any more, so
-+		   it is safe to keep on adding sym->st_value, even
-+		   though it's not ABI compliant.  Some day we should
-+		   bite the bullet and stop doing this.  */
-+#ifndef RTLD_BOOTSTRAP
-+		if (map != &GL(dl_rtld_map))
-+#endif
-+		  if (sym->st_value + map->l_addr)
-+		    *addr_field += sym->st_value + map->l_addr;
-+	      }
-+	    else
-+	      {
-+#ifndef RTLD_BOOTSTRAP
-+		const ElfW(Addr) *got
-+		  = (const ElfW(Addr) *) D_PTR (map, l_info[DT_PLTGOT]);
-+		const ElfW(Word) local_gotno
-+		  = (const ElfW(Word))
-+		    map->l_info[DT_RISCV (LOCAL_GOTNO)]->d_un.d_val;
-+
-+		*addr_field += got[symidx + local_gotno - gotsym];
-+#endif
-+	      }
-+	  }
-+	else
-+#ifndef RTLD_BOOTSTRAP
-+	  if (map != &GL(dl_rtld_map))
-+#endif
-+	    if (map->l_addr)
-+	      *addr_field += map->l_addr;
-+      }
-+      break;
-+
-+    case R_RISCV_JUMP_SLOT:
-+      {
-+	*addr_field = sym_map == NULL ? 0 : sym_map->l_addr + sym->st_value;
-+	break;
-+      }
 +
 +    case R_RISCV_COPY:
 +      {
@@ -1280,9 +1139,16 @@ index 0000000..dc56c01
 +	     found.  */
 +	  break;
 +
-+	size_t size = sym->st_size;
-+	void *value = (void *)(sym_map ? sym_map->l_addr + sym->st_value : 0);
++	/* Handle TLS copy relocations.  */
++	if (__glibc_unlikely (ELFW(ST_TYPE) (sym->st_info) == STT_TLS))
++	  {
++	    /* There's nothing to do if the symbol is in .tbss.  */
++	    if (__glibc_likely (sym->st_value >= sym_map->l_tls_initimage_size))
++	      break;
++	    value += sym_map->l_tls_initimage - sym_map->l_addr;
++	  }
 +
++	size_t size = sym->st_size;
 +	if (__builtin_expect (sym->st_size != refsym->st_size, 0))
 +	  {
 +	    const char *strtab = (const void *) D_PTR (map, l_info[DT_STRTAB]);
@@ -1295,11 +1161,37 @@ index 0000000..dc56c01
 +				strtab + refsym->st_name);
 +	  }
 +
-+	memcpy (reloc_addr, value, size);
++	memcpy (reloc_addr, (void *)value, size);
 +	break;
 +      }
++#endif
 +
-+    case R_MIPS_NONE:
++#if !defined RTLD_BOOTSTRAP || !defined HAVE_Z_COMBRELOC
++    case R_RISCV_RELATIVE:
++      {
++# if !defined RTLD_BOOTSTRAP && !defined HAVE_Z_COMBRELOC
++	/* This is defined in rtld.c, but nowhere in the static libc.a;
++	   make the reference weak so static programs can still link.
++	   This declaration cannot be done when compiling rtld.c
++	   (i.e. #ifdef RTLD_BOOTSTRAP) because rtld.c contains the
++	   common defn for _dl_rtld_map, which is incompatible with a
++	   weak decl in the same file.  */
++#  ifndef SHARED
++	weak_extern (GL(dl_rtld_map));
++#  endif
++	if (map != &GL(dl_rtld_map)) /* Already done in rtld itself.  */
++# endif
++	  *addr_field = map->l_addr + reloc->r_addend;
++      break;
++    }
++#endif
++
++    case R_RISCV_JUMP_SLOT:
++    case _RISCV_SIM == _ABI64 ? R_RISCV_64 : R_RISCV_32:
++      *addr_field = value + reloc->r_addend;
++      break;
++
++    case R_RISCV_NONE:
 +      break;
 +
 +    default:
@@ -1310,120 +1202,33 @@ index 0000000..dc56c01
 +
 +auto inline void
 +__attribute__((always_inline))
-+elf_machine_rel_relative (ElfW(Addr) l_addr, const ElfW(Rel) *reloc,
++elf_machine_rela_relative (ElfW(Addr) l_addr, const ElfW(Rela) *reloc,
 +			  void *const reloc_addr)
 +{
-+  /* XXX Nothing to do.  There is no relative relocation, right?  */
++  *(ElfW(Addr) *)reloc_addr = l_addr + reloc->r_addend;
 +}
 +
 +auto inline void
 +__attribute__((always_inline))
 +elf_machine_lazy_rel (struct link_map *map, ElfW(Addr) l_addr,
-+		      const ElfW(Rel) *reloc, int skip_ifunc)
++		      const ElfW(Rela) *reloc, int skip_ifunc)
 +{
 +  ElfW(Addr) *const reloc_addr = (void *) (l_addr + reloc->r_offset);
 +  const unsigned int r_type = ELFW(R_TYPE) (reloc->r_info);
++
 +  /* Check for unexpected PLT reloc type.  */
 +  if (__builtin_expect (r_type == R_RISCV_JUMP_SLOT, 1))
 +    {
 +      if (__builtin_expect (map->l_mach.plt, 0) == 0)
 +	{
-+	  /* Nothing is required here since we only support lazy
-+	     relocation in executables.  */
++	  if (l_addr)
++	    *reloc_addr += l_addr;
 +	}
 +      else
 +	*reloc_addr = map->l_mach.plt;
 +    }
 +  else
 +    _dl_reloc_bad_type (map, r_type, 1);
-+}
-+
-+/* Relocate GOT. */
-+auto inline void
-+__attribute__((always_inline))
-+elf_machine_got_rel (struct link_map *map, int lazy)
-+{
-+  ElfW(Addr) *got;
-+  ElfW(Sym) *sym;
-+  const ElfW(Half) *vernum;
-+  int i, n, symidx;
-+
-+#ifdef RTLD_BOOTSTRAP
-+# define RESOLVE_GOTSYM(sym,vernum,sym_index,reloc)			  \
-+    (bootstrap_map.l_addr + sym->st_value)
-+#else
-+# define RESOLVE_GOTSYM(sym,vernum,sym_index,reloc)			  \
-+    ({									  \
-+      const ElfW(Sym) *ref = sym;					  \
-+      const struct r_found_version *version				  \
-+        = vernum ? &map->l_versions[vernum[sym_index] & 0x7fff] : NULL;	  \
-+      struct link_map *sym_map;						  \
-+      sym_map = RESOLVE_MAP (&ref, version, reloc);			  \
-+      ref ? sym_map->l_addr + ref->st_value : 0;			  \
-+    })
-+#endif
-+
-+  if (map->l_info[VERSYMIDX (DT_VERSYM)] != NULL)
-+    vernum = (const void *) D_PTR (map, l_info[VERSYMIDX (DT_VERSYM)]);
-+  else
-+    vernum = NULL;
-+
-+  got = (ElfW(Addr) *) D_PTR (map, l_info[DT_PLTGOT]);
-+
-+  n = map->l_info[DT_RISCV (LOCAL_GOTNO)]->d_un.d_val;
-+  /* The dynamic linker's local got entries have already been relocated.  */
-+#ifndef RTLD_BOOTSTRAP
-+  if (map != &GL(dl_rtld_map))
-+#endif
-+    {
-+      /* got[0] and got[1] are reserved. */
-+      i = 2;
-+
-+      /* Add the run-time displacement to all local got entries if
-+         needed.  */
-+      if (__builtin_expect (map->l_addr != 0, 0))
-+	{
-+	  while (i < n)
-+	    got[i++] += map->l_addr;
-+	}
-+    }
-+
-+  /* Handle global got entries. */
-+  got += n;
-+  /* Keep track of the symbol index.  */
-+  symidx = map->l_info[DT_RISCV (GOTSYM)]->d_un.d_val;
-+  sym = (ElfW(Sym) *) D_PTR (map, l_info[DT_SYMTAB]) + symidx;
-+  i = map->l_info[DT_RISCV (SYMTABNO)]->d_un.d_val - symidx;
-+
-+  /* This loop doesn't handle Quickstart.  */
-+  while (i--)
-+    {
-+      if (sym->st_shndx == SHN_UNDEF || sym->st_shndx == SHN_COMMON)
-+	*got = RESOLVE_GOTSYM (sym, vernum, symidx, R_MIPS_32);
-+      else if (ELFW(ST_TYPE) (sym->st_info) == STT_FUNC
-+	       && *got != sym->st_value)
-+	{
-+	  if (lazy)
-+	    *got += map->l_addr;
-+	  else
-+	    /* This is a lazy-binding stub, so we don't need the
-+	       canonical address.  */
-+	    *got = RESOLVE_GOTSYM (sym, vernum, symidx, R_RISCV_JUMP_SLOT);
-+	}
-+      else if (ELFW(ST_TYPE) (sym->st_info) == STT_SECTION)
-+	{
-+	  if (sym->st_other == 0)
-+	    *got += map->l_addr;
-+	}
-+      else
-+	*got = RESOLVE_GOTSYM (sym, vernum, symidx, R_MIPS_32);
-+
-+      ++got;
-+      ++sym;
-+      ++symidx;
-+    }
-+
-+#undef RESOLVE_GOTSYM
 +}
 +
 +/* Set up the loaded object described by L so its stub function
@@ -1433,15 +1238,12 @@ index 0000000..dc56c01
 +__attribute__((always_inline))
 +elf_machine_runtime_setup (struct link_map *l, int lazy, int profile)
 +{
-+  /* Relocate global offset table.  */
-+  elf_machine_got_rel (l, lazy);
-+
 +#ifndef RTLD_BOOTSTRAP
 +  /* If using PLTs, fill in the first two entries of .got.plt.  */
 +  if (l->l_info[DT_JMPREL])
 +    {
-+      extern void _dl_runtime_resolve (void);
-+      ElfW(Addr) *gotplt = (ElfW(Addr) *) D_PTR (l, l_info[DT_RISCV (PLTGOT)]);
++      extern void _dl_runtime_resolve (void) __attribute__((visibility("hidden")));
++      ElfW(Addr) *gotplt = (ElfW(Addr) *) D_PTR (l, l_info[DT_PLTGOT]);
 +      /* If a library is prelinked but we have to relocate anyway,
 +	 we have to be able to undo the prelinking of .got.plt.
 +	 The prelinker saved the address of .plt for us here.  */
@@ -1449,10 +1251,6 @@ index 0000000..dc56c01
 +	l->l_mach.plt = gotplt[1] + l->l_addr;
 +      gotplt[0] = (ElfW(Addr)) &_dl_runtime_resolve;
 +      gotplt[1] = (ElfW(Addr)) l;
-+      /* Relocate subsequent .got.plt entries. */
-+      if (l->l_addr)
-+	for (gotplt += 2; *gotplt; gotplt++)
-+	  *gotplt += l->l_addr;
 +    }
 +#endif
 +
@@ -1462,7 +1260,7 @@ index 0000000..dc56c01
 +#endif /* RESOLVE_MAP */
 diff --git a/sysdeps/riscv/dl-tls.h b/sysdeps/riscv/dl-tls.h
 new file mode 100644
-index 0000000..8c77a70
+index 0000000..da2b444
 --- /dev/null
 +++ b/sysdeps/riscv/dl-tls.h
 @@ -0,0 +1,49 @@
@@ -1496,7 +1294,7 @@ index 0000000..8c77a70
 +/* The thread pointer points to the first static TLS block.  */
 +#define TLS_TP_OFFSET		0
 +
-+/* Dynamic thread vector pointers point 0x8000 past the start of each
++/* Dynamic thread vector pointers point 0x800 past the start of each
 +   TLS block.  */
 +#define TLS_DTV_OFFSET		0x800
 +
@@ -1517,10 +1315,10 @@ index 0000000..8c77a70
 +#define TLS_DTV_UNALLOCATED	((void *) -1l)
 diff --git a/sysdeps/riscv/dl-trampoline.S b/sysdeps/riscv/dl-trampoline.S
 new file mode 100644
-index 0000000..2fdd45a
+index 0000000..b3a4c09
 --- /dev/null
 +++ b/sysdeps/riscv/dl-trampoline.S
-@@ -0,0 +1,39 @@
+@@ -0,0 +1,40 @@
 +#include <sysdep.h>
 +#include <sys/asm.h>
 +
@@ -1541,8 +1339,9 @@ index 0000000..2fdd45a
 +  REG_S a7, 8*SZREG(sp)
 +
 +  # Update .got.plt and obtain runtime address of callee.
++  slli a1, t1, 1
 +  mv a0, t0       # link map
-+  slli a1, t1, 1  # reloc offset (== twice the .got.plt offset)
++  add a1, a1, t1  # reloc offset (== thrice the .got.plt offset)
 +  jal _dl_fixup
 +
 +  # Restore arguments from stack.
@@ -3129,7 +2928,7 @@ index 0000000..8820a08
 +#endif
 diff --git a/sysdeps/riscv/libc-tls.c b/sysdeps/riscv/libc-tls.c
 new file mode 100644
-index 0000000..a3d6301
+index 0000000..9984dce
 --- /dev/null
 +++ b/sysdeps/riscv/libc-tls.c
 @@ -0,0 +1,37 @@
@@ -3157,7 +2956,7 @@ index 0000000..a3d6301
 +
 +#if USE_TLS
 +
-+/* On MIPS, linker optimizations are not required, so __tls_get_addr
++/* On RISC-V, linker optimizations are not required, so __tls_get_addr
 +   can be called even in statically linked binaries.  In this case module
 +   must be always 1 and PT_TLS segment exist in the binary, otherwise it
 +   would not link.  */
@@ -3172,17 +2971,14 @@ index 0000000..a3d6301
 +#endif
 diff --git a/sysdeps/riscv/memcpy.c b/sysdeps/riscv/memcpy.c
 new file mode 100644
-index 0000000..3706ba6
+index 0000000..c4db923
 --- /dev/null
 +++ b/sysdeps/riscv/memcpy.c
-@@ -0,0 +1,65 @@
+@@ -0,0 +1,70 @@
 +#include <string.h>
 +#include <stdint.h>
 +
-+#undef memcpy
-+#undef __memcpy_g
-+
-+void* __memcpy_g(void* aa, const void* bb, size_t n)
++void* __memcpy(void* aa, const void* bb, size_t n)
 +{
 +  #define BODY(a, b, t) { \
 +    t tt = *b; \
@@ -3196,7 +2992,7 @@ index 0000000..3706ba6
 +  uintptr_t msk = sizeof(long)-1;
 +  if (__builtin_expect(((uintptr_t)a & msk) != ((uintptr_t)b & msk) || n < sizeof(long), 0))
 +  {
-+foo:
++small:
 +    if (__builtin_expect(a < end, 1))
 +      while (a < end)
 +        BODY(a, b, char);
@@ -3207,89 +3003,161 @@ index 0000000..3706ba6
 +    while ((uintptr_t)a & msk)
 +      BODY(a, b, char);
 +
-+  long* __restrict__ la = (long*)a;
-+  const long* __restrict__ lb = (const long*)b;
++  long* la = (long*)a;
++  const long* lb = (const long*)b;
 +  long* lend = (long*)((uintptr_t)end & ~msk);
 +
 +  if (__builtin_expect(la < lend-8, 0))
 +  {
 +    while (la < lend-8)
 +    {
-+      *la++ = *lb++;
-+      *la++ = *lb++;
-+      *la++ = *lb++;
-+      *la++ = *lb++;
-+      *la++ = *lb++;
-+      *la++ = *lb++;
-+      *la++ = *lb++;
-+      *la++ = *lb++;
-+      *la++ = *lb++;
++      long b0 = *lb++;
++      long b1 = *lb++;
++      long b2 = *lb++;
++      long b3 = *lb++;
++      long b4 = *lb++;
++      long b5 = *lb++;
++      long b6 = *lb++;
++      long b7 = *lb++;
++      long b8 = *lb++;
++      *la++ = b0;
++      *la++ = b1;
++      *la++ = b2;
++      *la++ = b3;
++      *la++ = b4;
++      *la++ = b5;
++      *la++ = b6;
++      *la++ = b7;
++      *la++ = b8;
 +    }
 +    if (la == lend)
-+      goto bar;
++      goto maybe_done;
 +  }
 +
 +  do BODY(la, lb, long) while (la < lend);
 +
-+bar:
++maybe_done:
 +  a = (char*)la;
 +  b = (const char*)lb;
 +  if (__builtin_expect(a < end, 0))
-+    goto foo;
++    goto small;
 +  return aa;
 +}
-+libc_hidden_def (__memcpy_g)
-+strong_alias (__memcpy_g, memcpy)
++weak_alias (__memcpy, memcpy)
 +libc_hidden_builtin_def (memcpy)
-diff --git a/sysdeps/riscv/memset.c b/sysdeps/riscv/memset.c
+diff --git a/sysdeps/riscv/memset.S b/sysdeps/riscv/memset.S
 new file mode 100644
-index 0000000..cfde2fe
+index 0000000..fcfba96
 --- /dev/null
-+++ b/sysdeps/riscv/memset.c
-@@ -0,0 +1,43 @@
-+typedef unsigned long size_t;
-+//#include <string.h>
++++ b/sysdeps/riscv/memset.S
+@@ -0,0 +1,107 @@
++/* Copyright (C) 2014 Free Software Foundation, Inc.
++   Contributed by Andrew Waterman (waterman@cs.berkeley.edu) at UC Berkeley.
++   This file is part of the GNU C Library.
 +
-+void* memset(void* dst, int val, size_t n)
-+{
-+  void* dst0 = dst;
-+  void* end = dst + n;
-+  unsigned char v = val;
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
 +
-+  /* is dst word-aligned? */
-+  if (((long)dst & (sizeof(long)-1)) == 0)
-+  {
-+    long lval = v;
-+    lval |= lval << 8;
-+    lval |= lval << 16;
-+    #ifdef __riscv64
-+    lval |= lval << 32;
-+    #elif !defined(__riscv32)
-+    # error
-+    #endif
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
 +
-+    /* set 4 words at a time */
-+    for ( ; dst <= end - 4*sizeof(long); dst += 4*sizeof(long))
-+    {
-+      *(long*)(dst+0*sizeof(long)) = lval;
-+      *(long*)(dst+1*sizeof(long)) = lval;
-+      *(long*)(dst+2*sizeof(long)) = lval;
-+      *(long*)(dst+3*sizeof(long)) = lval;
-+    }
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library.  If not, see
++   <http://www.gnu.org/licenses/>.  */
 +
-+    /* set a word at a time */
-+    for ( ; dst <= end - sizeof(long); dst += sizeof(long))
-+      *(long*)dst = lval;
-+  }
++#include <sysdep.h>
++#include <sys/asm.h>
 +
-+  /* set a byte at a time */
-+  for ( ; dst < end; dst++)
-+    *(unsigned char*)dst = v;
++ENTRY(memset)
++  li a6, 15
++  move v0, a0
++  bleu a2, a6, .Ltiny
++  and a5, a0, 15
++  bnez a5, .Lmisaligned
 +
-+  return dst0;
-+}
++.Laligned:
++  bnez a1, .Lwordify
 +
-+weak_alias (memset, __GI_memset)
++.Lwordified:
++  and a3, a2, ~15
++  and a2, a2, 15
++  add a3, a3, a0
++
++#ifdef __riscv64
++1:sd a1, 0(a0)
++  sd a1, 8(a0)
++#else
++1:sw a1, 0(a0)
++  sw a1, 4(a0)
++  sw a1, 8(a0)
++  sw a1, 12(a0)
++#endif
++  add a0, a0, 16
++  bltu a0, a3, 1b
++
++  bnez a2, .Ltiny
++  ret
++
++.Ltiny:
++  sub a3, a6, a2
++  sll a3, a3, 2
++1:auipc a4, %pcrel_hi(.Ltable)
++  add a3, a3, a4
++.option push
++.option norvc
++.Ltable_misaligned:
++  jr a3, %pcrel_lo(1b)
++.Ltable:
++  sb a1,14(a0)
++  sb a1,13(a0)
++  sb a1,12(a0)
++  sb a1,11(a0)
++  sb a1,10(a0)
++  sb a1, 9(a0)
++  sb a1, 8(a0)
++  sb a1, 7(a0)
++  sb a1, 6(a0)
++  sb a1, 5(a0)
++  sb a1, 4(a0)
++  sb a1, 3(a0)
++  sb a1, 2(a0)
++  sb a1, 1(a0)
++  sb a1, 0(a0)
++.option pop
++  ret
++
++.Lwordify:
++  and a1, a1, 0xFF
++  sll a3, a1, 8
++  or  a1, a1, a3
++  sll a3, a1, 16
++  or  a1, a1, a3
++#ifdef __riscv64
++  sll a3, a1, 32
++  or  a1, a1, a3
++#endif
++  j .Lwordified
++
++.Lmisaligned:
++  sll a3, a5, 2
++1:auipc a4, %pcrel_hi(.Ltable_misaligned)
++  add a3, a3, a4
++  mv t0, ra
++  jalr a3, %pcrel_lo(1b)
++  mv ra, t0
++
++  add a5, a5, -16
++  sub a0, a0, a5
++  add a2, a2, a5
++  bleu a2, a6, .Ltiny
++  j .Laligned
++END(memset)
++
++weak_alias(memset, __GI_memset)
 diff --git a/sysdeps/riscv/memusage.h b/sysdeps/riscv/memusage.h
 new file mode 100644
 index 0000000..c558a06
@@ -4583,21 +4451,31 @@ index 0000000..7fabe8a
 +#include <sysdeps/unix/sysv/linux/riscv/vfork.S>
 diff --git a/sysdeps/riscv/preconfigure b/sysdeps/riscv/preconfigure
 new file mode 100644
-index 0000000..5eb0a22
+index 0000000..2a5a109
 --- /dev/null
 +++ b/sysdeps/riscv/preconfigure
-@@ -0,0 +1,11 @@
-+# This is a -*- sh -*-
-+case "$machine" in
-+    riscv32)
-+        base_machine=riscv
-+        machine=riscv/rv32
-+        ;;
-+    riscv64)
-+        base_machine=riscv
-+        machine=riscv/rv64
-+        ;;
+@@ -0,0 +1,21 @@
++case "$CC $CFLAGS $CPPFLAGS " in
++*" -m32 "*) riscv_cc_abi=32 ;;
++*" -m64 "*) riscv_cc_abi=64 ;;
++*) riscv_cc_abi=default ;;
 +esac
++case $config_os in
++*64*) riscv_config_abi=64 ;;
++*32*) riscv_config_abi=32 ;;
++*) riscv_config_abi=$riscv_cc_abi ;;
++esac
++case $riscv_config_abi in
++default) base_machine=riscv machine=riscv/rv64 ;;
++32) base_machine=riscv machine=riscv/rv32 ;;
++64) base_machine=riscv machine=riscv/rv64 ;;
++esac
++machine=$machine/$config_machine
++if test $riscv_config_abi != $riscv_cc_abi; then
++  # This won't make it to config.make, but we want to
++  # set this in case configure tests depend on it.
++  CPPFLAGS="$CPPFLAGS -m$riscv_config_abi"
++fi
 diff --git a/sysdeps/riscv/rv32/Implies b/sysdeps/riscv/rv32/Implies
 new file mode 100644
 index 0000000..b2313e9
@@ -4615,6 +4493,37 @@ index 0000000..f9c69e3
 +ifeq ($(filter -m32,$(CC)),)
 +CC += -m32
 +endif
+diff --git a/sysdeps/riscv/rv32/bits/wordsize.h b/sysdeps/riscv/rv32/bits/wordsize.h
+new file mode 100644
+index 0000000..24a8e7d
+--- /dev/null
++++ b/sysdeps/riscv/rv32/bits/wordsize.h
+@@ -0,0 +1,25 @@
++/* Copyright (C) 2002, 2003 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, write to the Free
++   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
++   02111-1307 USA.  */
++
++#define __WORDSIZE	32
++
++#ifdef _RISCV_SIM
++# if _RISCV_SIM == _ABI64
++#  define __WORDSIZE_COMPAT32	1
++# endif
++#endif
 diff --git a/sysdeps/riscv/rv64/Implies b/sysdeps/riscv/rv64/Implies
 new file mode 100644
 index 0000000..fae63bc
@@ -4652,6 +4561,37 @@ index 0000000..253a65f
 +    exp2l;
 +  }
 +}
+diff --git a/sysdeps/riscv/rv64/bits/wordsize.h b/sysdeps/riscv/rv64/bits/wordsize.h
+new file mode 100644
+index 0000000..df16738
+--- /dev/null
++++ b/sysdeps/riscv/rv64/bits/wordsize.h
+@@ -0,0 +1,25 @@
++/* Copyright (C) 2002, 2003 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, write to the Free
++   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
++   02111-1307 USA.  */
++
++#define __WORDSIZE	64
++
++#ifdef _RISCV_SIM
++# if _RISCV_SIM == _ABI64
++#  define __WORDSIZE_COMPAT32	1
++# endif
++#endif
 diff --git a/sysdeps/riscv/rv64/gmp-mparam.h b/sysdeps/riscv/rv64/gmp-mparam.h
 new file mode 100644
 index 0000000..7666137
@@ -5009,7 +4949,7 @@ index 0000000..7a5e3e0
 +#endif	/* stackinfo.h */
 diff --git a/sysdeps/riscv/start.S b/sysdeps/riscv/start.S
 new file mode 100644
-index 0000000..55deb45
+index 0000000..95f2406
 --- /dev/null
 +++ b/sysdeps/riscv/start.S
 @@ -0,0 +1,98 @@
@@ -5092,17 +5032,17 @@ index 0000000..55deb45
 +	.globl ENTRY_POINT
 +	.type ENTRY_POINT,@function
 +ENTRY_POINT:
-+	la    gp, _gp
-+	la    a0, main
++	lla   gp, _gp
++	lla   a0, main
 +	REG_L a1, 0(sp)      /* argc */
 +	addi  a2, sp, SZREG  /* argv */
 +	andi  sp, sp, ALMASK /* Align stack. */
-+	la    a3, __libc_csu_init
-+	la    a4, __libc_csu_fini
++	lla   a3, __libc_csu_init
++	lla   a4, __libc_csu_fini
 +	move  a5, v0  /* rtld_fini */
 +	move  a6, sp  /* stack_end */
 +	
-+	jump  __libc_start_main
++	jump  __libc_start_main@
 +
 +/* Define a symbol for the first piece of initialized data.  */
 +	.data

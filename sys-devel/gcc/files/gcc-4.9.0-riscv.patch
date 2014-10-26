@@ -1,71 +1,3 @@
-From a1344afcac0e232541e50d0f4f16e3998842b2fd Mon Sep 17 00:00:00 2001
-From: Andrew Waterman <aswaterman@eecs.berkeley.edu>
-Date: Fri, 12 Sep 2014 09:44:03 -0700
-Subject: [PATCH 1/2] RISC-V Port
-
----
- config.sub                             |    3 +
- gcc/common/config/riscv/riscv-common.c |   59 +
- gcc/config.gcc                         |   39 +
- gcc/config/riscv/constraints.md        |   95 +
- gcc/config/riscv/elf.h                 |   31 +
- gcc/config/riscv/generic.md            |   98 +
- gcc/config/riscv/linux.h               |   60 +
- gcc/config/riscv/linux64.h             |   44 +
- gcc/config/riscv/opcode-riscv.h        |  150 +
- gcc/config/riscv/peephole.md           |  122 +
- gcc/config/riscv/predicates.md         |  182 ++
- gcc/config/riscv/riscv-ftypes.def      |   39 +
- gcc/config/riscv/riscv-modes.def       |   26 +
- gcc/config/riscv/riscv-opc.h           | 1216 +++++++++
- gcc/config/riscv/riscv-protos.h        |   90 +
- gcc/config/riscv/riscv.c               | 4685 ++++++++++++++++++++++++++++++++
- gcc/config/riscv/riscv.h               | 1187 ++++++++
- gcc/config/riscv/riscv.md              | 2425 +++++++++++++++++
- gcc/config/riscv/riscv.opt             |   63 +
- gcc/config/riscv/sync.md               |  197 ++
- gcc/config/riscv/t-elf                 |    5 +
- gcc/config/riscv/t-linux64             |    6 +
- libatomic/configure.tgt                |    1 +
- libgcc/config.host                     |    8 +
- libgcc/config/riscv/crti.S             |    1 +
- libgcc/config/riscv/crtn.S             |    1 +
- libgcc/config/riscv/riscv-fp.c         |  178 ++
- libgcc/config/riscv/t-dpbit            |    4 +
- libgcc/config/riscv/t-elf              |    2 +
- libgcc/config/riscv/t-fpbit            |    5 +
- libgcc/config/riscv/t-linux            |    1 +
- libgcc/config/riscv/t-tpbit            |   10 +
- 32 files changed, 11033 insertions(+)
- create mode 100644 gcc/common/config/riscv/riscv-common.c
- create mode 100644 gcc/config/riscv/constraints.md
- create mode 100644 gcc/config/riscv/elf.h
- create mode 100644 gcc/config/riscv/generic.md
- create mode 100644 gcc/config/riscv/linux.h
- create mode 100644 gcc/config/riscv/linux64.h
- create mode 100644 gcc/config/riscv/opcode-riscv.h
- create mode 100644 gcc/config/riscv/peephole.md
- create mode 100644 gcc/config/riscv/predicates.md
- create mode 100644 gcc/config/riscv/riscv-ftypes.def
- create mode 100644 gcc/config/riscv/riscv-modes.def
- create mode 100644 gcc/config/riscv/riscv-opc.h
- create mode 100644 gcc/config/riscv/riscv-protos.h
- create mode 100644 gcc/config/riscv/riscv.c
- create mode 100644 gcc/config/riscv/riscv.h
- create mode 100644 gcc/config/riscv/riscv.md
- create mode 100644 gcc/config/riscv/riscv.opt
- create mode 100644 gcc/config/riscv/sync.md
- create mode 100644 gcc/config/riscv/t-elf
- create mode 100644 gcc/config/riscv/t-linux64
- create mode 100644 libgcc/config/riscv/crti.S
- create mode 100644 libgcc/config/riscv/crtn.S
- create mode 100644 libgcc/config/riscv/riscv-fp.c
- create mode 100644 libgcc/config/riscv/t-dpbit
- create mode 100644 libgcc/config/riscv/t-elf
- create mode 100644 libgcc/config/riscv/t-fpbit
- create mode 100644 libgcc/config/riscv/t-linux
- create mode 100644 libgcc/config/riscv/t-tpbit
-
 diff --git a/config.sub b/config.sub
 index 61cb4bc..d6e23cb 100755
 --- a/config.sub
@@ -146,7 +78,7 @@ index 0000000..e3cc55a
 +
 +struct gcc_targetm_common targetm_common = TARGETM_COMMON_INITIALIZER;
 diff --git a/gcc/config.gcc b/gcc/config.gcc
-index 3c55c88..d5ee649 100644
+index 63e1222..cd12365 100644
 --- a/gcc/config.gcc
 +++ b/gcc/config.gcc
 @@ -1944,6 +1944,20 @@ microblaze*-*-elf)
@@ -170,7 +102,7 @@ index 3c55c88..d5ee649 100644
  mips*-*-netbsd*)			# NetBSD/mips, either endian.
  	target_cpu_default="MASK_ABICALLS"
  	tm_file="elfos.h ${tm_file} mips/elf.h netbsd.h netbsd-elf.h mips/netbsd.h"
-@@ -3751,6 +3765,31 @@ case "${target}" in
+@@ -3750,6 +3764,31 @@ case "${target}" in
  		done
  		;;
  
@@ -562,10 +494,10 @@ index 0000000..36c124a
 +%{" OPT_ARCH32 ":-melf32lriscv}"
 diff --git a/gcc/config/riscv/opcode-riscv.h b/gcc/config/riscv/opcode-riscv.h
 new file mode 100644
-index 0000000..012032b
+index 0000000..a5435ac
 --- /dev/null
 +++ b/gcc/config/riscv/opcode-riscv.h
-@@ -0,0 +1,150 @@
+@@ -0,0 +1,149 @@
 +/* RISC-V ISA encoding.
 +   Copyright (C) 2011-2014 Free Software Foundation, Inc.
 +   Contributed by Andrew Waterman (waterman@cs.berkeley.edu) at UC Berkeley.
@@ -600,7 +532,7 @@ index 0000000..012032b
 +#define EXTRACT_SBTYPE_IMM(x) \
 +  ((RV_X(x, 8, 4) << 1) | (RV_X(x, 25, 6) << 5) | (RV_X(x, 7, 1) << 11) | (RV_IMM_SIGN(x) << 12))
 +#define EXTRACT_UTYPE_IMM(x) \
-+  (RV_X(x, 12, 20) | (RV_IMM_SIGN(x) << 20))
++  ((RV_X(x, 12, 20) << 20) | (RV_IMM_SIGN(x) << 32))
 +#define EXTRACT_UJTYPE_IMM(x) \
 +  ((RV_X(x, 21, 10) << 1) | (RV_X(x, 20, 1) << 11) | (RV_X(x, 12, 8) << 12) | (RV_IMM_SIGN(x) << 20))
 +
@@ -611,7 +543,7 @@ index 0000000..012032b
 +#define ENCODE_SBTYPE_IMM(x) \
 +  ((RV_X(x, 1, 4) << 8) | (RV_X(x, 5, 6) << 25) | (RV_X(x, 11, 1) << 7) | (RV_X(x, 12, 1) << 31))
 +#define ENCODE_UTYPE_IMM(x) \
-+  (RV_X(x, 0, 20) << 12)
++  (RV_X(x, 12, 20) << 12)
 +#define ENCODE_UJTYPE_IMM(x) \
 +  ((RV_X(x, 1, 10) << 21) | (RV_X(x, 11, 1) << 20) | (RV_X(x, 12, 8) << 12) | (RV_X(x, 20, 1) << 31))
 +
@@ -639,7 +571,6 @@ index 0000000..012032b
 +#define RISCV_CONST_HIGH_PART(VALUE) \
 +  (((VALUE) + (RISCV_IMM_REACH/2)) & ~(RISCV_IMM_REACH-1))
 +#define RISCV_CONST_LOW_PART(VALUE) ((VALUE) - RISCV_CONST_HIGH_PART (VALUE))
-+#define RISCV_LUI_HIGH_PART(VALUE) (RISCV_CONST_HIGH_PART(VALUE) >> RISCV_IMM_BITS)
 +
 +/* RV fields */
 +
@@ -2333,10 +2264,10 @@ index 0000000..eb29d3e
 +#endif
 diff --git a/gcc/config/riscv/riscv-protos.h b/gcc/config/riscv/riscv-protos.h
 new file mode 100644
-index 0000000..429da71
+index 0000000..6b15dd5
 --- /dev/null
 +++ b/gcc/config/riscv/riscv-protos.h
-@@ -0,0 +1,90 @@
+@@ -0,0 +1,91 @@
 +/* Definition of RISC-V target for GNU compiler.
 +   Copyright (C) 2011-2014 Free Software Foundation, Inc.
 +   Contributed by Andrew Waterman (waterman@cs.berkeley.edu) at UC Berkeley.
@@ -2366,9 +2297,10 @@ index 0000000..429da71
 +  SYMBOL_GOT_DISP,
 +  SYMBOL_TLS,
 +  SYMBOL_TLS_LE,
-+  SYMBOL_TLS_IE
++  SYMBOL_TLS_IE,
++  SYMBOL_TLS_GD
 +};
-+#define NUM_SYMBOL_TYPES (SYMBOL_TLS_IE + 1)
++#define NUM_SYMBOL_TYPES (SYMBOL_TLS_GD + 1)
 +
 +extern bool mips_symbolic_constant_p (rtx, enum mips_symbol_type *);
 +extern int riscv_regno_mode_ok_for_base_p (int, enum machine_mode, bool);
@@ -2429,10 +2361,10 @@ index 0000000..429da71
 +#endif /* ! GCC_RISCV_PROTOS_H */
 diff --git a/gcc/config/riscv/riscv.c b/gcc/config/riscv/riscv.c
 new file mode 100644
-index 0000000..a646a57
+index 0000000..75b47e3
 --- /dev/null
 +++ b/gcc/config/riscv/riscv.c
-@@ -0,0 +1,4685 @@
+@@ -0,0 +1,4491 @@
 +/* Subroutines used for code generation for RISC-V.
 +   Copyright (C) 2011-2014 Free Software Foundation, Inc.
 +   Contributed by Andrew Waterman (waterman@cs.berkeley.edu) at UC Berkeley.
@@ -3021,12 +2953,10 @@ index 0000000..a646a57
 +  switch (*symbol_type)
 +    {
 +    case SYMBOL_ABSOLUTE:
++    case SYMBOL_TLS_LE:
 +      return (int32_t) INTVAL (offset) == INTVAL (offset);
 +
-+    case SYMBOL_TLS:
-+    case SYMBOL_TLS_LE:
-+    case SYMBOL_TLS_IE:
-+    case SYMBOL_GOT_DISP:
++    default:
 +      return false;
 +    }
 +  gcc_unreachable ();
@@ -3041,7 +2971,6 @@ index 0000000..a646a57
 +    case SYMBOL_TLS: return 0; /* Depends on the TLS model. */
 +    case SYMBOL_ABSOLUTE: return 2; /* LUI + the reference itself */
 +    case SYMBOL_TLS_LE: return 3; /* LUI + ADD TP + the reference itself */
-+    case SYMBOL_TLS_IE: return 4; /* LUI + LD + ADD TP + the reference itself */
 +    case SYMBOL_GOT_DISP: return 3; /* AUIPC + LD GOT + the reference itself */
 +    default: gcc_unreachable();
 +  }
@@ -3094,6 +3023,10 @@ index 0000000..a646a57
 +    {
 +      /* The same optimization as for CONST_INT.  */
 +      if (SMALL_INT (offset) && riscv_symbol_insns (type) > 0)
++	return true;
++
++      /* It's not worth creating additional dynamic relocations.  */
++      if (flag_pic)
 +	return true;
 +    }
 +
@@ -3232,20 +3165,6 @@ index 0000000..a646a57
 +	 are legitimate if $0 is a valid base register.  */
 +      info->type = ADDRESS_CONST_INT;
 +      return SMALL_INT (x);
-+
-+    case CONST:
-+    case LABEL_REF:
-+    case SYMBOL_REF:
-+      if (mips_symbolic_constant_p (x, &info->symbol_type)
-+	  && riscv_symbol_insns (info->symbol_type) > 0
-+	  && !riscv_hi_relocs[info->symbol_type]
-+	  && riscv_lo_relocs[info->symbol_type])
-+	{
-+	  info->type = ADDRESS_LO_SUM;
-+	  info->reg = gen_rtx_REG (Pmode, GP_REGNUM);
-+	  info->offset = x;
-+	  return true;
-+	}
 +
 +    default:
 +      return false;
@@ -3510,22 +3429,6 @@ index 0000000..a646a57
 +  return (Pmode == DImode ? gen_got_load_tls_iedi(dest, sym) : gen_got_load_tls_iesi(dest, sym));
 +}
 +
-+static rtx riscv_got_load_tls_ie_hi(rtx dest, rtx sym)
-+{
-+  return (Pmode == DImode ? gen_got_load_tls_ie_hidi(dest, sym) : gen_got_load_tls_ie_hisi(dest, sym));
-+}
-+
-+static rtx riscv_got_load_tls_ie_lo(rtx dest, rtx base, rtx sym)
-+{
-+  return (Pmode == DImode ? gen_got_load_tls_ie_lodi(dest, base, sym) : gen_got_load_tls_ie_losi(dest, base, sym));
-+}
-+
-+static rtx riscv_tls_add_tp_ie(rtx dest, rtx base, rtx sym)
-+{
-+  rtx tp = gen_rtx_REG (Pmode, THREAD_POINTER_REGNUM);
-+  return (Pmode == DImode ? gen_tls_add_tp_iedi(dest, base, tp, sym) : gen_tls_add_tp_iesi(dest, base, tp, sym));
-+}
-+
 +static rtx riscv_tls_add_tp_le(rtx dest, rtx base, rtx sym)
 +{
 +  rtx tp = gen_rtx_REG (Pmode, THREAD_POINTER_REGNUM);
@@ -3636,8 +3539,13 @@ index 0000000..a646a57
 +mips_legitimize_tls_address (rtx loc)
 +{
 +  rtx dest, insn, v0, tp, tmp1;
++  enum tls_model model = SYMBOL_REF_TLS_MODEL (loc);
 +
-+  switch (SYMBOL_REF_TLS_MODEL (loc))
++  /* Since we support TLS copy relocs, non-PIC TLS accesses may all use LE.  */
++  if (!flag_pic)
++    model = TLS_MODEL_LOCAL_EXEC;
++
++  switch (model)
 +    {
 +    case TLS_MODEL_LOCAL_DYNAMIC:
 +      /* Rely on section anchors for the optimization that LDM TLS
@@ -3650,27 +3558,12 @@ index 0000000..a646a57
 +      break;
 +
 +    case TLS_MODEL_INITIAL_EXEC:
-+      if (flag_pic)
-+	{
-+	  /* la.tls.ie; tp-relative add */
-+	  tp = gen_rtx_REG (Pmode, THREAD_POINTER_REGNUM);
-+	  tmp1 = gen_reg_rtx (Pmode);
-+	  emit_insn (riscv_got_load_tls_ie (tmp1, loc));
-+	  dest = gen_reg_rtx (Pmode);
-+	  emit_insn (gen_add3_insn (dest, tmp1, tp));
-+	}
-+      else
-+	{
-+	  /* lui %tls_ie_hi; ld %tls_le_lo; tp-relative add */
-+	  tmp1 = gen_reg_rtx (Pmode);
-+	  emit_insn (riscv_got_load_tls_ie_hi (tmp1, loc));
-+	  dest = gen_reg_rtx (Pmode);
-+	  emit_insn (riscv_got_load_tls_ie_lo (dest, tmp1, loc));
-+	  tmp1 = gen_reg_rtx (Pmode);
-+	  emit_insn (riscv_tls_add_tp_ie (tmp1, dest, loc));
-+	  dest = gen_rtx_LO_SUM (Pmode, tmp1,
-+				 mips_unspec_address (loc, SYMBOL_TLS_IE));
-+	}
++      /* la.tls.ie; tp-relative add */
++      tp = gen_rtx_REG (Pmode, THREAD_POINTER_REGNUM);
++      tmp1 = gen_reg_rtx (Pmode);
++      emit_insn (riscv_got_load_tls_ie (tmp1, loc));
++      dest = gen_reg_rtx (Pmode);
++      emit_insn (gen_add3_insn (dest, tmp1, tp));
 +      break;
 +
 +    case TLS_MODEL_LOCAL_EXEC:
@@ -4376,12 +4269,12 @@ index 0000000..a646a57
 +	return "lui\t%0,%h1";
 +
 +      if (symbolic_operand (src, VOIDmode))
-+	{
-+	  if (SYMBOL_REF_LOCAL_P (src)
-+	      || (src_code == LABEL_REF && !LABEL_REF_NONLOCAL_P (src)))
-+	    return "lla\t%0,%1";
-+	  return "la\t%0,%1";
-+	}
++	switch (mips_classify_symbolic_expression (src))
++	  {
++	  case SYMBOL_GOT_DISP: return "la\t%0,%1";
++	  case SYMBOL_ABSOLUTE: return "lla\t%0,%1";
++	  default: gcc_unreachable();
++	  }
 +    }
 +  if (src_code == REG && FP_REG_P (REGNO (src)))
 +    {
@@ -5346,11 +5239,12 @@ index 0000000..a646a57
 +    {
 +      riscv_hi_relocs[SYMBOL_ABSOLUTE] = "%hi(";
 +      riscv_lo_relocs[SYMBOL_ABSOLUTE] = "%lo(";
++    }
 +
++  if (!flag_pic || flag_pie)
++    {
 +      riscv_hi_relocs[SYMBOL_TLS_LE] = "%tprel_hi(";
 +      riscv_lo_relocs[SYMBOL_TLS_LE] = "%tprel_lo(";
-+
-+      riscv_lo_relocs[SYMBOL_TLS_IE] = "%tls_ie_off(";
 +    }
 +}
 +
@@ -5559,7 +5453,7 @@ index 0000000..a646a57
 +      gcc_unreachable ();
 +    }
 +  output_addr_const (file, x);
-+  fputs ("+0x8000", file);
++  fputs ("+0x800", file);
 +}
 +
 +/* Make the last instruction frame-related and note that it performs
@@ -6585,159 +6479,6 @@ index 0000000..a646a57
 +  gcc_unreachable ();
 +}
 +
-+/* This structure records that the current function has a LO_SUM
-+   involving SYMBOL_REF or LABEL_REF BASE and that MAX_OFFSET is
-+   the largest offset applied to BASE by all such LO_SUMs.  */
-+struct mips_lo_sum_offset {
-+  rtx base;
-+  HOST_WIDE_INT offset;
-+};
-+
-+/* Return a hash value for SYMBOL_REF or LABEL_REF BASE.  */
-+
-+static hashval_t
-+mips_hash_base (rtx base)
-+{
-+  int do_not_record_p;
-+
-+  return hash_rtx (base, GET_MODE (base), &do_not_record_p, NULL, false);
-+}
-+
-+/* Hash-table callbacks for mips_lo_sum_offsets.  */
-+
-+static hashval_t
-+mips_lo_sum_offset_hash (const void *entry)
-+{
-+  return mips_hash_base (((const struct mips_lo_sum_offset *) entry)->base);
-+}
-+
-+static int
-+mips_lo_sum_offset_eq (const void *entry, const void *value)
-+{
-+  return rtx_equal_p (((const struct mips_lo_sum_offset *) entry)->base,
-+		      (const_rtx) value);
-+}
-+
-+/* Look up symbolic constant X in HTAB, which is a hash table of
-+   mips_lo_sum_offsets.  If OPTION is NO_INSERT, return true if X can be
-+   paired with a recorded LO_SUM, otherwise record X in the table.  */
-+
-+static bool
-+mips_lo_sum_offset_lookup (htab_t htab, rtx x, enum insert_option option)
-+{
-+  rtx base, offset;
-+  void **slot;
-+  struct mips_lo_sum_offset *entry;
-+
-+  /* Split X into a base and offset.  */
-+  split_const (x, &base, &offset);
-+  if (UNSPEC_ADDRESS_P (base))
-+    base = UNSPEC_ADDRESS (base);
-+
-+  /* Look up the base in the hash table.  */
-+  slot = htab_find_slot_with_hash (htab, base, mips_hash_base (base), option);
-+  if (slot == NULL)
-+    return false;
-+
-+  entry = (struct mips_lo_sum_offset *) *slot;
-+  if (option == INSERT)
-+    {
-+      if (entry == NULL)
-+	{
-+	  entry = XNEW (struct mips_lo_sum_offset);
-+	  entry->base = base;
-+	  entry->offset = INTVAL (offset);
-+	  *slot = entry;
-+	}
-+      else
-+	{
-+	  if (INTVAL (offset) > entry->offset)
-+	    entry->offset = INTVAL (offset);
-+	}
-+    }
-+  return INTVAL (offset) <= entry->offset;
-+}
-+
-+/* A for_each_rtx callback for which DATA is a mips_lo_sum_offset hash table.
-+   Record every LO_SUM in *LOC.  */
-+
-+static int
-+mips_record_lo_sum (rtx *loc, void *data)
-+{
-+  if (GET_CODE (*loc) == LO_SUM)
-+    mips_lo_sum_offset_lookup ((htab_t) data, XEXP (*loc, 1), INSERT);
-+  return 0;
-+}
-+
-+/* Return true if INSN is a SET of an orphaned high-part relocation.
-+   HTAB is a hash table of mips_lo_sum_offsets that describes all the
-+   LO_SUMs in the current function.  */
-+
-+static bool
-+mips_orphaned_high_part_p (htab_t htab, rtx insn)
-+{
-+  rtx x, set;
-+
-+  set = single_set (insn);
-+  if (set)
-+    {
-+      /* Check for %his.  */
-+      x = SET_SRC (set);
-+      if (GET_CODE (x) == HIGH
-+	  && absolute_symbolic_operand (XEXP (x, 0), VOIDmode))
-+	return !mips_lo_sum_offset_lookup (htab, XEXP (x, 0), NO_INSERT);
-+    }
-+  return false;
-+}
-+
-+/* Delete any high-part relocations whose partnering low parts are dead. */
-+
-+static void
-+mips_reorg_process_insns (void)
-+{
-+  rtx insn, next_insn;
-+  htab_t htab;
-+
-+  /* Force all instructions to be split into their final form.  */
-+  split_all_insns_noflow ();
-+
-+  /* Recalculate instruction lengths without taking nops into account.  */
-+  shorten_branches (get_insns ());
-+
-+  htab = htab_create (37, mips_lo_sum_offset_hash,
-+		      mips_lo_sum_offset_eq, free);
-+
-+  /* Make a first pass over the instructions, recording all the LO_SUMs.  */
-+  for (insn = get_insns (); insn != 0; insn = NEXT_INSN (insn))
-+    if (USEFUL_INSN_P (insn))
-+      for_each_rtx (&PATTERN (insn), mips_record_lo_sum, htab);
-+
-+  /* Make a second pass over the instructions.  Delete orphaned
-+     high-part relocations or turn them into NOPs.  Avoid hazards
-+     by inserting NOPs.  */
-+  for (insn = get_insns (); insn != 0; insn = next_insn)
-+    {
-+      next_insn = NEXT_INSN (insn);
-+      if (USEFUL_INSN_P (insn))
-+	{
-+	  /* INSN is a single instruction.  Delete it if it's an
-+	     orphaned high-part relocation.  */
-+	  if (mips_orphaned_high_part_p (htab, insn))
-+	    delete_insn (insn);
-+	}
-+    }
-+
-+  htab_delete (htab);
-+}
-+
-+/* Implement TARGET_MACHINE_DEPENDENT_REORG.  */
-+
-+static void
-+mips_reorg (void)
-+{
-+  mips_reorg_process_insns ();
-+}
-+
 +/* Implement TARGET_ASM_OUTPUT_MI_THUNK.  Generate rtl rather than asm text
 +   in order to avoid duplicating too much logic from elsewhere.  */
 +
@@ -7013,9 +6754,6 @@ index 0000000..a646a57
 +#undef TARGET_ADDRESS_COST
 +#define TARGET_ADDRESS_COST riscv_address_cost
 +
-+#undef TARGET_MACHINE_DEPENDENT_REORG
-+#define TARGET_MACHINE_DEPENDENT_REORG mips_reorg
-+
 +#undef  TARGET_PREFERRED_RELOAD_CLASS
 +#define TARGET_PREFERRED_RELOAD_CLASS mips_preferred_reload_class
 +
@@ -7120,10 +6858,10 @@ index 0000000..a646a57
 +#include "gt-riscv.h"
 diff --git a/gcc/config/riscv/riscv.h b/gcc/config/riscv/riscv.h
 new file mode 100644
-index 0000000..47c3bbb
+index 0000000..9972f4a
 --- /dev/null
 +++ b/gcc/config/riscv/riscv.h
-@@ -0,0 +1,1187 @@
+@@ -0,0 +1,1161 @@
 +/* Definition of RISC-V target for GNU compiler.
 +   Copyright (C) 2011-2014 Free Software Foundation, Inc.
 +   Contributed by Andrew Waterman (waterman@cs.berkeley.edu) at UC Berkeley.
@@ -7645,7 +7383,6 @@ index 0000000..47c3bbb
 +#define HARD_FRAME_POINTER_REGNUM 2
 +#define STACK_POINTER_REGNUM 14
 +#define THREAD_POINTER_REGNUM 15
-+#define GP_REGNUM 31
 +
 +/* These two registers don't really exist: they get eliminated to either
 +   the stack or hard frame pointer.  */
@@ -8142,31 +7879,6 @@ index 0000000..47c3bbb
 +#define ASM_GENERATE_INTERNAL_LABEL(LABEL,PREFIX,NUM)			\
 +  sprintf ((LABEL), "*%s%s%ld", (LOCAL_LABEL_PREFIX), (PREFIX), (long)(NUM))
 +
-+/* Put small global uninitialized data in .sbss, otherwise in .bss. */
-+
-+#undef  ASM_OUTPUT_ALIGNED_COMMON
-+#define ASM_OUTPUT_ALIGNED_COMMON(FILE, NAME, SIZE, ALIGN)		\
-+do {									\
-+  targetm.asm_out.globalize_label (FILE, NAME);				\
-+  ASM_OUTPUT_ALIGNED_LOCAL (FILE, NAME, SIZE, ALIGN);			\
-+} while (0)
-+
-+/* Likewise, for local data. */
-+
-+#undef  ASM_OUTPUT_ALIGNED_LOCAL
-+#define ASM_OUTPUT_ALIGNED_LOCAL(FILE, NAME, SIZE, ALIGN)		\
-+do {									\
-+  if (riscv_size_ok_for_small_data_p (SIZE))				\
-+    switch_to_section (sbss_section);					\
-+  else									\
-+    switch_to_section (bss_section);					\
-+  ASM_OUTPUT_ALIGN (FILE, exact_log2 ((ALIGN) / BITS_PER_UNIT));	\
-+  ASM_OUTPUT_TYPE_DIRECTIVE (FILE, NAME, "object");			\
-+  ASM_OUTPUT_SIZE_DIRECTIVE (FILE, NAME, SIZE);				\
-+  ASM_OUTPUT_LABEL (FILE, NAME);					\
-+  ASM_OUTPUT_SKIP (FILE, (SIZE) ? (SIZE) : 1);				\
-+} while (0)
-+
 +/* This is how to output an element of a case-vector that is absolute.  */
 +
 +#define ASM_OUTPUT_ADDR_VEC_ELT(STREAM, VALUE)				\
@@ -8313,10 +8025,10 @@ index 0000000..47c3bbb
 +  (((GLOBAL) ? DW_EH_PE_indirect : 0) | DW_EH_PE_absptr)
 diff --git a/gcc/config/riscv/riscv.md b/gcc/config/riscv/riscv.md
 new file mode 100644
-index 0000000..0e3d507
+index 0000000..92b9794
 --- /dev/null
 +++ b/gcc/config/riscv/riscv.md
-@@ -0,0 +1,2425 @@
+@@ -0,0 +1,2390 @@
 +;; Machine description for RISC-V for GNU compiler.
 +;; Copyright (C) 2011-2014 Free Software Foundation, Inc.
 +;; Contributed by Andrew Waterman (waterman@cs.berkeley.edu) at UC Berkeley.
@@ -8352,13 +8064,12 @@ index 0000000..0e3d507
 +  UNSPEC_EH_RETURN
 +
 +  ;; Symbolic accesses.
++  UNSPEC_ADDRESS_FIRST
 +  UNSPEC_LOAD_GOT
-+  UNSPEC_TLS_LE_ADD
-+  UNSPEC_TLS_IE_ADD
-+  UNSPEC_TLS_GD
++  UNSPEC_TLS
++  UNSPEC_TLS_LE
 +  UNSPEC_TLS_IE
-+  UNSPEC_TLS_IE_HI
-+  UNSPEC_TLS_IE_LO
++  UNSPEC_TLS_GD
 +
 +  ;; Blockage and synchronisation.
 +  UNSPEC_BLOCKAGE
@@ -9763,20 +9474,9 @@ index 0000000..0e3d507
 +	(unspec:P [(match_operand:P 1 "register_operand" "r")
 +		   (match_operand:P 2 "register_operand" "r")
 +		   (match_operand:P 3 "symbolic_operand" "")]
-+		  UNSPEC_TLS_LE_ADD))]
-+  "!flag_pic"
++		  UNSPEC_TLS_LE))]
++  "!flag_pic || flag_pie"
 +  "add\t%0,%1,%2,%%tprel_add(%3)"
-+  [(set_attr "type" "arith")
-+   (set_attr "mode" "<MODE>")])
-+
-+(define_insn "tls_add_tp_ie<mode>"
-+  [(set (match_operand:P 0 "register_operand" "=r")
-+	(unspec:P [(match_operand:P 1 "register_operand" "r")
-+		   (match_operand:P 2 "register_operand" "r")
-+		   (match_operand:P 3 "symbolic_operand" "")]
-+		  UNSPEC_TLS_IE_ADD))]
-+  "!flag_pic"
-+  "add\t%0,%1,%2,%%tls_ie_add(%3)"
 +  [(set_attr "type" "arith")
 +   (set_attr "mode" "<MODE>")])
 +
@@ -9796,25 +9496,6 @@ index 0000000..0e3d507
 +  "flag_pic"
 +  "la.tls.ie\t%0,%1"
 +  [(set_attr "got" "load")
-+   (set_attr "mode" "<MODE>")])
-+
-+(define_insn "got_load_tls_ie_hi<mode>"
-+  [(set (match_operand:P 0 "register_operand" "=r")
-+       (unspec:P [(match_operand:P 1 "symbolic_operand" "")]
-+                 UNSPEC_TLS_IE_HI))]
-+  "!flag_pic"
-+  "lui\t%0,%%tls_ie_hi(%1)"
-+  [(set_attr "type" "arith")
-+   (set_attr "mode" "<MODE>")])
-+
-+(define_insn "got_load_tls_ie_lo<mode>"
-+  [(set (match_operand:P 0 "register_operand" "=r")
-+	(unspec:P [(match_operand:P 1 "register_operand" "r")
-+		   (match_operand:P 2 "symbolic_operand" "")]
-+		  UNSPEC_TLS_IE_LO))]
-+  "!flag_pic"
-+  "<load>\t%0,%%tls_ie_lo(%2)(%1)"
-+  [(set_attr "type" "load")
 +   (set_attr "mode" "<MODE>")])
 +
 +;; Instructions for adding the low 16 bits of an address to a register.
@@ -10738,10 +10419,6 @@ index 0000000..0e3d507
 +
 +(include "sync.md")
 +(include "peephole.md")
-+
-+(define_c_enum "unspec" [
-+  UNSPEC_ADDRESS_FIRST
-+])
 diff --git a/gcc/config/riscv/riscv.opt b/gcc/config/riscv/riscv.opt
 new file mode 100644
 index 0000000..0fdcb73
@@ -10813,7 +10490,7 @@ index 0000000..0fdcb73
 +Use hardware atomic memory instructions.  Enabled by default, use -mno-atomic to disable
 diff --git a/gcc/config/riscv/sync.md b/gcc/config/riscv/sync.md
 new file mode 100644
-index 0000000..80105ef
+index 0000000..cdf22c6
 --- /dev/null
 +++ b/gcc/config/riscv/sync.md
 @@ -0,0 +1,197 @@
@@ -10985,7 +10662,7 @@ index 0000000..80105ef
 +  rtx result = operands[0];
 +  rtx mem = operands[1];
 +  rtx model = operands[2];
-+  rtx addr = XEXP (mem, 0);
++  rtx addr = force_reg (Pmode, XEXP (mem, 0));
 +
 +  rtx aligned_addr = gen_reg_rtx (Pmode);
 +  emit_move_insn (aligned_addr, gen_rtx_AND (Pmode, addr, GEN_INT (-4)));
@@ -11037,6 +10714,80 @@ index 0000000..51c2b17
 +MULTILIB_DIRNAMES = 64 32 soft-float fdiv no-atomic
 +MULTILIB_EXCEPTIONS = *msoft-float*/*mfdiv*
 +MULTILIB_OSDIRNAMES = ../lib ../lib32
+diff --git a/gcc/configure b/gcc/configure
+index eae8fc8..e89f5b3 100755
+--- a/gcc/configure
++++ b/gcc/configure
+@@ -23506,6 +23506,25 @@ x3:	.space 4
+ 	tls_first_minor=14
+ 	tls_as_opt="-a32 --fatal-warnings"
+ 	;;
++  riscv*-*-*)
++    conftest_s='
++	.section .tdata,"awT",@progbits
++x:
++	.word 2
++	.text
++	la.tls.gd a0,x
++	la.tls.ie a1,x
++	lui v0,%tls_ie_hi(x)
++	lw v0,%tls_ie_lo(x)(v0)
++	add v0,v0,tp,%tls_ie_add(x)
++	lw v0,%tls_ie_off(x)(v0)
++        lui v0,%tprel_hi(x)
++	add v0,v0,tp,%tprel_add(x)
++	lw v0,%tprel_lo(x)(v0)'
++	tls_first_major=2
++	tls_first_minor=21
++	tls_as_opt='-m32 --fatal-warnings'
++	;;
+   s390-*-*)
+     conftest_s='
+ 	.section ".tdata","awT",@progbits
+diff --git a/gcc/configure.ac b/gcc/configure.ac
+index 87c7d6b..0f074bc 100644
+--- a/gcc/configure.ac
++++ b/gcc/configure.ac
+@@ -3178,6 +3178,25 @@ x3:	.space 4
+ 	tls_first_minor=14
+ 	tls_as_opt="-a32 --fatal-warnings"
+ 	;;
++  riscv*-*-*)
++    conftest_s='
++	.section .tdata,"awT",@progbits
++x:
++	.word 2
++	.text
++	la.tls.gd a0,x
++	la.tls.ie a1,x
++	lui v0,%tls_ie_hi(x)
++	lw v0,%tls_ie_lo(x)(v0)
++	add v0,v0,tp,%tls_ie_add(x)
++	lw v0,%tls_ie_off(x)(v0)
++	lui v0,%tprel_hi(x)
++	add v0,v0,tp,%tprel_add(x)
++	lw v0,%tprel_lo(x)(v0)'
++	tls_first_major=2
++	tls_first_minor=21
++	tls_as_opt='-m32 --fatal-warnings'
++	;;
+   s390-*-*)
+     conftest_s='
+ 	.section ".tdata","awT",@progbits
+diff --git a/gcc/testsuite/gcc.c-torture/execute/20101011-1.c b/gcc/testsuite/gcc.c-torture/execute/20101011-1.c
+index 1952dbd..7015082 100644
+--- a/gcc/testsuite/gcc.c-torture/execute/20101011-1.c
++++ b/gcc/testsuite/gcc.c-torture/execute/20101011-1.c
+@@ -6,6 +6,9 @@
+ #elif defined (__powerpc__) || defined (__PPC__) || defined (__ppc__) || defined (__POWERPC__) || defined (__ppc)
+   /* On PPC division by zero does not trap.  */
+ # define DO_TEST 0
++#elif defined (__riscv__)
++  /* On RISC-V division by zero does not trap.  */
++# define DO_TEST 0
+ #elif defined (__SPU__)
+   /* On SPU division by zero does not trap.  */
+ # define DO_TEST 0
 diff --git a/libatomic/configure.tgt b/libatomic/configure.tgt
 index a3757ef..516348d 100644
 --- a/libatomic/configure.tgt
@@ -11318,54 +11069,3 @@ index 0000000..d5df179
 +	echo '# define TFLOAT' >> tp-bit.c
 +	cat $(srcdir)/fp-bit.c >> tp-bit.c
 +	echo '#endif' >> tp-bit.c
--- 
-1.8.5.5
-
-
-From f8ee7238fbedfaee25825dbccb0489bfc01b2dd7 Mon Sep 17 00:00:00 2001
-From: Palmer Dabbelt <palmer.dabbelt@eecs.berkeley.edu>
-Date: Fri, 12 Sep 2014 10:07:39 -0700
-Subject: [PATCH 2/2] Support the new riscv{32,64}-{linux,elf} RISC-V tuples
-
-This causes riscv64 to use the riscv directory, which means that the
-other RISC-V variants will probably end up using that as well.  I
-think this is probably the right thing to do: it's what Intel does,
-but not what ARM or Tilera do, but I think that's probably OK because
-riscv* should be fairly similar (as opposed to aarch64, which IIRC is
-pretty different).
----
- gcc/config.gcc     | 3 +++
- libgcc/config.host | 3 +++
- 2 files changed, 6 insertions(+)
-
-diff --git a/gcc/config.gcc b/gcc/config.gcc
-index d5ee649..1486ae7 100644
---- a/gcc/config.gcc
-+++ b/gcc/config.gcc
-@@ -447,6 +447,9 @@ powerpc*-*-*)
- 	esac
- 	extra_options="${extra_options} g.opt fused-madd.opt rs6000/rs6000-tables.opt"
- 	;;
-+riscv*)
-+	cpu_type=riscv
-+	;;
- rs6000*-*-*)
- 	need_64bit_hwint=yes
- 	extra_options="${extra_options} g.opt fused-madd.opt rs6000/rs6000-tables.opt"
-diff --git a/libgcc/config.host b/libgcc/config.host
-index 76cd0db..2e14897 100644
---- a/libgcc/config.host
-+++ b/libgcc/config.host
-@@ -167,6 +167,9 @@ powerpc*-*-*)
- 	;;
- rs6000*-*-*)
- 	;;
-+riscv*)
-+	cpu_type=riscv
-+	;;
- score*-*-*)
- 	cpu_type=score
- 	;;
--- 
-1.8.5.5
-
