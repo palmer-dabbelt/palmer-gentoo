@@ -5,7 +5,7 @@
 EAPI="4"
 
 ETYPE="headers"
-H_SUPPORTEDARCH="alpha amd64 arc arm arm64 avr32 bfin cris frv hexagon hppa ia64 m32r m68k metag microblaze mips mn10300 openrisc ppc ppc64 riscv s390 score sh sparc tile x86 xtensa"
+H_SUPPORTEDARCH="alpha amd64 arc arm arm64 avr32 bfin cris frv hexagon hppa ia64 m32r m68k metag microblaze mips mn10300 openrisc ppc ppc64 riscv32 riscv64 s390 score sh sparc tile x86 xtensa"
 inherit kernel-2
 detect_version
 
