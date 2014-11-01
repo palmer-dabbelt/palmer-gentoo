@@ -415,8 +415,7 @@ ninj() { [[ ${type} == "kern" ]] && echo $1 || echo $2 ; }
 				echo ppc
 			fi
 			;;
-		riscv32*)	echo riscv32;;
-		riscv64*)	echo riscv64;;
+		riscv*) 	echo riscv;;
 		s390*)		echo s390;;
 		score)		echo score;;
 		sh64*)		ninj sh64 sh;;
