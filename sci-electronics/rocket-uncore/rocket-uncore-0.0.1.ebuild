@@ -12,10 +12,10 @@ KEYWORDS="amd64 amd64-linux"
 IUSE=""
 
 RDEPEND="dev-java/sbt-bin
-         dev-lang/scala"
-
-DEPEND="${RDEPEND}
+         dev-lang/scala
         sci-electronics/chisel:="
+
+DEPEND="${RDEPEND}"
 
 src_configure() {
         cat >Configfile <<EOF
