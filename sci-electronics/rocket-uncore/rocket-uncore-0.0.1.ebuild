@@ -15,7 +15,7 @@ RDEPEND="dev-java/sbt-bin
          dev-lang/scala"
 
 DEPEND="${RDEPEND}
-        sci-electronics/chisel"
+        sci-electronics/chisel:="
 
 src_configure() {
         cat >Configfile <<EOF
