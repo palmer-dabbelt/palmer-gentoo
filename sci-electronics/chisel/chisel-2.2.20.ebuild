@@ -23,6 +23,7 @@ PREFIX = ${EPREFIX}/usr
 LANGUAGES += scala
 LANGUAGES += pkgconfig
 LANGUAGES += h
+LANGUAGES += bash
 
 LIBRARIES += libchisel.jar
 SOURCES += main/scala/Driver.scala
@@ -38,6 +39,12 @@ SOURCES += main/resources/emulator_mod.h
 
 HEADERS += chisel/emulator_api.h
 SOURCES += main/resources/emulator_api.h
+
+BINARIES += chisel-hdrtar
+SOURCES  += chisel-hdrtar.bash
+
+BINARIES += chisel-jargen
+SOURCES  += chisel-jargen.bash
 EOF
 
         cat > src/chisel.pc <<EOF
@@ -52,6 +59,14 @@ Version: $PV
 Libs: -lchisel
 Cflags: -I\${includedir}/chisel
 URL: http://github.com/ucb-bar/chisel
+EOF
+
+        cat >src/chisel-jargen.bash <<EOF
+cat ${EPREFIX}/usr/lib/libchisel.jar
+EOF
+
+        cat >src/chisel-hdrtar.bash <<EOF
+tar -C ${EPREFIX}/usr/include/chisel -c .
 EOF
 
 	pconfigure
