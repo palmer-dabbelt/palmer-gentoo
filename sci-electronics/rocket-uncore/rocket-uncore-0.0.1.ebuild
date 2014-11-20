@@ -44,6 +44,7 @@ Name: rocket-uncore
 Description: The uncore for Rocket
 Version: $PV
 Libs: -lrocket-uncore
+Requires: chisel
 URL: http://github.com/ucb-bar/uncore
 EOF
 
