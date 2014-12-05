@@ -10,7 +10,7 @@ SLOT="0"
 KEYWORDS="amd64 amd64-linux"
 IUSE=""
 
-RDEPEND="app-cript/gpgme
+RDEPEND="app-crypt/gpgme
          dev-db/sqlite
          dev-libs/gitdate
          net-libs/gnutls
