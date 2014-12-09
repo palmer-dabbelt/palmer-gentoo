@@ -1,6 +1,6 @@
 diff -Nur original-glibc/scripts/config.sub glibc/scripts/config.sub
 --- original-glibc/scripts/config.sub	2014-09-07 01:09:09.000000000 -0700
-+++ glibc/scripts/config.sub	2014-12-09 14:40:30.020634841 -0800
++++ glibc/scripts/config.sub	2014-12-09 15:56:03.366409473 -0800
 @@ -302,6 +302,7 @@
  	| pdp10 | pdp11 | pj | pjl \
  	| powerpc | powerpc64 | powerpc64le | powerpcle \
@@ -11,7 +11,7 @@ diff -Nur original-glibc/scripts/config.sub glibc/scripts/config.sub
  	| sh | sh[1234] | sh[24]a | sh[24]aeb | sh[23]e | sh[34]eb | sheb | shbe | shle | sh[1234]le | sh3ele \
 diff -Nur original-glibc/shlib-versions glibc/shlib-versions
 --- original-glibc/shlib-versions	2014-09-07 01:09:09.000000000 -0700
-+++ glibc/shlib-versions	2014-12-09 14:40:30.020634841 -0800
++++ glibc/shlib-versions	2014-12-09 15:56:03.366409473 -0800
 @@ -25,6 +25,7 @@
  powerpc64-.*-linux.*	DEFAULT			GLIBC_2.3
  powerpc.*le-.*-linux.*	DEFAULT			GLIBC_2.17
@@ -20,12 +20,28 @@ diff -Nur original-glibc/shlib-versions glibc/shlib-versions
  
  # Configuration		Library=version		Earliest symbol set (optional)
  # -------------		---------------		------------------------------
+diff -Nur original-glibc/sunrpc/rpc_main.c glibc/sunrpc/rpc_main.c
+--- original-glibc/sunrpc/rpc_main.c	2014-09-07 01:09:09.000000000 -0700
++++ glibc/sunrpc/rpc_main.c	2014-12-09 15:56:03.366409473 -0800
+@@ -38,7 +38,9 @@
+ #include <stdio.h>
+ #include <string.h>
+ #include <unistd.h>
++#ifndef __APPLE__
+ #include <libintl.h>
++#endif
+ #include <locale.h>
+ #include <ctype.h>
+ #include <sys/types.h>
 diff -Nur original-glibc/sysdeps/riscv/bits/atomic.h glibc/sysdeps/riscv/bits/atomic.h
 --- original-glibc/sysdeps/riscv/bits/atomic.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/bits/atomic.h	2014-12-09 14:32:35.932301937 -0800
-@@ -0,0 +1,151 @@
-+/* Low-level functions for atomic operations. Mips version.
-+   Copyright (C) 2005 Free Software Foundation, Inc.
++++ glibc/sysdeps/riscv/bits/atomic.h	2014-12-09 15:54:39.020723609 -0800
+@@ -0,0 +1,153 @@
++/* Low-level functions for atomic operations. RISC-V version.
++   Copyright (C) 2011-2014 Free Software Foundation, Inc.
++
++   Contributed by Andrew Waterman (waterman@cs.berkeley.edu) at UC Berkeley.
++
 +   This file is part of the GNU C Library.
 +
 +   The GNU C Library is free software; you can redistribute it and/or
@@ -43,11 +59,10 @@ diff -Nur original-glibc/sysdeps/riscv/bits/atomic.h glibc/sysdeps/riscv/bits/at
 +   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
 +   02111-1307 USA.  */
 +
-+#ifndef _MIPS_BITS_ATOMIC_H
-+#define _MIPS_BITS_ATOMIC_H 1
++#ifndef _RISCV_BITS_ATOMIC_H
++#define _RISCV_BITS_ATOMIC_H 1
 +
 +#include <inttypes.h>
-+#include <sgidefs.h>
 +
 +typedef int32_t atomic32_t;
 +typedef uint32_t uatomic32_t;
@@ -177,7 +192,7 @@ diff -Nur original-glibc/sysdeps/riscv/bits/atomic.h glibc/sysdeps/riscv/bits/at
 +#endif /* bits/atomic.h */
 diff -Nur original-glibc/sysdeps/riscv/bits/dlfcn.h glibc/sysdeps/riscv/bits/dlfcn.h
 --- original-glibc/sysdeps/riscv/bits/dlfcn.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/bits/dlfcn.h	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/bits/dlfcn.h	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,66 @@
 +/* System dependent definitions for run-time dynamic loading.
 +   Copyright (C) 1996, 1997, 1999, 2000, 2001, 2004
@@ -247,7 +262,7 @@ diff -Nur original-glibc/sysdeps/riscv/bits/dlfcn.h glibc/sysdeps/riscv/bits/dlf
 +#endif
 diff -Nur original-glibc/sysdeps/riscv/bits/endian.h glibc/sysdeps/riscv/bits/endian.h
 --- original-glibc/sysdeps/riscv/bits/endian.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/bits/endian.h	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/bits/endian.h	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,5 @@
 +#ifndef _ENDIAN_H
 +# error "Never use <bits/endian.h> directly; include <endian.h> instead."
@@ -256,7 +271,7 @@ diff -Nur original-glibc/sysdeps/riscv/bits/endian.h glibc/sysdeps/riscv/bits/en
 +#define __BYTE_ORDER __LITTLE_ENDIAN
 diff -Nur original-glibc/sysdeps/riscv/bits/fenv.h glibc/sysdeps/riscv/bits/fenv.h
 --- original-glibc/sysdeps/riscv/bits/fenv.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/bits/fenv.h	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/bits/fenv.h	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,57 @@
 +/* Copyright (C) 1998, 1999, 2000 Free Software Foundation, Inc.
 +   This file is part of the GNU C Library.
@@ -317,7 +332,7 @@ diff -Nur original-glibc/sysdeps/riscv/bits/fenv.h glibc/sysdeps/riscv/bits/fenv
 +#define FE_DFL_ENV	((__const fenv_t *) -1)
 diff -Nur original-glibc/sysdeps/riscv/bits/ipctypes.h glibc/sysdeps/riscv/bits/ipctypes.h
 --- original-glibc/sysdeps/riscv/bits/ipctypes.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/bits/ipctypes.h	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/bits/ipctypes.h	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,32 @@
 +/* bits/ipctypes.h -- Define some types used by SysV IPC/MSG/SHM.  MIPS version
 +   Copyright (C) 2002 Free Software Foundation, Inc.
@@ -353,8 +368,8 @@ diff -Nur original-glibc/sysdeps/riscv/bits/ipctypes.h glibc/sysdeps/riscv/bits/
 +#endif /* bits/ipctypes.h */
 diff -Nur original-glibc/sysdeps/riscv/bits/link.h glibc/sysdeps/riscv/bits/link.h
 --- original-glibc/sysdeps/riscv/bits/link.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/bits/link.h	2014-12-09 14:32:35.932301937 -0800
-@@ -0,0 +1,76 @@
++++ glibc/sysdeps/riscv/bits/link.h	2014-12-09 15:54:39.020723609 -0800
+@@ -0,0 +1,56 @@
 +/* Copyright (C) 2005, 2009 Free Software Foundation, Inc.
 +   This file is part of the GNU C Library.
 +
@@ -377,63 +392,43 @@ diff -Nur original-glibc/sysdeps/riscv/bits/link.h glibc/sysdeps/riscv/bits/link
 +# error "Never include <bits/link.h> directly; use <link.h> instead."
 +#endif
 +
-+typedef struct La_mips_64_regs
++typedef struct La_riscv_regs
 +{
-+  unsigned long lr_reg[8]; /* $a0 through $a7 */
-+  double lr_fpreg[8]; /* $f4 throgh $f11 */
++  unsigned long lr_reg[8]; /* a0 - a7 */
++  double lr_fpreg[8]; /* fa0 - fa7 */
 +  unsigned long lr_ra;
 +  unsigned long lr_sp;
-+} La_mips_64_regs;
++} La_riscv_regs;
 +
 +/* Return values for calls from PLT on MIPS.  */
-+typedef struct La_mips_64_retval
++typedef struct La_riscv_retval
 +{
-+  unsigned long lrv_v0;
-+  unsigned long lrv_v1;
-+  double lrv_fv0;
-+  double lrv_fv1;
-+} La_mips_64_retval;
++  unsigned long lrv_a0;
++  unsigned long lrv_a1;
++  double lrv_fa0;
++  double lrv_fa1;
++} La_riscv_retval;
 +
 +__BEGIN_DECLS
 +
-+#if _RISCV_SIM == _ABI32
-+
-+extern Elf32_Addr la_mips_n32_gnu_pltenter (Elf32_Sym *__sym, unsigned int __ndx,
-+					    uintptr_t *__refcook,
-+					    uintptr_t *__defcook,
-+					    La_mips_64_regs *__regs,
-+					    unsigned int *__flags,
-+					    const char *__symname,
-+					    long int *__framesizep);
-+extern unsigned int la_mips_n32_gnu_pltexit (Elf32_Sym *__sym, unsigned int __ndx,
-+					     uintptr_t *__refcook,
-+					     uintptr_t *__defcook,
-+					     const La_mips_64_regs *__inregs,
-+					     La_mips_64_retval *__outregs,
-+					     const char *__symname);
-+
-+#else
-+
-+extern Elf64_Addr la_mips_n64_gnu_pltenter (Elf64_Sym *__sym, unsigned int __ndx,
-+					    uintptr_t *__refcook,
-+					    uintptr_t *__defcook,
-+					    La_mips_64_regs *__regs,
-+					    unsigned int *__flags,
-+					    const char *__symname,
-+					    long int *__framesizep);
-+extern unsigned int la_mips_n64_gnu_pltexit (Elf64_Sym *__sym, unsigned int __ndx,
-+					     uintptr_t *__refcook,
-+					     uintptr_t *__defcook,
-+					     const La_mips_64_regs *__inregs,
-+					     La_mips_64_retval *__outregs,
-+					     const char *__symname);
-+
-+#endif
++extern ElfW(Addr) la_riscv_gnu_pltenter (ElfW(Sym) *__sym, unsigned int __ndx,
++					 uintptr_t *__refcook,
++					 uintptr_t *__defcook,
++					 La_riscv_regs *__regs,
++					 unsigned int *__flags,
++					 const char *__symname,
++					 long int *__framesizep);
++extern unsigned int la_riscv_gnu_pltexit (ElfW(Sym) *__sym, unsigned int __ndx,
++					  uintptr_t *__refcook,
++					  uintptr_t *__defcook,
++					  const La_riscv_regs *__inregs,
++					  La_riscv_retval *__outregs,
++					  const char *__symname);
 +
 +__END_DECLS
 diff -Nur original-glibc/sysdeps/riscv/bits/linkmap.h glibc/sysdeps/riscv/bits/linkmap.h
 --- original-glibc/sysdeps/riscv/bits/linkmap.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/bits/linkmap.h	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/bits/linkmap.h	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,4 @@
 +struct link_map_machine
 +  {
@@ -441,8 +436,8 @@ diff -Nur original-glibc/sysdeps/riscv/bits/linkmap.h glibc/sysdeps/riscv/bits/l
 +  };
 diff -Nur original-glibc/sysdeps/riscv/bits/mathdef.h glibc/sysdeps/riscv/bits/mathdef.h
 --- original-glibc/sysdeps/riscv/bits/mathdef.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/bits/mathdef.h	2014-12-09 14:32:35.932301937 -0800
-@@ -0,0 +1,45 @@
++++ glibc/sysdeps/riscv/bits/mathdef.h	2014-12-09 15:54:39.020723609 -0800
+@@ -0,0 +1,43 @@
 +/* Copyright (C) 1997, 1998, 1999, 2000, 2002, 2003, 2004, 2007
 +	Free Software Foundation, Inc.
 +   This file is part of the GNU C Library.
@@ -466,8 +461,6 @@ diff -Nur original-glibc/sysdeps/riscv/bits/mathdef.h glibc/sysdeps/riscv/bits/m
 +# error "Never use <bits/mathdef.h> directly; include <math.h> instead"
 +#endif
 +
-+#include <sgidefs.h>
-+
 +#if defined  __USE_ISOC99 && defined _MATH_H && !defined _MATH_H_MATHDEF
 +# define _MATH_H_MATHDEF	1
 +
@@ -490,7 +483,7 @@ diff -Nur original-glibc/sysdeps/riscv/bits/mathdef.h glibc/sysdeps/riscv/bits/m
 +#endif
 diff -Nur original-glibc/sysdeps/riscv/bits/nan.h glibc/sysdeps/riscv/bits/nan.h
 --- original-glibc/sysdeps/riscv/bits/nan.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/bits/nan.h	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/bits/nan.h	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,56 @@
 +/* `NAN' constant for IEEE 754 machines.
 +   Copyright (C) 1992, 1996, 1997, 1999, 2002, 2004
@@ -550,7 +543,7 @@ diff -Nur original-glibc/sysdeps/riscv/bits/nan.h glibc/sysdeps/riscv/bits/nan.h
 +#endif	/* GCC.  */
 diff -Nur original-glibc/sysdeps/riscv/bits/setjmp.h glibc/sysdeps/riscv/bits/setjmp.h
 --- original-glibc/sysdeps/riscv/bits/setjmp.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/bits/setjmp.h	2014-12-09 14:38:38.665778707 -0800
++++ glibc/sysdeps/riscv/bits/setjmp.h	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,43 @@
 +/* Define the machine-dependent type `jmp_buf'.  RISC-V version.
 +   Copyright (C) 1992,1993,1995,1997,2000,2002,2003,2004,2005,2006
@@ -597,7 +590,7 @@ diff -Nur original-glibc/sysdeps/riscv/bits/setjmp.h glibc/sysdeps/riscv/bits/se
 +#endif /* _RISCV_BITS_SETJMP_H */
 diff -Nur original-glibc/sysdeps/riscv/bits/string.h glibc/sysdeps/riscv/bits/string.h
 --- original-glibc/sysdeps/riscv/bits/string.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/bits/string.h	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/bits/string.h	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,25 @@
 +/* This file should provide inline versions of string functions.
 +
@@ -624,45 +617,19 @@ diff -Nur original-glibc/sysdeps/riscv/bits/string.h glibc/sysdeps/riscv/bits/st
 +#endif /* __GNUC__ && !__cplusplus */
 +
 +#endif /* bits/string.h */
-diff -Nur original-glibc/sysdeps/riscv/bits/wordsize.h glibc/sysdeps/riscv/bits/wordsize.h
---- original-glibc/sysdeps/riscv/bits/wordsize.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/bits/wordsize.h	2014-12-09 14:32:35.932301937 -0800
-@@ -0,0 +1,22 @@
-+/* Copyright (C) 2002, 2003 Free Software Foundation, Inc.
-+   This file is part of the GNU C Library.
-+
-+   The GNU C Library is free software; you can redistribute it and/or
-+   modify it under the terms of the GNU Lesser General Public
-+   License as published by the Free Software Foundation; either
-+   version 2.1 of the License, or (at your option) any later version.
-+
-+   The GNU C Library is distributed in the hope that it will be useful,
-+   but WITHOUT ANY WARRANTY; without even the implied warranty of
-+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+   Lesser General Public License for more details.
-+
-+   You should have received a copy of the GNU Lesser General Public
-+   License along with the GNU C Library; if not, write to the Free
-+   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
-+   02111-1307 USA.  */
-+
-+#define __WORDSIZE	_RISCV_SZPTR
-+#if _RISCV_SIM == _ABI64
-+# define __WORDSIZE_COMPAT32	1
-+#endif
 diff -Nur original-glibc/sysdeps/riscv/bsd-_setjmp.c glibc/sysdeps/riscv/bsd-_setjmp.c
 --- original-glibc/sysdeps/riscv/bsd-_setjmp.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/bsd-_setjmp.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/bsd-_setjmp.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1 @@
 +/* _setjmp is implemented in setjmp.S */
 diff -Nur original-glibc/sysdeps/riscv/bsd-setjmp.c glibc/sysdeps/riscv/bsd-setjmp.c
 --- original-glibc/sysdeps/riscv/bsd-setjmp.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/bsd-setjmp.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/bsd-setjmp.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1 @@
 +/* setjmp is implemented in setjmp.S */
 diff -Nur original-glibc/sysdeps/riscv/configure glibc/sysdeps/riscv/configure
 --- original-glibc/sysdeps/riscv/configure	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/configure	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/configure	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,87 @@
 +
 +# as_fn_set_status STATUS
@@ -753,15 +720,35 @@ diff -Nur original-glibc/sysdeps/riscv/configure glibc/sysdeps/riscv/configure
 +
 diff -Nur original-glibc/sysdeps/riscv/configure.in glibc/sysdeps/riscv/configure.in
 --- original-glibc/sysdeps/riscv/configure.in	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/configure.in	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/configure.in	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,4 @@
 +GLIBC_PROVIDES dnl See aclocal.m4 in the top level source directory.
 +# Local configure fragment for sysdeps/riscv/elf.
 +
 +AC_DEFINE(PI_STATIC_AND_HIDDEN)
+diff -Nur original-glibc/sysdeps/riscv/crti.S glibc/sysdeps/riscv/crti.S
+--- original-glibc/sysdeps/riscv/crti.S	1969-12-31 16:00:00.000000000 -0800
++++ glibc/sysdeps/riscv/crti.S	2014-12-09 15:54:39.020723609 -0800
+@@ -0,0 +1,16 @@
++/* Facilitate pthread initialization using init_array.  */
++
++#ifdef PREINIT_FUNCTION
++
++#if PREINIT_FUNCTION_WEAK
++# error PREINIT_FUNCTION_WEAK is unsupported
++#endif
++
++	.section .init_array, "aw"
++#ifdef __riscv64
++	.dword PREINIT_FUNCTION
++#else
++	.word PREINIT_FUNCTION
++#endif
++
++#endif
 diff -Nur original-glibc/sysdeps/riscv/dl-machine.h glibc/sysdeps/riscv/dl-machine.h
 --- original-glibc/sysdeps/riscv/dl-machine.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/dl-machine.h	2014-12-09 14:38:38.665778707 -0800
++++ glibc/sysdeps/riscv/dl-machine.h	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,335 @@
 +/* Machine-dependent ELF dynamic relocation inline functions.  MIPS version.
 +   Copyright (C) 1996-2001, 2002, 2003, 2004, 2005, 2006, 2007
@@ -954,17 +941,17 @@ diff -Nur original-glibc/sysdeps/riscv/dl-machine.h glibc/sysdeps/riscv/dl-machi
 +  switch (r_type)
 +    {
 +#ifndef RTLD_BOOTSTRAP
-+    case _RISCV_SIM == _ABI64 ? R_RISCV_TLS_DTPMOD64 : R_RISCV_TLS_DTPMOD32:
++    case __WORDSIZE == 64 ? R_RISCV_TLS_DTPMOD64 : R_RISCV_TLS_DTPMOD32:
 +      if (sym_map)
 +	*addr_field = sym_map->l_tls_modid;
 +      break;
 +
-+    case _RISCV_SIM == _ABI64 ? R_RISCV_TLS_DTPREL64 : R_RISCV_TLS_DTPREL32:
++    case __WORDSIZE == 64 ? R_RISCV_TLS_DTPREL64 : R_RISCV_TLS_DTPREL32:
 +      if (sym != NULL)
 +	*addr_field = TLS_DTPREL_VALUE (sym) + reloc->r_addend;
 +      break;
 +
-+    case _RISCV_SIM == _ABI64 ? R_RISCV_TLS_TPREL64 : R_RISCV_TLS_TPREL32:
++    case __WORDSIZE == 64 ? R_RISCV_TLS_TPREL64 : R_RISCV_TLS_TPREL32:
 +      if (sym != NULL)
 +	{
 +	  CHECK_STATIC_TLS (map, sym_map);
@@ -1027,8 +1014,8 @@ diff -Nur original-glibc/sysdeps/riscv/dl-machine.h glibc/sysdeps/riscv/dl-machi
 +#endif
 +
 +    case R_RISCV_JUMP_SLOT:
-+    case _RISCV_SIM == _ABI64 ? R_RISCV_64 : R_RISCV_32:
-+      *addr_field = value + reloc->r_addend;
++    case __WORDSIZE == 64 ? R_RISCV_64 : R_RISCV_32:
++      *addr_field = value;
 +      break;
 +
 +    case R_RISCV_NONE:
@@ -1100,7 +1087,7 @@ diff -Nur original-glibc/sysdeps/riscv/dl-machine.h glibc/sysdeps/riscv/dl-machi
 +#endif /* RESOLVE_MAP */
 diff -Nur original-glibc/sysdeps/riscv/dl-tls.h glibc/sysdeps/riscv/dl-tls.h
 --- original-glibc/sysdeps/riscv/dl-tls.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/dl-tls.h	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/dl-tls.h	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,49 @@
 +/* Thread-local storage handling in the ELF dynamic linker.  MIPS version.
 +   Copyright (C) 2005 Free Software Foundation, Inc.
@@ -1153,7 +1140,7 @@ diff -Nur original-glibc/sysdeps/riscv/dl-tls.h glibc/sysdeps/riscv/dl-tls.h
 +#define TLS_DTV_UNALLOCATED	((void *) -1l)
 diff -Nur original-glibc/sysdeps/riscv/dl-trampoline.S glibc/sysdeps/riscv/dl-trampoline.S
 --- original-glibc/sysdeps/riscv/dl-trampoline.S	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/dl-trampoline.S	2014-12-09 14:38:38.665778707 -0800
++++ glibc/sysdeps/riscv/dl-trampoline.S	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,41 @@
 +#include <sysdep.h>
 +#include <sys/asm.h>
@@ -1198,8 +1185,8 @@ diff -Nur original-glibc/sysdeps/riscv/dl-trampoline.S glibc/sysdeps/riscv/dl-tr
 +END(_dl_runtime_resolve)
 diff -Nur original-glibc/sysdeps/riscv/fpu/bits/mathinline.h glibc/sysdeps/riscv/fpu/bits/mathinline.h
 --- original-glibc/sysdeps/riscv/fpu/bits/mathinline.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/bits/mathinline.h	2014-12-09 14:32:35.932301937 -0800
-@@ -0,0 +1,66 @@
++++ glibc/sysdeps/riscv/fpu/bits/mathinline.h	2014-12-09 15:54:39.020723609 -0800
+@@ -0,0 +1,72 @@
 +/* Inline math functions for RISC-V.
 +   Copyright (C) 2011
 +   Free Software Foundation, Inc.
@@ -1244,14 +1231,20 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/bits/mathinline.h glibc/sysdeps/riscv
 +# define islessgreater(x, y) (!!(isless(x, y) + isgreater(x, y)))
 +# define isunordered(x, y) (((x) == (x)) + ((y) == (y)) < 2)
 +
-+extern inline int __attribute_used__ __signbit (double __x)
++# ifndef __extern_inline
++#  define __MATH_INLINE __inline
++# else
++#  define __MATH_INLINE __extern_inline
++# endif  /* __cplusplus */
++
++__MATH_INLINE int __attribute_used__ __signbit (double __x)
 +{
 +  union { double __d; long __i[sizeof(double)/sizeof(long)]; } __u;
 +  __u.__d = __x;
 +  return __u.__i[sizeof(double)/sizeof(long)-1] < 0;
 +}
 +
-+extern inline int __attribute_used__ __signbitf (float __x)
++__MATH_INLINE int __attribute_used__ __signbitf (float __x)
 +{
 +  union { float __d; int __i; } __u;
 +  __u.__d = __x;
@@ -1268,8 +1261,8 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/bits/mathinline.h glibc/sysdeps/riscv
 +#endif /* __GNUC__ */
 diff -Nur original-glibc/sysdeps/riscv/fpu/fclrexcpt.c glibc/sysdeps/riscv/fpu/fclrexcpt.c
 --- original-glibc/sysdeps/riscv/fpu/fclrexcpt.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/fclrexcpt.c	2014-12-09 14:32:35.932301937 -0800
-@@ -0,0 +1,29 @@
++++ glibc/sysdeps/riscv/fpu/fclrexcpt.c	2014-12-09 15:54:39.020723609 -0800
+@@ -0,0 +1,30 @@
 +/* Clear given exceptions in current floating-point environment.
 +   Copyright (C) 1998, 1999, 2000, 2002 Free Software Foundation, Inc.
 +   This file is part of the GNU C Library.
@@ -1299,9 +1292,10 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/fclrexcpt.c glibc/sysdeps/riscv/fpu/f
 +  asm volatile ("csrc fflags, %0" : : "r"(excepts));
 +  return 0;
 +}
++libm_hidden_def (feclearexcept)
 diff -Nur original-glibc/sysdeps/riscv/fpu/fedisblxcpt.c glibc/sysdeps/riscv/fpu/fedisblxcpt.c
 --- original-glibc/sysdeps/riscv/fpu/fedisblxcpt.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/fedisblxcpt.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/fedisblxcpt.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,29 @@
 +/* Disable floating-point exceptions.
 +   Copyright (C) 2000 Free Software Foundation, Inc.
@@ -1334,7 +1328,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/fedisblxcpt.c glibc/sysdeps/riscv/fpu
 +}
 diff -Nur original-glibc/sysdeps/riscv/fpu/feenablxcpt.c glibc/sysdeps/riscv/fpu/feenablxcpt.c
 --- original-glibc/sysdeps/riscv/fpu/feenablxcpt.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/feenablxcpt.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/feenablxcpt.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,29 @@
 +/* Enable floating-point exceptions.
 +   Copyright (C) 2000 Free Software Foundation, Inc.
@@ -1367,7 +1361,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/feenablxcpt.c glibc/sysdeps/riscv/fpu
 +}
 diff -Nur original-glibc/sysdeps/riscv/fpu/fegetenv.c glibc/sysdeps/riscv/fpu/fegetenv.c
 --- original-glibc/sysdeps/riscv/fpu/fegetenv.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/fegetenv.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/fegetenv.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,32 @@
 +/* Store current floating-point environment.
 +   Copyright (C) 1998, 1999, 2000, 2002, 2010 Free Software Foundation, Inc.
@@ -1403,7 +1397,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/fegetenv.c glibc/sysdeps/riscv/fpu/fe
 +libm_hidden_def (fegetenv)
 diff -Nur original-glibc/sysdeps/riscv/fpu/fegetexcept.c glibc/sysdeps/riscv/fpu/fegetexcept.c
 --- original-glibc/sysdeps/riscv/fpu/fegetexcept.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/fegetexcept.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/fegetexcept.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,29 @@
 +/* Get enabled floating-point exceptions.
 +   Copyright (C) 2000 Free Software Foundation, Inc.
@@ -1436,8 +1430,8 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/fegetexcept.c glibc/sysdeps/riscv/fpu
 +}
 diff -Nur original-glibc/sysdeps/riscv/fpu/fegetround.c glibc/sysdeps/riscv/fpu/fegetround.c
 --- original-glibc/sysdeps/riscv/fpu/fegetround.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/fegetround.c	2014-12-09 14:32:35.932301937 -0800
-@@ -0,0 +1,30 @@
++++ glibc/sysdeps/riscv/fpu/fegetround.c	2014-12-09 15:54:39.020723609 -0800
+@@ -0,0 +1,31 @@
 +/* Return current rounding direction.
 +   Copyright (C) 1998 Free Software Foundation, Inc.
 +   This file is part of the GNU C Library.
@@ -1468,9 +1462,10 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/fegetround.c glibc/sysdeps/riscv/fpu/
 +  _FPU_GETROUND (round);
 +  return round;
 +}
++libm_hidden_def (fegetround)
 diff -Nur original-glibc/sysdeps/riscv/fpu/feholdexcpt.c glibc/sysdeps/riscv/fpu/feholdexcpt.c
 --- original-glibc/sysdeps/riscv/fpu/feholdexcpt.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/feholdexcpt.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/feholdexcpt.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,32 @@
 +/* Store current floating-point environment and clear exceptions.
 +   Copyright (C) 2000 Free Software Foundation, Inc.
@@ -1506,7 +1501,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/feholdexcpt.c glibc/sysdeps/riscv/fpu
 +libm_hidden_def (feholdexcept)
 diff -Nur original-glibc/sysdeps/riscv/fpu/fesetenv.c glibc/sysdeps/riscv/fpu/fesetenv.c
 --- original-glibc/sysdeps/riscv/fpu/fesetenv.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/fesetenv.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/fesetenv.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,31 @@
 +/* Install given floating-point environment.
 +   Copyright (C) 1998, 1999, 2000, 2002 Free Software Foundation, Inc.
@@ -1541,8 +1536,8 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/fesetenv.c glibc/sysdeps/riscv/fpu/fe
 +libm_hidden_def (fesetenv)
 diff -Nur original-glibc/sysdeps/riscv/fpu/fesetround.c glibc/sysdeps/riscv/fpu/fesetround.c
 --- original-glibc/sysdeps/riscv/fpu/fesetround.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/fesetround.c	2014-12-09 14:32:35.932301937 -0800
-@@ -0,0 +1,34 @@
++++ glibc/sysdeps/riscv/fpu/fesetround.c	2014-12-09 15:54:39.020723609 -0800
+@@ -0,0 +1,40 @@
 +/* Set current rounding direction.
 +   Copyright (C) 1998 Free Software Foundation, Inc.
 +   This file is part of the GNU C Library.
@@ -1569,17 +1564,23 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/fesetround.c glibc/sysdeps/riscv/fpu/
 +int
 +fesetround (int round)
 +{
-+  int fail = round != FE_TONEAREST && round != FE_TOWARDZERO
-+	     && round != FE_DOWNWARD && round != FE_UPWARD;
-+  if (!fail)
-+    _FPU_SETROUND (round);
-+  return fail;
++  switch (round)
++    {
++    case FE_TONEAREST:
++    case FE_TOWARDZERO:
++    case FE_DOWNWARD:
++    case FE_UPWARD:
++      _FPU_SETROUND (round);
++      return 0;
++    default:
++      return round; /* a nonzero value */
++    }
 +}
 +
 +libm_hidden_def (fesetround)
 diff -Nur original-glibc/sysdeps/riscv/fpu/feupdateenv.c glibc/sysdeps/riscv/fpu/feupdateenv.c
 --- original-glibc/sysdeps/riscv/fpu/feupdateenv.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/feupdateenv.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/feupdateenv.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,35 @@
 +/* Install given floating-point environment and raise exceptions.
 +   Copyright (C) 1998, 1999, 2000, 2002, 2010 Free Software Foundation, Inc.
@@ -1618,7 +1619,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/feupdateenv.c glibc/sysdeps/riscv/fpu
 +libm_hidden_def (feupdateenv)
 diff -Nur original-glibc/sysdeps/riscv/fpu/fgetexcptflg.c glibc/sysdeps/riscv/fpu/fgetexcptflg.c
 --- original-glibc/sysdeps/riscv/fpu/fgetexcptflg.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/fgetexcptflg.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/fgetexcptflg.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,35 @@
 +/* Store current representation for exceptions.
 +   Copyright (C) 1998, 1999, 2000, 2002 Free Software Foundation, Inc.
@@ -1657,7 +1658,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/fgetexcptflg.c glibc/sysdeps/riscv/fp
 +}
 diff -Nur original-glibc/sysdeps/riscv/fpu/fraiseexcpt.c glibc/sysdeps/riscv/fpu/fraiseexcpt.c
 --- original-glibc/sysdeps/riscv/fpu/fraiseexcpt.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/fraiseexcpt.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/fraiseexcpt.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,31 @@
 +/* Raise given exceptions.
 +   Copyright (C) 2000, 2002 Free Software Foundation, Inc.
@@ -1692,7 +1693,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/fraiseexcpt.c glibc/sysdeps/riscv/fpu
 +libm_hidden_def (feraiseexcept)
 diff -Nur original-glibc/sysdeps/riscv/fpu/fsetexcptflg.c glibc/sysdeps/riscv/fpu/fsetexcptflg.c
 --- original-glibc/sysdeps/riscv/fpu/fsetexcptflg.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/fsetexcptflg.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/fsetexcptflg.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,32 @@
 +/* Set floating-point environment exception handling.
 +   Copyright (C) 1998, 1999, 2000, 2002 Free Software Foundation, Inc.
@@ -1728,7 +1729,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/fsetexcptflg.c glibc/sysdeps/riscv/fp
 +}
 diff -Nur original-glibc/sysdeps/riscv/fpu/ftestexcept.c glibc/sysdeps/riscv/fpu/ftestexcept.c
 --- original-glibc/sysdeps/riscv/fpu/ftestexcept.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/ftestexcept.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/ftestexcept.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,33 @@
 +/* Test exception in current environment.
 +   Copyright (C) 1998, 2010 Free Software Foundation, Inc.
@@ -1765,7 +1766,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/ftestexcept.c glibc/sysdeps/riscv/fpu
 +libm_hidden_def (fetestexcept)
 diff -Nur original-glibc/sysdeps/riscv/fpu/s_copysign.c glibc/sysdeps/riscv/fpu/s_copysign.c
 --- original-glibc/sysdeps/riscv/fpu/s_copysign.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/s_copysign.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/s_copysign.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,9 @@
 +#include "math.h"
 +
@@ -1778,7 +1779,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/s_copysign.c glibc/sysdeps/riscv/fpu/
 +weak_alias (__copysign, copysign)
 diff -Nur original-glibc/sysdeps/riscv/fpu/s_copysignf.c glibc/sysdeps/riscv/fpu/s_copysignf.c
 --- original-glibc/sysdeps/riscv/fpu/s_copysignf.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/s_copysignf.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/s_copysignf.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,9 @@
 +#include "math.h"
 +
@@ -1791,7 +1792,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/s_copysignf.c glibc/sysdeps/riscv/fpu
 +weak_alias (__copysignf, copysignf)
 diff -Nur original-glibc/sysdeps/riscv/fpu/s_fabs.c glibc/sysdeps/riscv/fpu/s_fabs.c
 --- original-glibc/sysdeps/riscv/fpu/s_fabs.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/s_fabs.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/s_fabs.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,9 @@
 +#include "math.h"
 +
@@ -1804,7 +1805,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/s_fabs.c glibc/sysdeps/riscv/fpu/s_fa
 +weak_alias (__fabs, fabs)
 diff -Nur original-glibc/sysdeps/riscv/fpu/s_fabsf.c glibc/sysdeps/riscv/fpu/s_fabsf.c
 --- original-glibc/sysdeps/riscv/fpu/s_fabsf.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/s_fabsf.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/s_fabsf.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,9 @@
 +#include "math.h"
 +
@@ -1817,7 +1818,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/s_fabsf.c glibc/sysdeps/riscv/fpu/s_f
 +weak_alias (__fabsf, fabsf)
 diff -Nur original-glibc/sysdeps/riscv/fpu/s_fdim.c glibc/sysdeps/riscv/fpu/s_fdim.c
 --- original-glibc/sysdeps/riscv/fpu/s_fdim.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/s_fdim.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/s_fdim.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,17 @@
 +#include <errno.h>
 +#include <math.h>
@@ -1838,7 +1839,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/s_fdim.c glibc/sysdeps/riscv/fpu/s_fd
 +weak_alias (__fdim, fdim)
 diff -Nur original-glibc/sysdeps/riscv/fpu/s_fdimf.c glibc/sysdeps/riscv/fpu/s_fdimf.c
 --- original-glibc/sysdeps/riscv/fpu/s_fdimf.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/s_fdimf.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/s_fdimf.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,17 @@
 +#include <errno.h>
 +#include <math.h>
@@ -1859,7 +1860,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/s_fdimf.c glibc/sysdeps/riscv/fpu/s_f
 +weak_alias (__fdimf, fdimf)
 diff -Nur original-glibc/sysdeps/riscv/fpu/s_finite.c glibc/sysdeps/riscv/fpu/s_finite.c
 --- original-glibc/sysdeps/riscv/fpu/s_finite.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/s_finite.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/s_finite.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,9 @@
 +#include "math.h"
 +#include "fpu_control.h"
@@ -1872,7 +1873,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/s_finite.c glibc/sysdeps/riscv/fpu/s_
 +weak_alias (__finite, finite)
 diff -Nur original-glibc/sysdeps/riscv/fpu/s_finitef.c glibc/sysdeps/riscv/fpu/s_finitef.c
 --- original-glibc/sysdeps/riscv/fpu/s_finitef.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/s_finitef.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/s_finitef.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,9 @@
 +#include "math.h"
 +#include "fpu_control.h"
@@ -1885,7 +1886,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/s_finitef.c glibc/sysdeps/riscv/fpu/s
 +weak_alias (__finitef, finitef)
 diff -Nur original-glibc/sysdeps/riscv/fpu/s_fma.c glibc/sysdeps/riscv/fpu/s_fma.c
 --- original-glibc/sysdeps/riscv/fpu/s_fma.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/s_fma.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/s_fma.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,11 @@
 +#include <math.h>
 +#include <fenv.h>
@@ -1900,7 +1901,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/s_fma.c glibc/sysdeps/riscv/fpu/s_fma
 +weak_alias (__fma, fma)
 diff -Nur original-glibc/sysdeps/riscv/fpu/s_fmaf.c glibc/sysdeps/riscv/fpu/s_fmaf.c
 --- original-glibc/sysdeps/riscv/fpu/s_fmaf.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/s_fmaf.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/s_fmaf.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,11 @@
 +#include <math.h>
 +#include <fenv.h>
@@ -1915,7 +1916,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/s_fmaf.c glibc/sysdeps/riscv/fpu/s_fm
 +weak_alias (__fmaf, fmaf)
 diff -Nur original-glibc/sysdeps/riscv/fpu/s_fmax.c glibc/sysdeps/riscv/fpu/s_fmax.c
 --- original-glibc/sysdeps/riscv/fpu/s_fmax.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/s_fmax.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/s_fmax.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,9 @@
 +#include <math.h>
 +
@@ -1928,7 +1929,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/s_fmax.c glibc/sysdeps/riscv/fpu/s_fm
 +weak_alias (__fmax, fmax)
 diff -Nur original-glibc/sysdeps/riscv/fpu/s_fmaxf.c glibc/sysdeps/riscv/fpu/s_fmaxf.c
 --- original-glibc/sysdeps/riscv/fpu/s_fmaxf.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/s_fmaxf.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/s_fmaxf.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,9 @@
 +#include <math.h>
 +
@@ -1941,7 +1942,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/s_fmaxf.c glibc/sysdeps/riscv/fpu/s_f
 +weak_alias (__fmaxf, fmaxf)
 diff -Nur original-glibc/sysdeps/riscv/fpu/s_fmin.c glibc/sysdeps/riscv/fpu/s_fmin.c
 --- original-glibc/sysdeps/riscv/fpu/s_fmin.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/s_fmin.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/s_fmin.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,9 @@
 +#include <math.h>
 +
@@ -1954,7 +1955,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/s_fmin.c glibc/sysdeps/riscv/fpu/s_fm
 +weak_alias (__fmin, fmin)
 diff -Nur original-glibc/sysdeps/riscv/fpu/s_fminf.c glibc/sysdeps/riscv/fpu/s_fminf.c
 --- original-glibc/sysdeps/riscv/fpu/s_fminf.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/s_fminf.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/s_fminf.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,9 @@
 +#include <math.h>
 +
@@ -1967,7 +1968,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/s_fminf.c glibc/sysdeps/riscv/fpu/s_f
 +weak_alias (__fminf, fminf)
 diff -Nur original-glibc/sysdeps/riscv/fpu/s_fpclassify.c glibc/sysdeps/riscv/fpu/s_fpclassify.c
 --- original-glibc/sysdeps/riscv/fpu/s_fpclassify.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/s_fpclassify.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/s_fpclassify.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,18 @@
 +#include <math.h>
 +#include "fpu_control.h"
@@ -1989,7 +1990,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/s_fpclassify.c glibc/sysdeps/riscv/fp
 +libm_hidden_def (__fpclassify)
 diff -Nur original-glibc/sysdeps/riscv/fpu/s_fpclassifyf.c glibc/sysdeps/riscv/fpu/s_fpclassifyf.c
 --- original-glibc/sysdeps/riscv/fpu/s_fpclassifyf.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/s_fpclassifyf.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/s_fpclassifyf.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,18 @@
 +#include <math.h>
 +#include "fpu_control.h"
@@ -2011,7 +2012,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/s_fpclassifyf.c glibc/sysdeps/riscv/f
 +libm_hidden_def (__fpclassifyf)
 diff -Nur original-glibc/sysdeps/riscv/fpu/s_isinf.c glibc/sysdeps/riscv/fpu/s_isinf.c
 --- original-glibc/sysdeps/riscv/fpu/s_isinf.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/s_isinf.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/s_isinf.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,10 @@
 +#include "math.h"
 +#include "fpu_control.h"
@@ -2025,7 +2026,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/s_isinf.c glibc/sysdeps/riscv/fpu/s_i
 +weak_alias (__isinf, isinf)
 diff -Nur original-glibc/sysdeps/riscv/fpu/s_isinff.c glibc/sysdeps/riscv/fpu/s_isinff.c
 --- original-glibc/sysdeps/riscv/fpu/s_isinff.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/s_isinff.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/s_isinff.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,10 @@
 +#include "math.h"
 +#include "fpu_control.h"
@@ -2039,7 +2040,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/s_isinff.c glibc/sysdeps/riscv/fpu/s_
 +weak_alias (__isinff, isinff)
 diff -Nur original-glibc/sysdeps/riscv/fpu/s_isnan.c glibc/sysdeps/riscv/fpu/s_isnan.c
 --- original-glibc/sysdeps/riscv/fpu/s_isnan.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/s_isnan.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/s_isnan.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,9 @@
 +#include "math.h"
 +#include "fpu_control.h"
@@ -2052,7 +2053,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/s_isnan.c glibc/sysdeps/riscv/fpu/s_i
 +weak_alias (__isnan, isnan)
 diff -Nur original-glibc/sysdeps/riscv/fpu/s_isnanf.c glibc/sysdeps/riscv/fpu/s_isnanf.c
 --- original-glibc/sysdeps/riscv/fpu/s_isnanf.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/s_isnanf.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/s_isnanf.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,9 @@
 +#include "math.h"
 +#include "fpu_control.h"
@@ -2065,7 +2066,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/s_isnanf.c glibc/sysdeps/riscv/fpu/s_
 +weak_alias (__isnanf, isnanf)
 diff -Nur original-glibc/sysdeps/riscv/fpu/s_signbit.c glibc/sysdeps/riscv/fpu/s_signbit.c
 --- original-glibc/sysdeps/riscv/fpu/s_signbit.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/s_signbit.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/s_signbit.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,18 @@
 +#include <features.h>
 +#undef __USE_EXTERN_INLINES
@@ -2087,7 +2088,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/s_signbit.c glibc/sysdeps/riscv/fpu/s
 +}
 diff -Nur original-glibc/sysdeps/riscv/fpu/s_signbitf.c glibc/sysdeps/riscv/fpu/s_signbitf.c
 --- original-glibc/sysdeps/riscv/fpu/s_signbitf.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu/s_signbitf.c	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/fpu/s_signbitf.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,12 @@
 +#include <features.h>
 +#undef __USE_EXTERN_INLINES
@@ -2103,7 +2104,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu/s_signbitf.c glibc/sysdeps/riscv/fpu/
 +}
 diff -Nur original-glibc/sysdeps/riscv/fpu_control.h glibc/sysdeps/riscv/fpu_control.h
 --- original-glibc/sysdeps/riscv/fpu_control.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/fpu_control.h	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/fpu_control.h	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,92 @@
 +/* FPU control word bits.  Mips version.
 +   Copyright (C) 1996, 1997, 1998, 1999, 2000, 2006, 2008
@@ -2199,7 +2200,7 @@ diff -Nur original-glibc/sysdeps/riscv/fpu_control.h glibc/sysdeps/riscv/fpu_con
 +#endif	/* fpu_control.h */
 diff -Nur original-glibc/sysdeps/riscv/gccframe.h glibc/sysdeps/riscv/gccframe.h
 --- original-glibc/sysdeps/riscv/gccframe.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/gccframe.h	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/gccframe.h	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,22 @@
 +/* Definition of object in frame unwind info.  mips version.
 +   Copyright (C) 2001 Free Software Foundation, Inc.
@@ -2225,7 +2226,7 @@ diff -Nur original-glibc/sysdeps/riscv/gccframe.h glibc/sysdeps/riscv/gccframe.h
 +#include <sysdeps/generic/gccframe.h>
 diff -Nur original-glibc/sysdeps/riscv/ieee754.h glibc/sysdeps/riscv/ieee754.h
 --- original-glibc/sysdeps/riscv/ieee754.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/ieee754.h	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/ieee754.h	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,325 @@
 +/* Copyright (C) 1992, 1995, 1996, 1999, 2002, 2003
 +	Free Software Foundation, Inc.
@@ -2554,7 +2555,7 @@ diff -Nur original-glibc/sysdeps/riscv/ieee754.h glibc/sysdeps/riscv/ieee754.h
 +#endif /* ieee754.h */
 diff -Nur original-glibc/sysdeps/riscv/Implies glibc/sysdeps/riscv/Implies
 --- original-glibc/sysdeps/riscv/Implies	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/Implies	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/Implies	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,7 @@
 +init_array
 +
@@ -2565,7 +2566,7 @@ diff -Nur original-glibc/sysdeps/riscv/Implies glibc/sysdeps/riscv/Implies
 +riscv/rv64
 diff -Nur original-glibc/sysdeps/riscv/jmpbuf-unwind.h glibc/sysdeps/riscv/jmpbuf-unwind.h
 --- original-glibc/sysdeps/riscv/jmpbuf-unwind.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/jmpbuf-unwind.h	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/jmpbuf-unwind.h	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,46 @@
 +/* Copyright (C) 2003, 2005, 2006 Free Software Foundation, Inc.
 +   This file is part of the GNU C Library.
@@ -2615,7 +2616,7 @@ diff -Nur original-glibc/sysdeps/riscv/jmpbuf-unwind.h glibc/sysdeps/riscv/jmpbu
 +#define __libc_unwind_longjmp(buf, val) __libc_longjmp (buf, val)
 diff -Nur original-glibc/sysdeps/riscv/ldsodefs.h glibc/sysdeps/riscv/ldsodefs.h
 --- original-glibc/sysdeps/riscv/ldsodefs.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/ldsodefs.h	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/ldsodefs.h	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,70 @@
 +/* Run-time dynamic linker data structures for loaded ELF shared objects.
 +   Copyright (C) 2000, 2002, 2003, 2006, 2007 Free Software Foundation, Inc.
@@ -2689,7 +2690,7 @@ diff -Nur original-glibc/sysdeps/riscv/ldsodefs.h glibc/sysdeps/riscv/ldsodefs.h
 +#endif
 diff -Nur original-glibc/sysdeps/riscv/libc-tls.c glibc/sysdeps/riscv/libc-tls.c
 --- original-glibc/sysdeps/riscv/libc-tls.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/libc-tls.c	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/libc-tls.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,37 @@
 +/* Thread-local storage handling in the ELF dynamic linker.  MIPS version.
 +   Copyright (C) 2005 Free Software Foundation, Inc.
@@ -2730,7 +2731,7 @@ diff -Nur original-glibc/sysdeps/riscv/libc-tls.c glibc/sysdeps/riscv/libc-tls.c
 +#endif
 diff -Nur original-glibc/sysdeps/riscv/__longjmp.S glibc/sysdeps/riscv/__longjmp.S
 --- original-glibc/sysdeps/riscv/__longjmp.S	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/__longjmp.S	2014-12-09 14:38:38.665778707 -0800
++++ glibc/sysdeps/riscv/__longjmp.S	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,63 @@
 +/* Copyright (C) 1996, 1997, 2000, 2002, 2003, 2004
 +	Free Software Foundation, Inc.
@@ -2797,7 +2798,7 @@ diff -Nur original-glibc/sysdeps/riscv/__longjmp.S glibc/sysdeps/riscv/__longjmp
 +END(__longjmp)
 diff -Nur original-glibc/sysdeps/riscv/Makefile glibc/sysdeps/riscv/Makefile
 --- original-glibc/sysdeps/riscv/Makefile	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/Makefile	2014-12-09 14:32:35.932301937 -0800
++++ glibc/sysdeps/riscv/Makefile	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,49 @@
 +ifneq ($(all-rtld-routines),)
 +CFLAGS-rtld.c += -mno-plt
@@ -2840,7 +2841,7 @@ diff -Nur original-glibc/sysdeps/riscv/Makefile glibc/sysdeps/riscv/Makefile
 +CFLAGS-cxa_atexit.c += -mno-plt
 +
 +ifeq ($(subdir),misc)
-+sysdep_headers += sys/asm.h sgidefs.h
++sysdep_headers += sys/asm.h
 +endif
 +
 +ifeq ($(subdir),rt)
@@ -2850,8 +2851,8 @@ diff -Nur original-glibc/sysdeps/riscv/Makefile glibc/sysdeps/riscv/Makefile
 +ASFLAGS-.os += $(pic-ccflag)
 diff -Nur original-glibc/sysdeps/riscv/memcpy.c glibc/sysdeps/riscv/memcpy.c
 --- original-glibc/sysdeps/riscv/memcpy.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/memcpy.c	2014-12-09 14:32:35.932301937 -0800
-@@ -0,0 +1,70 @@
++++ glibc/sysdeps/riscv/memcpy.c	2014-12-09 15:54:39.020723609 -0800
+@@ -0,0 +1,69 @@
 +#include <string.h>
 +#include <stdint.h>
 +
@@ -2907,11 +2908,10 @@ diff -Nur original-glibc/sysdeps/riscv/memcpy.c glibc/sysdeps/riscv/memcpy.c
 +      *la++ = b7;
 +      *la++ = b8;
 +    }
-+    if (la == lend)
-+      goto maybe_done;
 +  }
 +
-+  do BODY(la, lb, long) while (la < lend);
++  while (la < lend)
++    BODY(la, lb, long);
 +
 +maybe_done:
 +  a = (char*)la;
@@ -2924,7 +2924,7 @@ diff -Nur original-glibc/sysdeps/riscv/memcpy.c glibc/sysdeps/riscv/memcpy.c
 +libc_hidden_builtin_def (memcpy)
 diff -Nur original-glibc/sysdeps/riscv/memset.S glibc/sysdeps/riscv/memset.S
 --- original-glibc/sysdeps/riscv/memset.S	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/memset.S	2014-12-09 14:38:38.665778707 -0800
++++ glibc/sysdeps/riscv/memset.S	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,107 @@
 +/* Copyright (C) 2014 Free Software Foundation, Inc.
 +   Contributed by Andrew Waterman (waterman@cs.berkeley.edu) at UC Berkeley.
@@ -3035,7 +3035,7 @@ diff -Nur original-glibc/sysdeps/riscv/memset.S glibc/sysdeps/riscv/memset.S
 +weak_alias(memset, __GI_memset)
 diff -Nur original-glibc/sysdeps/riscv/memusage.h glibc/sysdeps/riscv/memusage.h
 --- original-glibc/sysdeps/riscv/memusage.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/memusage.h	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/memusage.h	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,21 @@
 +/* Copyright (C) 2000 Free Software Foundation, Inc.
 +   This file is part of the GNU C Library.
@@ -3060,7 +3060,7 @@ diff -Nur original-glibc/sysdeps/riscv/memusage.h glibc/sysdeps/riscv/memusage.h
 +#include <sysdeps/generic/memusage.h>
 diff -Nur original-glibc/sysdeps/riscv/nptl/bits/pthreadtypes.h glibc/sysdeps/riscv/nptl/bits/pthreadtypes.h
 --- original-glibc/sysdeps/riscv/nptl/bits/pthreadtypes.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/nptl/bits/pthreadtypes.h	2014-12-09 14:32:35.932301937 -0800
++++ glibc/sysdeps/riscv/nptl/bits/pthreadtypes.h	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,241 @@
 +/* Machine-specific pthread type layouts.  RISC-V version.
 +   Copyright (C) 2011-2014 Free Software Foundation, Inc.
@@ -3086,7 +3086,7 @@ diff -Nur original-glibc/sysdeps/riscv/nptl/bits/pthreadtypes.h glibc/sysdeps/ri
 +
 +#include <endian.h>
 +
-+#if _RISCV_SIM == _ABI64
++#ifdef __riscv64
 +# define __SIZEOF_PTHREAD_ATTR_T 56
 +# define __SIZEOF_PTHREAD_MUTEX_T 40
 +# define __SIZEOF_PTHREAD_MUTEXATTR_T 4
@@ -3124,7 +3124,7 @@ diff -Nur original-glibc/sysdeps/riscv/nptl/bits/pthreadtypes.h glibc/sysdeps/ri
 +# define __have_pthread_attr_t  1
 +#endif
 +
-+#if _RISCV_SIM == _ABI64
++#ifdef __riscv64
 +typedef struct __pthread_internal_list
 +{
 +  struct __pthread_internal_list *__prev;
@@ -3147,13 +3147,13 @@ diff -Nur original-glibc/sysdeps/riscv/nptl/bits/pthreadtypes.h glibc/sysdeps/ri
 +    int __lock;
 +    unsigned int __count;
 +    int __owner;
-+#if _RISCV_SIM == _ABI64
++#ifdef __riscv64
 +    unsigned int __nusers;
 +#endif
 +    /* KIND must stay at this position in the structure to maintain
 +       binary compatibility.  */
 +    int __kind;
-+#if _RISCV_SIM == _ABI64
++#ifdef __riscv64
 +    int __spins;
 +    __pthread_list_t __list;
 +# define __PTHREAD_MUTEX_HAVE_PREV	1
@@ -3219,7 +3219,7 @@ diff -Nur original-glibc/sysdeps/riscv/nptl/bits/pthreadtypes.h glibc/sysdeps/ri
 +   structure of the attribute type is deliberately not exposed.  */
 +typedef union
 +{
-+# if _RISCV_SIM == _ABI64
++# ifdef __riscv64
 +  struct
 +  {
 +    int __lock;
@@ -3305,7 +3305,7 @@ diff -Nur original-glibc/sysdeps/riscv/nptl/bits/pthreadtypes.h glibc/sysdeps/ri
 +#endif	/* bits/pthreadtypes.h */
 diff -Nur original-glibc/sysdeps/riscv/nptl/bits/semaphore.h glibc/sysdeps/riscv/nptl/bits/semaphore.h
 --- original-glibc/sysdeps/riscv/nptl/bits/semaphore.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/nptl/bits/semaphore.h	2014-12-09 14:32:35.932301937 -0800
++++ glibc/sysdeps/riscv/nptl/bits/semaphore.h	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,37 @@
 +/* Copyright (C) 2002, 2005, 2007 Free Software Foundation, Inc.
 +   This file is part of the GNU C Library.
@@ -3329,7 +3329,7 @@ diff -Nur original-glibc/sysdeps/riscv/nptl/bits/semaphore.h glibc/sysdeps/riscv
 +# error "Never use <bits/semaphore.h> directly; include <semaphore.h> instead."
 +#endif
 +
-+#if _RISCV_SIM == _ABI64
++#ifdef __riscv64
 +# define __SIZEOF_SEM_T	32
 +#else
 +# define __SIZEOF_SEM_T	16
@@ -3346,13 +3346,13 @@ diff -Nur original-glibc/sysdeps/riscv/nptl/bits/semaphore.h glibc/sysdeps/riscv
 +} sem_t;
 diff -Nur original-glibc/sysdeps/riscv/nptl/clone.S glibc/sysdeps/riscv/nptl/clone.S
 --- original-glibc/sysdeps/riscv/nptl/clone.S	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/nptl/clone.S	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/nptl/clone.S	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,2 @@
 +#define RESET_PID
 +#include <sysdeps/unix/sysv/linux/riscv/clone.S>
 diff -Nur original-glibc/sysdeps/riscv/nptl/lowlevellock.h glibc/sysdeps/riscv/nptl/lowlevellock.h
 --- original-glibc/sysdeps/riscv/nptl/lowlevellock.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/nptl/lowlevellock.h	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/nptl/lowlevellock.h	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,262 @@
 +/* Copyright (C) 2011-2014 Free Software Foundation, Inc.
 +   This file is part of the GNU C Library.
@@ -3618,7 +3618,7 @@ diff -Nur original-glibc/sysdeps/riscv/nptl/lowlevellock.h glibc/sysdeps/riscv/n
 +#endif	/* lowlevellock.h */
 diff -Nur original-glibc/sysdeps/riscv/nptl/Makefile glibc/sysdeps/riscv/nptl/Makefile
 --- original-glibc/sysdeps/riscv/nptl/Makefile	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/nptl/Makefile	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/nptl/Makefile	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,25 @@
 +# Copyright (C) 2005 Free Software Foundation, Inc.
 +# This file is part of the GNU C Library.
@@ -3647,13 +3647,13 @@ diff -Nur original-glibc/sysdeps/riscv/nptl/Makefile glibc/sysdeps/riscv/nptl/Ma
 +endif
 diff -Nur original-glibc/sysdeps/riscv/nptl/nptl-sysdep.c glibc/sysdeps/riscv/nptl/nptl-sysdep.c
 --- original-glibc/sysdeps/riscv/nptl/nptl-sysdep.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/nptl/nptl-sysdep.c	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/nptl/nptl-sysdep.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,2 @@
 +/* Pull in __syscall_error.  */
 +#include <sysdep.c>
 diff -Nur original-glibc/sysdeps/riscv/nptl/pthreaddef.h glibc/sysdeps/riscv/nptl/pthreaddef.h
 --- original-glibc/sysdeps/riscv/nptl/pthreaddef.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/nptl/pthreaddef.h	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/nptl/pthreaddef.h	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,32 @@
 +/* Copyright (C) 2011-2014 Free Software Foundation, Inc.
 +   This file is part of the GNU C Library.
@@ -3689,7 +3689,7 @@ diff -Nur original-glibc/sysdeps/riscv/nptl/pthreaddef.h glibc/sysdeps/riscv/npt
 +#define CURRENT_STACK_FRAME	__builtin_frame_address (0)
 diff -Nur original-glibc/sysdeps/riscv/nptl/pthread_spin_destroy.c glibc/sysdeps/riscv/nptl/pthread_spin_destroy.c
 --- original-glibc/sysdeps/riscv/nptl/pthread_spin_destroy.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/nptl/pthread_spin_destroy.c	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/nptl/pthread_spin_destroy.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,30 @@
 +/* Copyright (C) 2002 Free Software Foundation, Inc.
 +   This file is part of the GNU C Library.
@@ -3723,7 +3723,7 @@ diff -Nur original-glibc/sysdeps/riscv/nptl/pthread_spin_destroy.c glibc/sysdeps
 +#endif
 diff -Nur original-glibc/sysdeps/riscv/nptl/pthread_spin_init.c glibc/sysdeps/riscv/nptl/pthread_spin_init.c
 --- original-glibc/sysdeps/riscv/nptl/pthread_spin_init.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/nptl/pthread_spin_init.c	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/nptl/pthread_spin_init.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,30 @@
 +/* pthread_spin_init -- initialize a spin lock.  Generic version.
 +   Copyright (C) 2003 Free Software Foundation, Inc.
@@ -3757,7 +3757,7 @@ diff -Nur original-glibc/sysdeps/riscv/nptl/pthread_spin_init.c glibc/sysdeps/ri
 +#endif
 diff -Nur original-glibc/sysdeps/riscv/nptl/pthread_spin_lock.c glibc/sysdeps/riscv/nptl/pthread_spin_lock.c
 --- original-glibc/sysdeps/riscv/nptl/pthread_spin_lock.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/nptl/pthread_spin_lock.c	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/nptl/pthread_spin_lock.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,39 @@
 +/* Copyright (C) 2005 Free Software Foundation, Inc.
 +   This file is part of the GNU C Library.
@@ -3800,7 +3800,7 @@ diff -Nur original-glibc/sysdeps/riscv/nptl/pthread_spin_lock.c glibc/sysdeps/ri
 +}
 diff -Nur original-glibc/sysdeps/riscv/nptl/pthread_spin_trylock.c glibc/sysdeps/riscv/nptl/pthread_spin_trylock.c
 --- original-glibc/sysdeps/riscv/nptl/pthread_spin_trylock.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/nptl/pthread_spin_trylock.c	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/nptl/pthread_spin_trylock.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,39 @@
 +/* Copyright (C) 2005 Free Software Foundation, Inc.
 +   This file is part of the GNU C Library.
@@ -3843,7 +3843,7 @@ diff -Nur original-glibc/sysdeps/riscv/nptl/pthread_spin_trylock.c glibc/sysdeps
 +}
 diff -Nur original-glibc/sysdeps/riscv/nptl/pthread_spin_unlock.c glibc/sysdeps/riscv/nptl/pthread_spin_unlock.c
 --- original-glibc/sysdeps/riscv/nptl/pthread_spin_unlock.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/nptl/pthread_spin_unlock.c	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/nptl/pthread_spin_unlock.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,33 @@
 +/* pthread_spin_unlock -- unlock a spin lock.  Generic version.
 +   Copyright (C) 2003 Free Software Foundation, Inc.
@@ -3880,7 +3880,7 @@ diff -Nur original-glibc/sysdeps/riscv/nptl/pthread_spin_unlock.c glibc/sysdeps/
 +}
 diff -Nur original-glibc/sysdeps/riscv/nptl/pt-vfork.S glibc/sysdeps/riscv/nptl/pt-vfork.S
 --- original-glibc/sysdeps/riscv/nptl/pt-vfork.S	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/nptl/pt-vfork.S	2014-12-09 14:38:38.665778707 -0800
++++ glibc/sysdeps/riscv/nptl/pt-vfork.S	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,36 @@
 +/* Copyright (C) 2005, 2006 Free Software Foundation, Inc.
 +   This file is part of the GNU C Library.
@@ -3920,7 +3920,7 @@ diff -Nur original-glibc/sysdeps/riscv/nptl/pt-vfork.S glibc/sysdeps/riscv/nptl/
 +#include <sysdeps/unix/sysv/linux/riscv/vfork.S>
 diff -Nur original-glibc/sysdeps/riscv/nptl/sysdep-cancel.h glibc/sysdeps/riscv/nptl/sysdep-cancel.h
 --- original-glibc/sysdeps/riscv/nptl/sysdep-cancel.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/nptl/sysdep-cancel.h	2014-12-09 14:38:38.665778707 -0800
++++ glibc/sysdeps/riscv/nptl/sysdep-cancel.h	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,142 @@
 +/* Copyright (C) 2003, 2004, 2005, 2006 Free Software Foundation, Inc.
 +   This file is part of the GNU C Library.
@@ -4066,7 +4066,7 @@ diff -Nur original-glibc/sysdeps/riscv/nptl/sysdep-cancel.h glibc/sysdeps/riscv/
 +#endif
 diff -Nur original-glibc/sysdeps/riscv/nptl/tcb-offsets.sym glibc/sysdeps/riscv/nptl/tcb-offsets.sym
 --- original-glibc/sysdeps/riscv/nptl/tcb-offsets.sym	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/nptl/tcb-offsets.sym	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/nptl/tcb-offsets.sym	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,11 @@
 +#include <sysdep.h>
 +#include <tls.h>
@@ -4081,7 +4081,7 @@ diff -Nur original-glibc/sysdeps/riscv/nptl/tcb-offsets.sym glibc/sysdeps/riscv/
 +TID_OFFSET			thread_offsetof (tid)
 diff -Nur original-glibc/sysdeps/riscv/nptl/tls.h glibc/sysdeps/riscv/nptl/tls.h
 --- original-glibc/sysdeps/riscv/nptl/tls.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/nptl/tls.h	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/nptl/tls.h	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,159 @@
 +/* Definition for thread-local data handling.  NPTL/RISC-V version.
 +   Copyright (C) 2011-2014 Free Software Foundation, Inc.
@@ -4244,7 +4244,7 @@ diff -Nur original-glibc/sysdeps/riscv/nptl/tls.h glibc/sysdeps/riscv/nptl/tls.h
 +#endif	/* tls.h */
 diff -Nur original-glibc/sysdeps/riscv/nptl/vfork.S glibc/sysdeps/riscv/nptl/vfork.S
 --- original-glibc/sysdeps/riscv/nptl/vfork.S	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/nptl/vfork.S	2014-12-09 14:38:38.665778707 -0800
++++ glibc/sysdeps/riscv/nptl/vfork.S	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,41 @@
 +/* Copyright (C) 2005, 2006 Free Software Foundation, Inc.
 +   This file is part of the GNU C Library.
@@ -4289,8 +4289,8 @@ diff -Nur original-glibc/sysdeps/riscv/nptl/vfork.S glibc/sysdeps/riscv/nptl/vfo
 +#include <sysdeps/unix/sysv/linux/riscv/vfork.S>
 diff -Nur original-glibc/sysdeps/riscv/preconfigure glibc/sysdeps/riscv/preconfigure
 --- original-glibc/sysdeps/riscv/preconfigure	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/preconfigure	2014-12-09 14:32:35.932301937 -0800
-@@ -0,0 +1,20 @@
++++ glibc/sysdeps/riscv/preconfigure	2014-12-09 15:54:39.020723609 -0800
+@@ -0,0 +1,21 @@
 +case "$CC $CFLAGS $CPPFLAGS " in
 +*" -m32 "*) riscv_cc_abi=32 ;;
 +*" -m64 "*) riscv_cc_abi=64 ;;
@@ -4302,8 +4302,9 @@ diff -Nur original-glibc/sysdeps/riscv/preconfigure glibc/sysdeps/riscv/preconfi
 +*) riscv_config_abi=$riscv_cc_abi ;;
 +esac
 +case $riscv_config_abi in
-+default) machine=riscv/rv64 ;;
-+32) machine=riscv/rv32 ;;
++default) base_machine=riscv machine=riscv/rv64 ;;
++32) base_machine=riscv machine=riscv/rv32 ;;
++64) base_machine=riscv machine=riscv/rv64 ;;
 +esac
 +machine=$machine/$config_machine
 +if test $riscv_config_abi != $riscv_cc_abi; then
@@ -4311,22 +4312,69 @@ diff -Nur original-glibc/sysdeps/riscv/preconfigure glibc/sysdeps/riscv/preconfi
 +  # set this in case configure tests depend on it.
 +  CPPFLAGS="$CPPFLAGS -m$riscv_config_abi"
 +fi
+diff -Nur original-glibc/sysdeps/riscv/rv32/bits/wordsize.h glibc/sysdeps/riscv/rv32/bits/wordsize.h
+--- original-glibc/sysdeps/riscv/rv32/bits/wordsize.h	1969-12-31 16:00:00.000000000 -0800
++++ glibc/sysdeps/riscv/rv32/bits/wordsize.h	2014-12-09 15:54:39.020723609 -0800
+@@ -0,0 +1,19 @@
++/* Copyright (C) 2002, 2003 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, write to the Free
++   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
++   02111-1307 USA.  */
++
++#define __WORDSIZE 32
 diff -Nur original-glibc/sysdeps/riscv/rv32/Implies glibc/sysdeps/riscv/rv32/Implies
 --- original-glibc/sysdeps/riscv/rv32/Implies	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/rv32/Implies	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/rv32/Implies	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,2 @@
 +riscv
 +wordsize-32
 diff -Nur original-glibc/sysdeps/riscv/rv32/Makefile glibc/sysdeps/riscv/rv32/Makefile
 --- original-glibc/sysdeps/riscv/rv32/Makefile	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/rv32/Makefile	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/rv32/Makefile	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,3 @@
 +ifeq ($(filter -m32,$(CC)),)
 +CC += -m32
 +endif
+diff -Nur original-glibc/sysdeps/riscv/rv64/bits/wordsize.h glibc/sysdeps/riscv/rv64/bits/wordsize.h
+--- original-glibc/sysdeps/riscv/rv64/bits/wordsize.h	1969-12-31 16:00:00.000000000 -0800
++++ glibc/sysdeps/riscv/rv64/bits/wordsize.h	2014-12-09 15:54:39.020723609 -0800
+@@ -0,0 +1,20 @@
++/* Copyright (C) 2002, 2003 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, write to the Free
++   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
++   02111-1307 USA.  */
++
++#define __WORDSIZE 64
++#define __WORDSIZE_TIME64_COMPAT32 1
 diff -Nur original-glibc/sysdeps/riscv/rv64/gmp-mparam.h glibc/sysdeps/riscv/rv64/gmp-mparam.h
 --- original-glibc/sysdeps/riscv/rv64/gmp-mparam.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/rv64/gmp-mparam.h	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/rv64/gmp-mparam.h	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,31 @@
 +/* gmp-mparam.h -- Compiler/machine parameter header file.
 +
@@ -4361,7 +4409,7 @@ diff -Nur original-glibc/sysdeps/riscv/rv64/gmp-mparam.h glibc/sysdeps/riscv/rv6
 +#define BITS_PER_CHAR 8
 diff -Nur original-glibc/sysdeps/riscv/rv64/Implies glibc/sysdeps/riscv/rv64/Implies
 --- original-glibc/sysdeps/riscv/rv64/Implies	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/rv64/Implies	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/rv64/Implies	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,6 @@
 +ieee754/flt-32
 +ieee754/dbl-64
@@ -4371,7 +4419,7 @@ diff -Nur original-glibc/sysdeps/riscv/rv64/Implies glibc/sysdeps/riscv/rv64/Imp
 +wordsize-64
 diff -Nur original-glibc/sysdeps/riscv/rv64/Makefile glibc/sysdeps/riscv/rv64/Makefile
 --- original-glibc/sysdeps/riscv/rv64/Makefile	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/rv64/Makefile	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/rv64/Makefile	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,6 @@
 +# Link libc.so at its likely load address for faster dynamic linking
 +LDLIBS-c.so += -Wl,--section-start=.dynamic=0x40100270
@@ -4381,14 +4429,14 @@ diff -Nur original-glibc/sysdeps/riscv/rv64/Makefile glibc/sysdeps/riscv/rv64/Ma
 +endif
 diff -Nur original-glibc/sysdeps/riscv/rv64/soft-fp/Makefile glibc/sysdeps/riscv/rv64/soft-fp/Makefile
 --- original-glibc/sysdeps/riscv/rv64/soft-fp/Makefile	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/rv64/soft-fp/Makefile	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/rv64/soft-fp/Makefile	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,3 @@
 +ifeq ($(subdir),math)
 +CPPFLAGS += -I../soft-fp
 +endif
 diff -Nur original-glibc/sysdeps/riscv/rv64/soft-fp/sfp-machine.h glibc/sysdeps/riscv/rv64/soft-fp/sfp-machine.h
 --- original-glibc/sysdeps/riscv/rv64/soft-fp/sfp-machine.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/rv64/soft-fp/sfp-machine.h	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/rv64/soft-fp/sfp-machine.h	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,74 @@
 +#include <fenv.h>
 +#include <fpu_control.h>
@@ -4466,7 +4514,7 @@ diff -Nur original-glibc/sysdeps/riscv/rv64/soft-fp/sfp-machine.h glibc/sysdeps/
 +#endif
 diff -Nur original-glibc/sysdeps/riscv/rv64/Versions glibc/sysdeps/riscv/rv64/Versions
 --- original-glibc/sysdeps/riscv/rv64/Versions	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/rv64/Versions	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/rv64/Versions	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,7 @@
 +libm {
 +  GLIBC_2.1 {
@@ -4477,7 +4525,7 @@ diff -Nur original-glibc/sysdeps/riscv/rv64/Versions glibc/sysdeps/riscv/rv64/Ve
 +}
 diff -Nur original-glibc/sysdeps/riscv/setjmp.S glibc/sysdeps/riscv/setjmp.S
 --- original-glibc/sysdeps/riscv/setjmp.S	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/setjmp.S	2014-12-09 14:38:38.665778707 -0800
++++ glibc/sysdeps/riscv/setjmp.S	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,79 @@
 +/* Copyright (C) 1996, 1997, 2000, 2002, 2003, 2004
 +	Free Software Foundation, Inc.
@@ -4558,54 +4606,9 @@ diff -Nur original-glibc/sysdeps/riscv/setjmp.S glibc/sysdeps/riscv/setjmp.S
 +END(__sigsetjmp)
 +
 +weak_alias(_setjmp, __GI__setjmp)
-diff -Nur original-glibc/sysdeps/riscv/sgidefs.h glibc/sysdeps/riscv/sgidefs.h
---- original-glibc/sysdeps/riscv/sgidefs.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/sgidefs.h	2014-12-09 14:32:35.932301937 -0800
-@@ -0,0 +1,41 @@
-+/* Copyright (C) 1996, 1997, 1998, 2003, 2004 Free Software Foundation, Inc.
-+   This file is part of the GNU C Library.
-+   Contributed by Ralf Baechle <ralf@gnu.org>.
-+
-+   The GNU C Library is free software; you can redistribute it and/or
-+   modify it under the terms of the GNU Lesser General Public
-+   License as published by the Free Software Foundation; either
-+   version 2.1 of the License, or (at your option) any later version.
-+
-+   The GNU C Library is distributed in the hope that it will be useful,
-+   but WITHOUT ANY WARRANTY; without even the implied warranty of
-+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+   Lesser General Public License for more details.
-+
-+   You should have received a copy of the GNU Lesser General Public
-+   License along with the GNU C Library; if not, write to the Free
-+   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
-+   02111-1307 USA.  */
-+
-+#ifndef _SGIDEFS_H
-+#define _SGIDEFS_H	1
-+
-+/*
-+ * Subprogram calling convention
-+ */
-+#ifndef _ABIO32
-+# define _ABIO32		1
-+#endif
-+#define _RISCV_SIM_ABI32		_ABIO32
-+
-+#ifndef _ABIN32
-+# define _ABIN32		2
-+#endif
-+#define _RISCV_SIM_NABI32	_ABIN32
-+
-+#ifndef _ABI64
-+# define _ABI64			3
-+#endif
-+#define _RISCV_SIM_ABI64		_ABI64
-+
-+#endif /* sgidefs.h */
 diff -Nur original-glibc/sysdeps/riscv/soft-fp/sfp-machine.h glibc/sysdeps/riscv/soft-fp/sfp-machine.h
 --- original-glibc/sysdeps/riscv/soft-fp/sfp-machine.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/soft-fp/sfp-machine.h	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/soft-fp/sfp-machine.h	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,47 @@
 +#define _FP_W_TYPE_SIZE		32
 +#define _FP_W_TYPE		unsigned long
@@ -4656,7 +4659,7 @@ diff -Nur original-glibc/sysdeps/riscv/soft-fp/sfp-machine.h glibc/sysdeps/riscv
 +#define FP_EX_INEXACT           (1 << 0)
 diff -Nur original-glibc/sysdeps/riscv/stackinfo.h glibc/sysdeps/riscv/stackinfo.h
 --- original-glibc/sysdeps/riscv/stackinfo.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/stackinfo.h	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/stackinfo.h	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,34 @@
 +/* Copyright (C) 2000, 2010 Free Software Foundation, Inc.
 +   This file is part of the GNU C Library.
@@ -4694,7 +4697,7 @@ diff -Nur original-glibc/sysdeps/riscv/stackinfo.h glibc/sysdeps/riscv/stackinfo
 +#endif	/* stackinfo.h */
 diff -Nur original-glibc/sysdeps/riscv/start.S glibc/sysdeps/riscv/start.S
 --- original-glibc/sysdeps/riscv/start.S	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/start.S	2014-12-09 14:38:38.665778707 -0800
++++ glibc/sysdeps/riscv/start.S	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,66 @@
 +/* Startup code compliant to the ELF Mips ABI.
 +   Copyright (C) 1995, 1997, 2000, 2001, 2002, 2003, 2004
@@ -4764,7 +4767,7 @@ diff -Nur original-glibc/sysdeps/riscv/start.S glibc/sysdeps/riscv/start.S
 +	data_start = __data_start
 diff -Nur original-glibc/sysdeps/riscv/strcmp.S glibc/sysdeps/riscv/strcmp.S
 --- original-glibc/sysdeps/riscv/strcmp.S	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/strcmp.S	2014-12-09 14:38:38.665778707 -0800
++++ glibc/sysdeps/riscv/strcmp.S	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,127 @@
 +# Artisanally coded in California by A. Shell Waterman
 +
@@ -4895,7 +4898,7 @@ diff -Nur original-glibc/sysdeps/riscv/strcmp.S glibc/sysdeps/riscv/strcmp.S
 +#endif
 diff -Nur original-glibc/sysdeps/riscv/strcpy.c glibc/sysdeps/riscv/strcpy.c
 --- original-glibc/sysdeps/riscv/strcpy.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/strcpy.c	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/strcpy.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,54 @@
 +#include <string.h>
 +#include <stdint.h>
@@ -4953,7 +4956,7 @@ diff -Nur original-glibc/sysdeps/riscv/strcpy.c glibc/sysdeps/riscv/strcpy.c
 +libc_hidden_def(strcpy)
 diff -Nur original-glibc/sysdeps/riscv/strlen.c glibc/sysdeps/riscv/strlen.c
 --- original-glibc/sysdeps/riscv/strlen.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/strlen.c	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/strlen.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,38 @@
 +#include <string.h>
 +#include <stdint.h>
@@ -4995,7 +4998,7 @@ diff -Nur original-glibc/sysdeps/riscv/strlen.c glibc/sysdeps/riscv/strlen.c
 +libc_hidden_def(strlen)
 diff -Nur original-glibc/sysdeps/riscv/sys/asm.h glibc/sysdeps/riscv/sys/asm.h
 --- original-glibc/sysdeps/riscv/sys/asm.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/sys/asm.h	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/sys/asm.h	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,69 @@
 +/* copyright (c) 1997, 1998, 2002, 2003, 2004, 2005
 +   Free Software Foundation, Inc.
@@ -5068,7 +5071,7 @@ diff -Nur original-glibc/sysdeps/riscv/sys/asm.h glibc/sysdeps/riscv/sys/asm.h
 +#endif /* sys/asm.h */
 diff -Nur original-glibc/sysdeps/riscv/tcb-offsets.sym glibc/sysdeps/riscv/tcb-offsets.sym
 --- original-glibc/sysdeps/riscv/tcb-offsets.sym	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/tcb-offsets.sym	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/riscv/tcb-offsets.sym	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,11 @@
 +#include <sysdep.h>
 +#include <tls.h>
@@ -5083,8 +5086,8 @@ diff -Nur original-glibc/sysdeps/riscv/tcb-offsets.sym glibc/sysdeps/riscv/tcb-o
 +TID_OFFSET			thread_offsetof (tid)
 diff -Nur original-glibc/sysdeps/riscv/tst-audit.h glibc/sysdeps/riscv/tst-audit.h
 --- original-glibc/sysdeps/riscv/tst-audit.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/tst-audit.h	2014-12-09 14:32:35.932301937 -0800
-@@ -0,0 +1,33 @@
++++ glibc/sysdeps/riscv/tst-audit.h	2014-12-09 15:54:39.020723609 -0800
+@@ -0,0 +1,26 @@
 +/* Definitions for testing PLT entry/exit auditing.  ARM version.
 +
 +   Copyright (C) 2005 Free Software Foundation, Inc.
@@ -5106,21 +5109,14 @@ diff -Nur original-glibc/sysdeps/riscv/tst-audit.h glibc/sysdeps/riscv/tst-audit
 +   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
 +   02111-1307 USA.  */
 +
-+#include <sgidefs.h>
-+
-+#if _RISCV_SIM == _ABI32
-+#define pltenter la_mips_n32_gnu_pltenter
-+#define pltexit la_mips_n32_gnu_pltexit
-+#else
-+#define pltenter la_mips_n64_gnu_pltenter
-+#define pltexit la_mips_n64_gnu_pltexit
-+#endif
-+#define La_regs La_mips_64_regs
-+#define La_retval La_mips_64_retval
-+#define int_retval lrv_v0
++#define pltenter la_riscv_gnu_pltenter
++#define pltexit la_riscv_gnu_pltexit
++#define La_regs La_riscv_regs
++#define La_retval La_riscv_retval
++#define int_retval lrv_a0
 diff -Nur original-glibc/sysdeps/riscv/Versions glibc/sysdeps/riscv/Versions
 --- original-glibc/sysdeps/riscv/Versions	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/riscv/Versions	2014-12-09 14:31:16.755856778 -0800
++++ glibc/sysdeps/riscv/Versions	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,5 @@
 +libc {
 +  GLIBC_2.14 {
@@ -5129,12 +5125,12 @@ diff -Nur original-glibc/sysdeps/riscv/Versions glibc/sysdeps/riscv/Versions
 +}
 diff -Nur original-glibc/sysdeps/unix/riscv/rt-sysdep.c glibc/sysdeps/unix/riscv/rt-sysdep.c
 --- original-glibc/sysdeps/unix/riscv/rt-sysdep.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/riscv/rt-sysdep.c	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/unix/riscv/rt-sysdep.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1 @@
 +#include <sysdep.c>
 diff -Nur original-glibc/sysdeps/unix/riscv/sysdep.c glibc/sysdeps/unix/riscv/sysdep.c
 --- original-glibc/sysdeps/unix/riscv/sysdep.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/riscv/sysdep.c	2014-12-09 14:38:38.665778707 -0800
++++ glibc/sysdeps/unix/riscv/sysdep.c	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,41 @@
 +/* Copyright (C) 1992, 1993, 1994, 1997, 1998, 1999, 2000, 2002, 2003 
 +   Free Software Foundation, Inc.
@@ -5179,7 +5175,7 @@ diff -Nur original-glibc/sysdeps/unix/riscv/sysdep.c glibc/sysdeps/unix/riscv/sy
 +}
 diff -Nur original-glibc/sysdeps/unix/riscv/sysdep.h glibc/sysdeps/unix/riscv/sysdep.h
 --- original-glibc/sysdeps/unix/riscv/sysdep.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/riscv/sysdep.h	2014-12-09 14:38:38.665778707 -0800
++++ glibc/sysdeps/unix/riscv/sysdep.h	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,72 @@
 +/* Copyright (C) 1992, 1995, 1997, 1999, 2000, 2002, 2003, 2004
 +   Free Software Foundation, Inc.
@@ -5255,12 +5251,12 @@ diff -Nur original-glibc/sysdeps/unix/riscv/sysdep.h glibc/sysdeps/unix/riscv/sy
 +#endif
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/arch-fork.h glibc/sysdeps/unix/sysv/linux/riscv/arch-fork.h
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/arch-fork.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/arch-fork.h	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/arch-fork.h	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1 @@
 +#include <sysdeps/unix/sysv/linux/i386/arch-fork.h>
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/bits/atomic.h glibc/sysdeps/unix/sysv/linux/riscv/bits/atomic.h
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/bits/atomic.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/bits/atomic.h	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/bits/atomic.h	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1,53 @@
 +/* Low-level functions for atomic operations. Mips version.
 +   Copyright (C) 2005 Free Software Foundation, Inc.
@@ -5315,29 +5311,9 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/bits/atomic.h glibc/sysde
 +#endif /* __riscv_atomic */
 +
 +#endif /* bits/atomic.h */
-diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/bits/endian.h glibc/sysdeps/unix/sysv/linux/riscv/bits/endian.h
---- original-glibc/sysdeps/unix/sysv/linux/riscv/bits/endian.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/bits/endian.h	2014-12-09 14:32:35.932301937 -0800
-@@ -0,0 +1,16 @@
-+/* The MIPS architecture has selectable endianness.
-+   Linux/MIPS exists in two both little and big endian flavours and we
-+   want to be able to share the installed headerfiles between both,
-+   so we define __BYTE_ORDER based on GCC's predefines.  */
-+
-+#ifndef _ENDIAN_H
-+# error "Never use <bits/endian.h> directly; include <endian.h> instead."
-+#endif
-+
-+#ifdef __RISCVEB__
-+# define __BYTE_ORDER __BIG_ENDIAN
-+#else
-+# ifdef __RISCVEL__
-+#  define __BYTE_ORDER __LITTLE_ENDIAN
-+# endif
-+#endif
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/bits/mman.h glibc/sysdeps/unix/sysv/linux/riscv/bits/mman.h
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/bits/mman.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/bits/mman.h	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/bits/mman.h	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1,38 @@
 +/* Definitions for POSIX memory map interface.  Linux/MIPS version.
 +   Copyright (C) 1997, 2000, 2003, 2004, 2005, 2006, 2009, 2011
@@ -5379,7 +5355,7 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/bits/mman.h glibc/sysdeps
 +#include <bits/mman-linux.h>
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/bits/sigcontext.h glibc/sysdeps/unix/sysv/linux/riscv/bits/sigcontext.h
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/bits/sigcontext.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/bits/sigcontext.h	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/bits/sigcontext.h	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1,33 @@
 +/* Copyright (C) 1996, 1997, 1998, 2003, 2004, 2006 Free Software
 +   Foundation, Inc.  This file is part of the GNU C Library.
@@ -5416,7 +5392,7 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/bits/sigcontext.h glibc/s
 +#endif
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/clone.S glibc/sysdeps/unix/sysv/linux/riscv/clone.S
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/clone.S	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/clone.S	2014-12-09 14:38:38.665778707 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/clone.S	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1,117 @@
 +/* Copyright (C) 1996, 1997, 2000, 2003, 2005 Free Software Foundation, Inc.
 +   This file is part of the GNU C Library.
@@ -5537,7 +5513,7 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/clone.S glibc/sysdeps/uni
 +weak_alias (__clone, clone)
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/configure glibc/sysdeps/unix/sysv/linux/riscv/configure
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/configure	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/configure	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/configure	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1,28 @@
 +# This file is generated from configure.in by Autoconf.  DO NOT EDIT!
 + # Local configure fragment for sysdeps/unix/sysv/linux/riscv.
@@ -5569,7 +5545,7 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/configure glibc/sysdeps/u
 +fi
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/configure.in glibc/sysdeps/unix/sysv/linux/riscv/configure.in
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/configure.in	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/configure.in	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/configure.in	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1,29 @@
 +sinclude(./aclocal.m4)dnl Autoconf lossage
 +GLIBC_PROVIDES dnl See aclocal.m4 in the top level source directory.
@@ -5602,7 +5578,7 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/configure.in glibc/sysdep
 +fi
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/dl-cache.h glibc/sysdeps/unix/sysv/linux/riscv/dl-cache.h
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/dl-cache.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/dl-cache.h	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/dl-cache.h	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1,45 @@
 +/* Support for reading /etc/ld.so.cache files written by Linux ldconfig.
 +   Copyright (C) 2003, 2007 Free Software Foundation, Inc.
@@ -5651,7 +5627,7 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/dl-cache.h glibc/sysdeps/
 +#include_next <dl-cache.h>
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/dl-static.c glibc/sysdeps/unix/sysv/linux/riscv/dl-static.c
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/dl-static.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/dl-static.c	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/dl-static.c	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1,92 @@
 +/* Variable initialization.  MIPS version.
 +   Copyright (C) 2001, 2002, 2003, 2005 Free Software Foundation, Inc.
@@ -5747,7 +5723,7 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/dl-static.c glibc/sysdeps
 +#endif
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/getcontext.S glibc/sysdeps/unix/sysv/linux/riscv/getcontext.S
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/getcontext.S	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/getcontext.S	2014-12-09 14:38:38.665778707 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/getcontext.S	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1,82 @@
 +/* Save current context.
 +   Copyright (C) 2009 Free Software Foundation, Inc.
@@ -5833,12 +5809,12 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/getcontext.S glibc/sysdep
 +weak_alias (__getcontext, getcontext)
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/getmsg.c glibc/sysdeps/unix/sysv/linux/riscv/getmsg.c
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/getmsg.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/getmsg.c	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/getmsg.c	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1 @@
 +#include <sysdeps/unix/sysv/linux/i386/getmsg.c>
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/Implies glibc/sysdeps/unix/sysv/linux/riscv/Implies
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/Implies	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/Implies	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/Implies	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,5 @@
 +unix/sysv/linux/generic
 +riscv/nptl
@@ -5847,7 +5823,7 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/Implies glibc/sysdeps/uni
 +unix/sysv/linux/riscv/rv64
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/kernel-features.h glibc/sysdeps/unix/sysv/linux/riscv/kernel-features.h
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/kernel-features.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/kernel-features.h	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/kernel-features.h	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1,29 @@
 +/* Copyright (C) 2014 Free Software Foundation, Inc.
 +   This file is part of the GNU C Library.
@@ -5880,7 +5856,7 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/kernel-features.h glibc/s
 +#define __ASSUME_ALIGNED_REGISTER_PAIRS	1
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/ldsodefs.h glibc/sysdeps/unix/sysv/linux/riscv/ldsodefs.h
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/ldsodefs.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/ldsodefs.h	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/ldsodefs.h	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1,33 @@
 +/* Run-time dynamic linker data structures for loaded ELF shared objects. MIPS.
 +   Copyright (C) 2001, 2003 Free Software Foundation, Inc.
@@ -5917,7 +5893,7 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/ldsodefs.h glibc/sysdeps/
 +#endif /* ldsodefs.h */
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/libc-abis glibc/sysdeps/unix/sysv/linux/riscv/libc-abis
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/libc-abis	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/libc-abis	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/libc-abis	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1,13 @@
 +# See the copy of this file in libc for detailed explanations.  This
 +# copy needs to include all libc definitions applicable to MIPS; only
@@ -5934,13 +5910,13 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/libc-abis glibc/sysdeps/u
 +UNIQUE
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/____longjmp_chk.S glibc/sysdeps/unix/sysv/linux/riscv/____longjmp_chk.S
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/____longjmp_chk.S	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/____longjmp_chk.S	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/____longjmp_chk.S	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,2 @@
 +#define __longjmp ____longjmp_chk
 +#include <__longjmp.S>
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/makecontext.c glibc/sysdeps/unix/sysv/linux/riscv/makecontext.c
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/makecontext.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/makecontext.c	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/makecontext.c	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1,43 @@
 +#include <sysdep.h>
 +#include <sys/asm.h>
@@ -5987,7 +5963,7 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/makecontext.c glibc/sysde
 +weak_alias (__makecontext, makecontext)
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/Makefile glibc/sysdeps/unix/sysv/linux/riscv/Makefile
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/Makefile	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/Makefile	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/Makefile	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,13 @@
 +ifeq ($(subdir),elf)
 +ifeq ($(build-shared),yes)
@@ -6004,18 +5980,18 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/Makefile glibc/sysdeps/un
 +endif
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/profil-counter.h glibc/sysdeps/unix/sysv/linux/riscv/profil-counter.h
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/profil-counter.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/profil-counter.h	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/profil-counter.h	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1,2 @@
 +/* We can use the ix86 version.  */
 +#include <sysdeps/unix/sysv/linux/i386/profil-counter.h>
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/putmsg.c glibc/sysdeps/unix/sysv/linux/riscv/putmsg.c
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/putmsg.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/putmsg.c	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/putmsg.c	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1 @@
 +#include <sysdeps/unix/sysv/linux/i386/putmsg.c>
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/register-dump.h glibc/sysdeps/unix/sysv/linux/riscv/register-dump.h
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/register-dump.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/register-dump.h	2014-12-09 14:38:38.665778707 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/register-dump.h	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1,65 @@
 +/* Dump registers.
 +   Copyright (C) 2000, 2001, 2002, 2006 Free Software Foundation, Inc.
@@ -6084,27 +6060,27 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/register-dump.h glibc/sys
 +#define REGISTER_DUMP register_dump (fd, ctx)
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/rv32/lockf64.c glibc/sysdeps/unix/sysv/linux/riscv/rv32/lockf64.c
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/rv32/lockf64.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/rv32/lockf64.c	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/rv32/lockf64.c	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1 @@
 +#include <sysdeps/unix/sysv/linux/i386/lockf64.c>
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/rv32/readahead.c glibc/sysdeps/unix/sysv/linux/riscv/rv32/readahead.c
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/rv32/readahead.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/rv32/readahead.c	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/rv32/readahead.c	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1 @@
 +#include <sysdeps/unix/sysv/linux/arm/readahead.c>
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/rv32/sync_file_range.c glibc/sysdeps/unix/sysv/linux/riscv/rv32/sync_file_range.c
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/rv32/sync_file_range.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/rv32/sync_file_range.c	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/rv32/sync_file_range.c	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1 @@
 +#include <sysdeps/unix/sysv/linux/mips/mips32/sync_file_range.c>
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/rv64/Implies glibc/sysdeps/unix/sysv/linux/riscv/rv64/Implies
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/rv64/Implies	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/rv64/Implies	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/rv64/Implies	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1 @@
 +unix/sysv/linux/wordsize-64
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/rv64/ldconfig.h glibc/sysdeps/unix/sysv/linux/riscv/rv64/ldconfig.h
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/rv64/ldconfig.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/rv64/ldconfig.h	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/rv64/ldconfig.h	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1,26 @@
 +/* Copyright (C) 2001, 2002, 2003 Free Software Foundation, Inc.
 +   This file is part of the GNU C Library.
@@ -6134,12 +6110,12 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/rv64/ldconfig.h glibc/sys
 +  { "libm.so.6", FLAG_ELF_LIBC6 },
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/rv64/ldd-rewrite.sed glibc/sysdeps/unix/sysv/linux/riscv/rv64/ldd-rewrite.sed
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/rv64/ldd-rewrite.sed	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/rv64/ldd-rewrite.sed	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/rv64/ldd-rewrite.sed	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1 @@
 +s_^\(RTLDLIST=\)\(.*lib\)\(\|32\|64\)\(/[^/]*\.so\.[0-9.]*\)[ 	]*$_\1"\232\4 \264\4 \2\4"_
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/rv64/Makefile glibc/sysdeps/unix/sysv/linux/riscv/rv64/Makefile
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/rv64/Makefile	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/rv64/Makefile	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/rv64/Makefile	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1,9 @@
 +ifeq ($(subdir),socket)
 +CFLAGS-recv.c += -fexceptions
@@ -6152,7 +6128,7 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/rv64/Makefile glibc/sysde
 +endif
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/setcontext.S glibc/sysdeps/unix/sysv/linux/riscv/setcontext.S
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/setcontext.S	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/setcontext.S	2014-12-09 14:38:38.665778707 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/setcontext.S	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1,96 @@
 +/* Set current context.
 +   Copyright (C) 2009 Free Software Foundation, Inc.
@@ -6252,7 +6228,7 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/setcontext.S glibc/sysdep
 +weak_alias (__setcontext, setcontext)
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/sigcontextinfo.h glibc/sysdeps/unix/sysv/linux/riscv/sigcontextinfo.h
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/sigcontextinfo.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/sigcontextinfo.h	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/sigcontextinfo.h	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1,29 @@
 +/* Copyright (C) 2000, 2001, 2003, 2004 Free Software Foundation, Inc.
 +   This file is part of the GNU C Library.
@@ -6283,104 +6259,9 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/sigcontextinfo.h glibc/sy
 +
 +#define CALL_SIGHANDLER(handler, signo, ctx) \
 +  (handler)((signo), SIGCONTEXT_EXTRA_ARGS (ctx))
-diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/socket.S glibc/sysdeps/unix/sysv/linux/riscv/socket.S
---- original-glibc/sysdeps/unix/sysv/linux/riscv/socket.S	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/socket.S	2014-12-09 14:38:38.665778707 -0800
-@@ -0,0 +1,91 @@
-+/* Copyright (C) 1997, 1998, 2002, 2003 Free Software Foundation, Inc.
-+   This file is part of the GNU C Library.
-+   Contributed by Miguel de Icaza <miguel@gnu.ai.mit.edu>, 1997.
-+
-+   The GNU C Library is free software; you can redistribute it and/or
-+   modify it under the terms of the GNU Lesser General Public
-+   License as published by the Free Software Foundation; either
-+   version 2.1 of the License, or (at your option) any later version.
-+
-+   The GNU C Library is distributed in the hope that it will be useful,
-+   but WITHOUT ANY WARRANTY; without even the implied warranty of
-+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+   Lesser General Public License for more details.
-+
-+   You should have received a copy of the GNU Lesser General Public
-+   License along with the GNU C Library; if not, write to the Free
-+   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
-+   02111-1307 USA.  */
-+
-+#include <sysdep-cancel.h>
-+#include <socketcall.h>
-+
-+#define P(a, b) P2(a, b)
-+#define P2(a, b) a##b
-+
-+#ifndef NARGS
-+#ifdef socket
-+#error NARGS not defined
-+#endif
-+#define NARGS 3
-+#endif
-+
-+	.text
-+/* The socket-oriented system calls are handled unusually in Linux.
-+   They are all gated through the single `socketcall' system call number.
-+   `socketcall' takes two arguments: the first is the subcode, specifying
-+   which socket function is being called; and the second is a pointer to
-+   the arguments to the specific function.
-+
-+   The .S files for the other calls just #define socket and #include this.  */
-+
-+#ifndef __socket
-+# ifndef NO_WEAK_ALIAS
-+#  define __socket P(__,socket)
-+# else
-+#  define __socket socket
-+# endif
-+#endif
-+
-+LEAF (__socket)
-+
-+	addi  sp, sp, -SZREG*NARGS
-+
-+	REG_S a0, 0*SZREG(sp)
-+	REG_S a1, 1*SZREG(sp)
-+#if NARGS > 2
-+	REG_S a2, 2*SZREG(sp)
-+#if NARGS > 3
-+	REG_S a3, 3*SZREG(sp)
-+#if NARGS > 4
-+	REG_S a4, 4*SZREG(sp)
-+#if NARGS > 5
-+	REG_S a5, 5*SZREG(sp)
-+#endif
-+#endif
-+#endif
-+#endif
-+
-+#if defined NEED_CANCELLATION && defined CENABLE
-+	SINGLE_THREAD_P(a0)
-+	bnez  a0, 1f
-+#endif
-+	li    a0, P(SOCKOP_,socket)	/* arg 1: socket subfunction */
-+	move  a1, sp			/* arg 2: parameter block */
-+	li    a7, SYS_ify (rt_sigprocmask)
-+	scall
-+
-+	addi  sp, sp, SZREG*NARGS
-+	bltz  a0, 99f
-+
-+#if defined NEED_CANCELLATION && defined CENABLE
-+1:sbreak
-+#endif
-+
-+99: 	j	__syscall_error
-+
-+END (__socket)
-+
-+#ifndef NO_WEAK_ALIAS
-+weak_alias (__socket, socket)
-+#endif
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/__start_context.S glibc/sysdeps/unix/sysv/linux/riscv/__start_context.S
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/__start_context.S	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/__start_context.S	2014-12-09 14:38:38.665778707 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/__start_context.S	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,36 @@
 +/* Modify saved context.
 +   Copyright (C) 2009 Free Software Foundation, Inc.
@@ -6420,7 +6301,7 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/__start_context.S glibc/s
 +PSEUDO_END (__start_context)
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/swapcontext.S glibc/sysdeps/unix/sysv/linux/riscv/swapcontext.S
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/swapcontext.S	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/swapcontext.S	2014-12-09 14:38:38.665778707 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/swapcontext.S	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1,131 @@
 +/* Save and set current context.
 +   Copyright (C) 2009 Free Software Foundation, Inc.
@@ -6555,8 +6436,8 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/swapcontext.S glibc/sysde
 +weak_alias (__swapcontext, swapcontext)
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/sys/procfs.h glibc/sysdeps/unix/sysv/linux/riscv/sys/procfs.h
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/sys/procfs.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/sys/procfs.h	2014-12-09 14:32:35.932301937 -0800
-@@ -0,0 +1,128 @@
++++ glibc/sysdeps/unix/sysv/linux/riscv/sys/procfs.h	2014-12-09 15:54:39.030723097 -0800
+@@ -0,0 +1,113 @@
 +/* Copyright (C) 1996, 1997, 1999, 2000, 2002, 2003, 2004
 +	Free Software Foundation, Inc.
 +   This file is part of the GNU C Library.
@@ -6584,25 +6465,19 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/sys/procfs.h glibc/sysdep
 +   used on Linux.  */
 +
 +#include <features.h>
-+#include <sgidefs.h>
 +#include <sys/time.h>
 +#include <sys/types.h>
 +#include <sys/user.h>
-+#include <sgidefs.h>
++#include <sys/ucontext.h>
 +
 +/* ELF register definitions */
-+#define ELF_NGREG	45
-+#define ELF_NFPREG	33
++#define ELF_NGREG	NGREG
++#define ELF_NFPREG	NFPREG
 +
-+#if _RISCV_SIM == _ABIN32
-+__extension__ typedef unsigned long long elf_greg_t;
-+#else
-+typedef unsigned long elf_greg_t;
-+#endif
-+typedef elf_greg_t elf_gregset_t[ELF_NGREG];
-+
-+typedef double elf_fpreg_t;
-+typedef elf_fpreg_t elf_fpregset_t[ELF_NFPREG];
++typedef greg_t elf_greg_t;
++typedef gregset_t elf_gregset_t;
++typedef fpreg_t elf_fpreg_t;
++typedef fpregset_t elf_fpregset_t;
 +
 +__BEGIN_DECLS
 +
@@ -6625,13 +6500,8 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/sys/procfs.h glibc/sysdep
 +  {
 +    struct elf_siginfo pr_info;		/* Info associated with signal.  */
 +    short int pr_cursig;		/* Current signal.  */
-+#if _RISCV_SIM == _ABIN32
-+    __extension__ unsigned long long int pr_sigpend;
-+    __extension__ unsigned long long int pr_sighold;
-+#else
 +    unsigned long int pr_sigpend;	/* Set of pending signals.  */
 +    unsigned long int pr_sighold;	/* Set of held signals.  */
-+#endif
 +    __pid_t pr_pid;
 +    __pid_t pr_ppid;
 +    __pid_t pr_pgrp;
@@ -6653,11 +6523,7 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/sys/procfs.h glibc/sysdep
 +    char pr_sname;			/* Char for pr_state.  */
 +    char pr_zomb;			/* Zombie.  */
 +    char pr_nice;			/* Nice val.  */
-+#if _RISCV_SIM == _ABIN32
-+    __extension__ unsigned long long int pr_flag;
-+#else
 +    unsigned long int pr_flag;		/* Flags.  */
-+#endif
 +    long pr_uid;
 +    long pr_gid;
 +    int pr_pid, pr_ppid, pr_pgrp, pr_sid;
@@ -6687,8 +6553,8 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/sys/procfs.h glibc/sysdep
 +#endif	/* sys/procfs.h */
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/sys/ucontext.h glibc/sysdeps/unix/sysv/linux/riscv/sys/ucontext.h
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/sys/ucontext.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/sys/ucontext.h	2014-12-09 14:38:38.665778707 -0800
-@@ -0,0 +1,66 @@
++++ glibc/sysdeps/unix/sysv/linux/riscv/sys/ucontext.h	2014-12-09 15:54:39.030723097 -0800
+@@ -0,0 +1,67 @@
 +/* Copyright (C) 1997, 1998, 2000, 2003, 2004, 2006, 2009 Free Software
 +   Foundation, Inc.  This file is part of the GNU C Library.
 +
@@ -6722,6 +6588,7 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/sys/ucontext.h glibc/sysd
 +/* Type for general register.  Even in o32 we assume 64-bit registers,
 +   like the kernel.  */
 +__extension__ typedef unsigned long long int greg_t;
++typedef double fpreg_t;
 +
 +/* Number of general registers.  */
 +#define NGREG	32
@@ -6739,7 +6606,7 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/sys/ucontext.h glibc/sysd
 +typedef greg_t gregset_t[NGREG];
 +
 +/* Container for all FPU registers.  */
-+typedef double fpregset_t[NFPREG];
++typedef fpreg_t fpregset_t[NFPREG];
 +
 +/* Context to describe whole processor state.  */
 +typedef struct sigcontext mcontext_t;
@@ -6757,12 +6624,12 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/sys/ucontext.h glibc/sysd
 +#endif /* sys/ucontext.h */
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/sys/user.h glibc/sysdeps/unix/sysv/linux/riscv/sys/user.h
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/sys/user.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/sys/user.h	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/sys/user.h	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1 @@
 +/* This file is not needed, but in practice gdb might try to include it.  */
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/syscall.c glibc/sysdeps/unix/sysv/linux/riscv/syscall.c
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/syscall.c	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/syscall.c	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/syscall.c	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1,36 @@
 +/* Copyright (C) 2001, 2002, 2003, 2005 Free Software Foundation, Inc.
 +   This file is part of the GNU C Library.
@@ -6802,7 +6669,7 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/syscall.c glibc/sysdeps/u
 +}
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/sysdep.h glibc/sysdeps/unix/sysv/linux/riscv/sysdep.h
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/sysdep.h	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/sysdep.h	2014-12-09 14:38:38.665778707 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/sysdep.h	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1,235 @@
 +/* Copyright (C) 2011-2014
 +   This file is part of the GNU C Library.
@@ -7041,7 +6908,7 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/sysdep.h glibc/sysdeps/un
 +#endif /* linux/mips/sysdep.h */
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/ucontext_i.sym glibc/sysdeps/unix/sysv/linux/riscv/ucontext_i.sym
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/ucontext_i.sym	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/ucontext_i.sym	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/ucontext_i.sym	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1,33 @@
 +#include <inttypes.h>
 +#include <signal.h>
@@ -7078,7 +6945,7 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/ucontext_i.sym glibc/sysd
 +UCONTEXT_SIZE			sizeof (ucontext_t)
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/Versions glibc/sysdeps/unix/sysv/linux/riscv/Versions
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/Versions	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/Versions	2014-12-09 14:31:16.765856331 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/Versions	2014-12-09 15:54:39.020723609 -0800
 @@ -0,0 +1,40 @@
 +ld {
 +  GLIBC_PRIVATE {
@@ -7122,7 +6989,7 @@ diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/Versions glibc/sysdeps/un
 +}
 diff -Nur original-glibc/sysdeps/unix/sysv/linux/riscv/vfork.S glibc/sysdeps/unix/sysv/linux/riscv/vfork.S
 --- original-glibc/sysdeps/unix/sysv/linux/riscv/vfork.S	1969-12-31 16:00:00.000000000 -0800
-+++ glibc/sysdeps/unix/sysv/linux/riscv/vfork.S	2014-12-09 14:38:38.665778707 -0800
++++ glibc/sysdeps/unix/sysv/linux/riscv/vfork.S	2014-12-09 15:54:39.030723097 -0800
 @@ -0,0 +1,69 @@
 +/* Copyright (C) 2005 Free Software Foundation, Inc.
 +   This file is part of the GNU C Library.
