@@ -1,150 +1,6 @@
-diff --git a/bfd/archures.c b/bfd/archures.c
-index 97c540a..9fcbaf7 100644
---- a/bfd/archures.c
-+++ b/bfd/archures.c
-@@ -583,6 +583,7 @@ extern const bfd_arch_info_type bfd_pj_arch;
- extern const bfd_arch_info_type bfd_plugin_arch;
- extern const bfd_arch_info_type bfd_powerpc_archs[];
- #define bfd_powerpc_arch bfd_powerpc_archs[0]
-+extern const bfd_arch_info_type bfd_riscv_arch;
- extern const bfd_arch_info_type bfd_rs6000_arch;
- extern const bfd_arch_info_type bfd_rl78_arch;
- extern const bfd_arch_info_type bfd_rx_arch;
-@@ -669,6 +670,7 @@ static const bfd_arch_info_type * const bfd_archures_list[] =
-     &bfd_or32_arch,
-     &bfd_pdp11_arch,
-     &bfd_powerpc_arch,
-+    &bfd_riscv_arch,
-     &bfd_rs6000_arch,
-     &bfd_rl78_arch,
-     &bfd_rx_arch,
-diff --git a/bfd/bfd-in2.h b/bfd/bfd-in2.h
-index 756af87..fc2f690 100644
---- a/bfd/bfd-in2.h
-+++ b/bfd/bfd-in2.h
-@@ -2003,6 +2003,9 @@ enum bfd_architecture
- #define bfd_mach_ppc_e6500     5007
- #define bfd_mach_ppc_titan     83
- #define bfd_mach_ppc_vle       84
-+  bfd_arch_riscv, /* RISC-V */
-+#define bfd_mach_riscv32 132
-+#define bfd_mach_riscv64 164
-   bfd_arch_rs6000,    /* IBM RS/6000 */
- #define bfd_mach_rs6k          6000
- #define bfd_mach_rs6k_rs1      6001
-@@ -5227,6 +5230,40 @@ relative offset from _GLOBAL_OFFSET_TABLE_  */
- value in a word.  The relocation is relative offset from  */
-   BFD_RELOC_MICROBLAZE_32_GOTOFF,
- 
-+/* RISC-V relocations */
-+  BFD_RELOC_RISCV_HI20,
-+  BFD_RELOC_RISCV_PCREL_HI20,
-+  BFD_RELOC_RISCV_PCREL_LO12_I,
-+  BFD_RELOC_RISCV_PCREL_LO12_S,
-+  BFD_RELOC_RISCV_LO12_I,
-+  BFD_RELOC_RISCV_LO12_S,
-+  BFD_RELOC_RISCV_GPREL12_I,
-+  BFD_RELOC_RISCV_GPREL12_S,
-+  BFD_RELOC_RISCV_TPREL_HI20,
-+  BFD_RELOC_RISCV_TPREL_LO12_I,
-+  BFD_RELOC_RISCV_TPREL_LO12_S,
-+  BFD_RELOC_RISCV_TPREL_ADD,
-+  BFD_RELOC_RISCV_CALL,
-+  BFD_RELOC_RISCV_CALL_PLT,
-+  BFD_RELOC_RISCV_ADD8,
-+  BFD_RELOC_RISCV_ADD16,
-+  BFD_RELOC_RISCV_ADD32,
-+  BFD_RELOC_RISCV_ADD64,
-+  BFD_RELOC_RISCV_SUB8,
-+  BFD_RELOC_RISCV_SUB16,
-+  BFD_RELOC_RISCV_SUB32,
-+  BFD_RELOC_RISCV_SUB64,
-+  BFD_RELOC_RISCV_GOT_HI20,
-+  BFD_RELOC_RISCV_TLS_GOT_HI20,
-+  BFD_RELOC_RISCV_TLS_GD_HI20,
-+  BFD_RELOC_RISCV_JMP,
-+  BFD_RELOC_RISCV_TLS_DTPMOD32,
-+  BFD_RELOC_RISCV_TLS_DTPREL32,
-+  BFD_RELOC_RISCV_TLS_DTPMOD64,
-+  BFD_RELOC_RISCV_TLS_DTPREL64,
-+  BFD_RELOC_RISCV_TLS_TPREL32,
-+  BFD_RELOC_RISCV_TLS_TPREL64,
-+
- /* This is used to tell the dynamic linker to copy the value out of
- the dynamic object into the runtime process image.  */
-   BFD_RELOC_MICROBLAZE_COPY,
-diff --git a/bfd/config.bfd b/bfd/config.bfd
-index 5324d39..f15701f 100644
---- a/bfd/config.bfd
-+++ b/bfd/config.bfd
-@@ -114,6 +114,7 @@ or32*)		 targ_archs=bfd_or32_arch ;;
- pdp11*)		 targ_archs=bfd_pdp11_arch ;;
- pj*)		 targ_archs="bfd_pj_arch bfd_i386_arch";;
- powerpc*)	 targ_archs="bfd_rs6000_arch bfd_powerpc_arch" ;;
-+riscv*)		 targ_archs=bfd_riscv_arch ;;
- rs6000)		 targ_archs="bfd_rs6000_arch bfd_powerpc_arch" ;;
- s390*)		 targ_archs=bfd_s390_arch ;;
- sh*)		 targ_archs=bfd_sh_arch ;;
-@@ -1295,6 +1296,14 @@ case "${targ}" in
-     targ_defvec=bfd_elf32_rl78_vec
-     ;;
- 
-+#ifdef BFD64
-+  riscv*-*-*)
-+    targ_defvec=bfd_elf64_riscv_vec
-+    targ_selvecs="bfd_elf32_riscv_vec bfd_elf64_riscv_vec"
-+    want64=true
-+    ;;
-+#endif
-+
-   rx-*-elf)
-     targ_defvec=bfd_elf32_rx_le_vec
-     targ_selvecs="bfd_elf32_rx_be_vec bfd_elf32_rx_le_vec bfd_elf32_rx_be_ns_vec"
-diff --git a/bfd/configure b/bfd/configure
-index 90cd397..b186b60 100755
---- a/bfd/configure
-+++ b/bfd/configure
-@@ -15278,6 +15278,7 @@ do
-     bfd_elf32_littlemips_vec) 	tb="$tb elf32-mips.lo elfxx-mips.lo elf-vxworks.lo elf32.lo $elf ecofflink.lo" ;;
-     bfd_elf32_littlemips_vxworks_vec)
- 			 	tb="$tb elf32-mips.lo elfxx-mips.lo elf-vxworks.lo elf32.lo $elf ecofflink.lo" ;;
-+    bfd_elf32_riscv_vec)   tb="$tb elf32-riscv.lo elfxx-riscv.lo elf32.lo $elf" ;;
-     bfd_elf32_littlemoxie_vec)	tb="$tb elf32-moxie.lo elf32.lo $elf" ;;
-     bfd_elf32_littlenios2_vec)	tb="$tb elf32-nios2.lo elf32.lo $elf" ;;
-     bfd_elf32_m32c_vec)         tb="$tb elf32-m32c.lo elf32.lo $elf" ;;
-@@ -15384,6 +15385,7 @@ do
-     bfd_elf32_littleaarch64_vec)tb="$tb elf32-aarch64.lo elfxx-aarch64.lo elf-ifunc.lo elf32.lo $elf"; target_size=64 ;;
-     bfd_elf64_little_generic_vec) tb="$tb elf64-gen.lo elf64.lo $elf"; target_size=64 ;;
-     bfd_elf64_littlemips_vec) 	tb="$tb elf64-mips.lo elf64.lo elfxx-mips.lo elf-vxworks.lo elf32.lo $elf ecofflink.lo"; target_size=64 ;;
-+    bfd_elf64_riscv_vec) 	tb="$tb elf64-riscv.lo elf64.lo elfxx-riscv.lo elf32.lo $elf"; target_size=64 ;;
-     bfd_elf64_mmix_vec) 	tb="$tb elf64-mmix.lo elf64.lo $elf" target_size=64 ;;
-     bfd_elf64_powerpc_vec)	tb="$tb elf64-ppc.lo elf64-gen.lo elf64.lo $elf"; target_size=64 ;;
-     bfd_elf64_powerpcle_vec)	tb="$tb elf64-ppc.lo elf64-gen.lo elf64.lo $elf" target_size=64 ;;
-diff --git a/bfd/configure.in b/bfd/configure.in
-index 0e88d78..2d9d624 100644
---- a/bfd/configure.in
-+++ b/bfd/configure.in
-@@ -767,6 +767,7 @@ do
-     bfd_elf32_littlemips_vec) 	tb="$tb elf32-mips.lo elfxx-mips.lo elf-vxworks.lo elf32.lo $elf ecofflink.lo" ;;
-     bfd_elf32_littlemips_vxworks_vec)
- 			 	tb="$tb elf32-mips.lo elfxx-mips.lo elf-vxworks.lo elf32.lo $elf ecofflink.lo" ;;
-+    bfd_elf32_riscv_vec)   tb="$tb elf32-riscv.lo elfxx-riscv.lo elf32.lo $elf ecofflink.lo" ;;
-     bfd_elf32_littlemoxie_vec)	tb="$tb elf32-moxie.lo elf32.lo $elf" ;;
-     bfd_elf32_littlenios2_vec)	tb="$tb elf32-nios2.lo elf32.lo $elf" ;;
-     bfd_elf32_m32c_vec)         tb="$tb elf32-m32c.lo elf32.lo $elf" ;;
-@@ -873,6 +874,7 @@ do
-     bfd_elf32_littleaarch64_vec)tb="$tb elf32-aarch64.lo elfxx-aarch64.lo elf-ifunc.lo elf32.lo $elf"; target_size=64 ;;
-     bfd_elf64_little_generic_vec) tb="$tb elf64-gen.lo elf64.lo $elf"; target_size=64 ;;
-     bfd_elf64_littlemips_vec) 	tb="$tb elf64-mips.lo elf64.lo elfxx-mips.lo elf-vxworks.lo elf32.lo $elf ecofflink.lo"; target_size=64 ;;
-+    bfd_elf64_riscv_vec) 	tb="$tb elf64-riscv.lo elf64.lo elfxx-riscv.lo elf32.lo $elf"; target_size=64 ;;
-     bfd_elf64_mmix_vec) 	tb="$tb elf64-mmix.lo elf64.lo $elf" target_size=64 ;;
-     bfd_elf64_powerpc_vec)	tb="$tb elf64-ppc.lo elf64-gen.lo elf64.lo $elf"; target_size=64 ;;
-     bfd_elf64_powerpcle_vec)	tb="$tb elf64-ppc.lo elf64-gen.lo elf64.lo $elf" target_size=64 ;;
-diff --git a/bfd/cpu-riscv.c b/bfd/cpu-riscv.c
-new file mode 100644
-index 0000000..4dbc1a3
---- /dev/null
-+++ b/bfd/cpu-riscv.c
+diff -Nur original-binutils/bfd/cpu-riscv.c binutils/bfd/cpu-riscv.c
+--- original-binutils/bfd/cpu-riscv.c	1969-12-31 16:00:00.000000000 -0800
++++ binutils/bfd/cpu-riscv.c	2014-12-09 14:31:16.735857672 -0800
 @@ -0,0 +1,80 @@
 +/* BFD backend for RISC-V
 +   Copyright 2011-2014 Free Software Foundation, Inc.
@@ -226,23 +82,9 @@ index 0000000..4dbc1a3
 +
 +const bfd_arch_info_type bfd_riscv_arch =
 +N (64, 64, 0, "riscv", TRUE, &arch_info_struct[0]);
-diff --git a/bfd/elf-bfd.h b/bfd/elf-bfd.h
-index add80b3..94b7380 100644
---- a/bfd/elf-bfd.h
-+++ b/bfd/elf-bfd.h
-@@ -432,6 +432,7 @@ enum elf_target_id
-   XGATE_ELF_DATA,
-   TILEGX_ELF_DATA,
-   TILEPRO_ELF_DATA,
-+  RISCV_ELF_DATA,
-   GENERIC_ELF_DATA
- };
- 
-diff --git a/bfd/elf32-riscv.c b/bfd/elf32-riscv.c
-new file mode 100644
-index 0000000..0dcf7d9
---- /dev/null
-+++ b/bfd/elf32-riscv.c
+diff -Nur original-binutils/bfd/elf32-riscv.c binutils/bfd/elf32-riscv.c
+--- original-binutils/bfd/elf32-riscv.c	1969-12-31 16:00:00.000000000 -0800
++++ binutils/bfd/elf32-riscv.c	2014-12-09 14:32:35.932301937 -0800
 @@ -0,0 +1,81 @@
 +/* RISC-V-specific support for 32-bit ELF.
 +   Copyright 2011-2014 Free Software Foundation, Inc.
@@ -325,11 +167,9 @@ index 0000000..0dcf7d9
 +#define elf_backend_default_execstack 0
 +
 +#include "elf32-target.h"
-diff --git a/bfd/elf64-riscv.c b/bfd/elf64-riscv.c
-new file mode 100644
-index 0000000..5272a6e
---- /dev/null
-+++ b/bfd/elf64-riscv.c
+diff -Nur original-binutils/bfd/elf64-riscv.c binutils/bfd/elf64-riscv.c
+--- original-binutils/bfd/elf64-riscv.c	1969-12-31 16:00:00.000000000 -0800
++++ binutils/bfd/elf64-riscv.c	2014-12-09 14:32:35.932301937 -0800
 @@ -0,0 +1,82 @@
 +/* RISC-V-specific support for 64-bit ELF.
 +   Copyright 2011-2014 Free Software Foundation, Inc.
@@ -413,12 +253,10 @@ index 0000000..5272a6e
 +#define elf_backend_default_execstack 0
 +
 +#include "elf64-target.h"
-diff --git a/bfd/elfxx-riscv.c b/bfd/elfxx-riscv.c
-new file mode 100644
-index 0000000..ba98d6a
---- /dev/null
-+++ b/bfd/elfxx-riscv.c
-@@ -0,0 +1,3705 @@
+diff -Nur original-binutils/bfd/elfxx-riscv.c binutils/bfd/elfxx-riscv.c
+--- original-binutils/bfd/elfxx-riscv.c	1969-12-31 16:00:00.000000000 -0800
++++ binutils/bfd/elfxx-riscv.c	2014-12-09 14:38:38.665778707 -0800
+@@ -0,0 +1,3699 @@
 +/* RISC-V-specific support for ELF.
 +   Copyright 2011-2014 Free Software Foundation, Inc.
 +
@@ -1289,12 +1127,6 @@ index 0000000..ba98d6a
 +	 + (plt_index * GOT_ENTRY_SIZE (info));
 +}
 +
-+#define X_V0 16
-+#define X_V1 17
-+#define X_T0 26
-+#define X_T1 27
-+#define X_T2 28
-+
 +#define MATCH_LREG(abfd) (ABI_64_P (abfd) ? MATCH_LD : MATCH_LW)
 +#define MATCH_SREG(abfd) (ABI_64_P (abfd) ? MATCH_SD : MATCH_SW)
 +
@@ -1307,22 +1139,22 @@ index 0000000..ba98d6a
 +  int regbytes = ABI_64_P(abfd) ? 8 : 4;
 +
 +  /* auipc  t2, %hi(.got.plt)
-+     sub    v0, v0, v1               # shifted .got.plt offset + hdr size + 12
-+     l[w|d] v1, %lo(.got.plt)(t2)    # _dl_runtime_resolve
-+     addi   v0, v0, -(hdr size + 12) # shifted .got.plt offset
++     sub    t1, t1, t0               # shifted .got.plt offset + hdr size + 12
++     l[w|d] t3, %lo(.got.plt)(t2)    # _dl_runtime_resolve
++     addi   t1, t1, -(hdr size + 12) # shifted .got.plt offset
 +     addi   t0, t2, %lo(.got.plt)    # &.got.plt
-+     srli   t1, v0, log2(16/PTRSIZE) # .got.plt offset
++     srli   t1, t1, log2(16/PTRSIZE) # .got.plt offset
 +     l[w|d] t0, PTRSIZE(t0)          # link map
-+     jr     v1 */
++     jr     t3 */
 +
 +  entry[0] = RISCV_UTYPE(AUIPC, X_T2, RISCV_PCREL_HIGH_PART(gotplt_addr, addr));
-+  entry[1] = RISCV_RTYPE(SUB, X_V0, X_V0, X_V1);
-+  entry[2] = RISCV_ITYPE(LREG(abfd), X_V1, X_T2, RISCV_PCREL_LOW_PART(gotplt_addr, addr));
-+  entry[3] = RISCV_ITYPE(ADDI, X_V0, X_V0, -(PLT_HEADER_SIZE + 12));
++  entry[1] = RISCV_RTYPE(SUB, X_T1, X_T1, X_T0);
++  entry[2] = RISCV_ITYPE(LREG(abfd), X_T3, X_T2, RISCV_PCREL_LOW_PART(gotplt_addr, addr));
++  entry[3] = RISCV_ITYPE(ADDI, X_T1, X_T1, -(PLT_HEADER_SIZE + 12));
 +  entry[4] = RISCV_ITYPE(ADDI, X_T0, X_T2, RISCV_PCREL_LOW_PART(gotplt_addr, addr));
-+  entry[5] = RISCV_ITYPE(SRLI, X_T1, X_V0, regbytes == 4 ? 2 : 1);
++  entry[5] = RISCV_ITYPE(SRLI, X_T1, X_T1, regbytes == 4 ? 2 : 1);
 +  entry[6] = RISCV_ITYPE(LREG(abfd), X_T0, X_T0, regbytes);
-+  entry[7] = RISCV_ITYPE(JALR, 0, X_V1, 0);
++  entry[7] = RISCV_ITYPE(JALR, 0, X_T3, 0);
 +}
 +
 +/* The format of subsequent PLT entries.  */
@@ -1331,14 +1163,14 @@ index 0000000..ba98d6a
 +riscv_make_plt_entry(bfd* abfd, bfd_vma got_address, bfd_vma addr,
 +		     uint32_t *entry)
 +{
-+  /* auipc  v0, %hi(.got.plt entry)
-+     l[w|d] v1, %lo(.got.plt entry)(v0)
-+     jalr   v0, v1
++  /* auipc  t1, %hi(.got.plt entry)
++     l[w|d] t0, %lo(.got.plt entry)(t1)
++     jalr   t1, t0
 +     nop */
 +
-+  entry[0] = RISCV_UTYPE(AUIPC, X_V0, RISCV_PCREL_HIGH_PART(got_address, addr));
-+  entry[1] = RISCV_ITYPE(LREG(abfd),  X_V1, X_V0, RISCV_PCREL_LOW_PART(got_address, addr));
-+  entry[2] = RISCV_ITYPE(JALR, X_V0, X_V1, 0);
++  entry[0] = RISCV_UTYPE (AUIPC, X_T1, RISCV_PCREL_HIGH_PART (got_address, addr));
++  entry[1] = RISCV_ITYPE(LREG(abfd),  X_T0, X_T1, RISCV_PCREL_LOW_PART(got_address, addr));
++  entry[2] = RISCV_ITYPE(JALR, X_T1, X_T0, 0);
 +  entry[3] = RISCV_NOP;
 +}
 +
@@ -3033,7 +2865,7 @@ index 0000000..ba98d6a
 +	      /* We can use tp as the base register.  */
 +	      bfd_vma insn = bfd_get_32 (input_bfd, contents + rel->r_offset);
 +	      insn &= ~(OP_MASK_RS1 << OP_SH_RS1);
-+	      insn |= TP_REG << OP_SH_RS1;
++	      insn |= X_TP << OP_SH_RS1;
 +	      bfd_put_32 (input_bfd, insn, contents + rel->r_offset);
 +	    }
 +	  break;
@@ -3049,7 +2881,7 @@ index 0000000..ba98d6a
 +		bfd_vma insn = bfd_get_32 (input_bfd, contents + rel->r_offset);
 +		insn &= ~(OP_MASK_RS1 << OP_SH_RS1);
 +		if (gp != 0)
-+		  insn |= GP_REG << OP_SH_RS1;
++		  insn |= X_GP << OP_SH_RS1;
 +		bfd_put_32 (input_bfd, insn, contents + rel->r_offset);
 +	      }
 +	    break;
@@ -4124,11 +3956,9 @@ index 0000000..ba98d6a
 +
 +  return FALSE;
 +}
-diff --git a/bfd/elfxx-riscv.h b/bfd/elfxx-riscv.h
-new file mode 100644
-index 0000000..59643c0
---- /dev/null
-+++ b/bfd/elfxx-riscv.h
+diff -Nur original-binutils/bfd/elfxx-riscv.h binutils/bfd/elfxx-riscv.h
+--- original-binutils/bfd/elfxx-riscv.h	1969-12-31 16:00:00.000000000 -0800
++++ binutils/bfd/elfxx-riscv.h	2014-12-09 14:32:35.932301937 -0800
 @@ -0,0 +1,98 @@
 +/* RISC-V ELF specific backend routines.
 +   Copyright 2011-2014 Free Software Foundation, Inc.
@@ -4228,195 +4058,10 @@ index 0000000..59643c0
 +extern bfd_boolean
 +_bfd_riscv_relax_section (bfd *, asection *, struct bfd_link_info *,
 +			  bfd_boolean *);
-diff --git a/bfd/targets.c b/bfd/targets.c
-index b117bfe..f66f59f 100644
---- a/bfd/targets.c
-+++ b/bfd/targets.c
-@@ -681,6 +681,7 @@ extern const bfd_target bfd_elf32_powerpc_vec;
- extern const bfd_target bfd_elf32_powerpcle_vec;
- extern const bfd_target bfd_elf32_powerpc_freebsd_vec;
- extern const bfd_target bfd_elf32_powerpc_vxworks_vec;
-+extern const bfd_target bfd_elf32_riscv_vec;
- extern const bfd_target bfd_elf32_rl78_vec;
- extern const bfd_target bfd_elf32_rx_le_vec;
- extern const bfd_target bfd_elf32_rx_be_vec;
-@@ -751,6 +752,7 @@ extern const bfd_target bfd_elf64_mmix_vec;
- extern const bfd_target bfd_elf64_powerpc_vec;
- extern const bfd_target bfd_elf64_powerpcle_vec;
- extern const bfd_target bfd_elf64_powerpc_freebsd_vec;
-+extern const bfd_target bfd_elf64_riscv_vec;
- extern const bfd_target bfd_elf64_s390_vec;
- extern const bfd_target bfd_elf64_sh64_vec;
- extern const bfd_target bfd_elf64_sh64l_vec;
-diff --git a/binutils/readelf.c b/binutils/readelf.c
-index 61ea0ad..e68b363 100644
---- a/binutils/readelf.c
-+++ b/binutils/readelf.c
-@@ -125,6 +125,7 @@
- #include "elf/metag.h"
- #include "elf/microblaze.h"
- #include "elf/mips.h"
-+#include "elf/riscv.h"
- #include "elf/mmix.h"
- #include "elf/mn10200.h"
- #include "elf/mn10300.h"
-@@ -629,6 +630,7 @@ guess_is_rela (unsigned int e_machine)
-     case EM_NIOS32:
-     case EM_PPC64:
-     case EM_PPC:
-+    case EM_RISCV:
-     case EM_RL78:
-     case EM_RX:
-     case EM_S390:
-@@ -1157,6 +1159,10 @@ dump_relocations (FILE * file,
- 	  rtype = elf_mips_reloc_type (type);
- 	  break;
- 
-+	case EM_RISCV:
-+	  rtype = elf_riscv_reloc_type (type);
-+	  break;
-+
- 	case EM_ALPHA:
- 	  rtype = elf_alpha_reloc_type (type);
- 	  break;
-@@ -2072,6 +2078,7 @@ get_machine_name (unsigned e_machine)
-     case EM_CR16:
-     case EM_MICROBLAZE:
-     case EM_MICROBLAZE_OLD:	return "Xilinx MicroBlaze";
-+    case EM_RISCV:		return "RISC-V";
-     case EM_RL78:		return "Renesas RL78";
-     case EM_RX:			return "Renesas RX";
-     case EM_METAG:		return "Imagination Technologies Meta processor architecture";
-@@ -2649,6 +2656,14 @@ get_machine_flags (unsigned e_flags, unsigned e_machine)
- 	    }
- 	  break;
- 
-+	case EM_RISCV:
-+          {
-+            unsigned int riscv_extension = EF_GET_RISCV_EXT(e_flags);
-+            strcat (buf, ", ");
-+            strcat (buf, riscv_elf_flag_to_name (riscv_extension));
-+          }
-+	  break;
-+
- 	case EM_SH:
- 	  switch ((e_flags & EF_SH_MACH_MASK))
- 	    {
-@@ -10274,6 +10289,8 @@ is_32bit_abs_reloc (unsigned int reloc_type)
-       return reloc_type == 1; /* R_PPC64_ADDR32.  */
-     case EM_PPC:
-       return reloc_type == 1; /* R_PPC_ADDR32.  */
-+    case EM_RISCV:
-+      return reloc_type == 1; /* R_RISCV_32.  */
-     case EM_RL78:
-       return reloc_type == 1; /* R_RL78_DIR32.  */
-     case EM_RX:
-@@ -10407,6 +10424,8 @@ is_64bit_abs_reloc (unsigned int reloc_type)
-       return reloc_type == 80; /* R_PARISC_DIR64.  */
-     case EM_PPC64:
-       return reloc_type == 38; /* R_PPC64_ADDR64.  */
-+    case EM_RISCV:
-+      return reloc_type == 2; /* R_RISCV_64.  */
-     case EM_SPARC32PLUS:
-     case EM_SPARCV9:
-     case EM_SPARC:
-@@ -10551,6 +10570,7 @@ is_none_reloc (unsigned int reloc_type)
-     case EM_ADAPTEVA_EPIPHANY:
-     case EM_PPC:     /* R_PPC_NONE.  */
-     case EM_PPC64:   /* R_PPC64_NONE.  */
-+    case EM_RISCV:   /* R_RISCV_NONE.  */
-     case EM_ARM:     /* R_ARM_NONE.  */
-     case EM_IA_64:   /* R_IA64_NONE.  */
-     case EM_SH:      /* R_SH_NONE.  */
-diff --git a/config.sub b/config.sub
-index 61cb4bc..d6e23cb 100755
---- a/config.sub
-+++ b/config.sub
-@@ -334,6 +334,9 @@ case $basic_machine in
- 	ms1)
- 		basic_machine=mt-unknown
- 		;;
-+	riscv)
-+		basic_machine=riscv-ucb
-+		;;
- 
- 	strongarm | thumb | xscale)
- 		basic_machine=arm-unknown
-diff --git a/gas/Makefile.am b/gas/Makefile.am
-index b85755d..15bf781 100644
---- a/gas/Makefile.am
-+++ b/gas/Makefile.am
-@@ -171,6 +171,7 @@ TARGET_CPU_CFILES = \
- 	config/tc-pdp11.c \
- 	config/tc-pj.c \
- 	config/tc-ppc.c \
-+	config/tc-riscv.c \
- 	config/tc-rl78.c \
- 	config/tc-rx.c \
- 	config/tc-s390.c \
-@@ -242,6 +243,7 @@ TARGET_CPU_HFILES = \
- 	config/tc-pdp11.h \
- 	config/tc-pj.h \
- 	config/tc-ppc.h \
-+	config/tc-riscv.h \
- 	config/tc-rl78.h \
- 	config/tc-rx.h \
- 	config/tc-s390.h \
-diff --git a/gas/Makefile.in b/gas/Makefile.in
-index 89ce4f5..c8919b9 100644
---- a/gas/Makefile.in
-+++ b/gas/Makefile.in
-@@ -440,6 +440,7 @@ TARGET_CPU_CFILES = \
- 	config/tc-pdp11.c \
- 	config/tc-pj.c \
- 	config/tc-ppc.c \
-+	config/tc-riscv.c \
- 	config/tc-rl78.c \
- 	config/tc-rx.c \
- 	config/tc-s390.c \
-@@ -511,6 +512,7 @@ TARGET_CPU_HFILES = \
- 	config/tc-pdp11.h \
- 	config/tc-pj.h \
- 	config/tc-ppc.h \
-+	config/tc-riscv.h \
- 	config/tc-rl78.h \
- 	config/tc-rx.h \
- 	config/tc-s390.h \
-@@ -861,6 +863,7 @@ distclean-compile:
- @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tc-pdp11.Po@am__quote@
- @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tc-pj.Po@am__quote@
- @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tc-ppc.Po@am__quote@
-+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tc-riscv.Po@am__quote@
- @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tc-rl78.Po@am__quote@
- @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tc-rx.Po@am__quote@
- @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tc-s390.Po@am__quote@
-@@ -1566,6 +1569,20 @@ tc-ppc.obj: config/tc-ppc.c
- @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
- @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o tc-ppc.obj `if test -f 'config/tc-ppc.c'; then $(CYGPATH_W) 'config/tc-ppc.c'; else $(CYGPATH_W) '$(srcdir)/config/tc-ppc.c'; fi`
- 
-+tc-riscv.o: config/tc-riscv.c
-+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT tc-riscv.o -MD -MP -MF $(DEPDIR)/tc-riscv.Tpo -c -o tc-riscv.o `test -f 'config/tc-riscv.c' || echo '$(srcdir)/'`config/tc-riscv.c
-+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/tc-riscv.Tpo $(DEPDIR)/tc-riscv.Po
-+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='config/tc-riscv.c' object='tc-riscv.o' libtool=no @AMDEPBACKSLASH@
-+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o tc-riscv.o `test -f 'config/tc-riscv.c' || echo '$(srcdir)/'`config/tc-riscv.c
-+
-+tc-riscv.obj: config/tc-riscv.c
-+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT tc-riscv.obj -MD -MP -MF $(DEPDIR)/tc-riscv.Tpo -c -o tc-riscv.obj `if test -f 'config/tc-riscv.c'; then $(CYGPATH_W) 'config/tc-riscv.c'; else $(CYGPATH_W) '$(srcdir)/config/tc-riscv.c'; fi`
-+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/tc-riscv.Tpo $(DEPDIR)/tc-riscv.Po
-+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='config/tc-riscv.c' object='tc-riscv.obj' libtool=no @AMDEPBACKSLASH@
-+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o tc-riscv.obj `if test -f 'config/tc-riscv.c'; then $(CYGPATH_W) 'config/tc-riscv.c'; else $(CYGPATH_W) '$(srcdir)/config/tc-riscv.c'; fi`
-+
- tc-rl78.o: config/tc-rl78.c
- @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT tc-rl78.o -MD -MP -MF $(DEPDIR)/tc-rl78.Tpo -c -o tc-rl78.o `test -f 'config/tc-rl78.c' || echo '$(srcdir)/'`config/tc-rl78.c
- @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/tc-rl78.Tpo $(DEPDIR)/tc-rl78.Po
-diff --git a/gas/config/tc-riscv.c b/gas/config/tc-riscv.c
-new file mode 100644
-index 0000000..1016819
---- /dev/null
-+++ b/gas/config/tc-riscv.c
-@@ -0,0 +1,2425 @@
+diff -Nur original-binutils/gas/config/tc-riscv.c binutils/gas/config/tc-riscv.c
+--- original-binutils/gas/config/tc-riscv.c	1969-12-31 16:00:00.000000000 -0800
++++ binutils/gas/config/tc-riscv.c	2014-12-09 14:38:38.665778707 -0800
+@@ -0,0 +1,2177 @@
 +/* tc-riscv.c -- RISC-V assembler
 +   Copyright 2011-2014 Free Software Foundation, Inc.
 +
@@ -4454,9 +4099,6 @@ index 0000000..1016819
 +
 +#include <execinfo.h>
 +#include <stdint.h>
-+
-+#define ZERO 0
-+#define SP 14
 +
 +/* Information about an instruction, including its format, operands
 +   and fixups.  */
@@ -4825,278 +4467,42 @@ index 0000000..1016819
 +  unsigned int num;
 +};
 +
-+#define RNUM_MASK	    0x000fff
-+#define RTYPE_NUM	    0x001000
-+#define RTYPE_FPU	    0x002000
-+#define RTYPE_VEC	    0x004000
-+#define RTYPE_GP	    0x008000
-+#define RTYPE_CP0	    0x010000
-+#define RTYPE_VGR_REG	0x020000
-+#define RTYPE_VFP_REG	0x040000
-+
-+#define X_REGISTER_NUMBERS \
-+    {"x0",	RTYPE_NUM | 0},  \
-+    {"x1",	RTYPE_NUM | 1},  \
-+    {"x2",	RTYPE_NUM | 2},  \
-+    {"x3",	RTYPE_NUM | 3},  \
-+    {"x4",	RTYPE_NUM | 4},  \
-+    {"x5",	RTYPE_NUM | 5},  \
-+    {"x6",	RTYPE_NUM | 6},  \
-+    {"x7",	RTYPE_NUM | 7},  \
-+    {"x8",	RTYPE_NUM | 8},  \
-+    {"x9",	RTYPE_NUM | 9},  \
-+    {"x10",	RTYPE_NUM | 10}, \
-+    {"x11",	RTYPE_NUM | 11}, \
-+    {"x12",	RTYPE_NUM | 12}, \
-+    {"x13",	RTYPE_NUM | 13}, \
-+    {"x14",	RTYPE_NUM | 14}, \
-+    {"x15",	RTYPE_NUM | 15}, \
-+    {"x16",	RTYPE_NUM | 16}, \
-+    {"x17",	RTYPE_NUM | 17}, \
-+    {"x18",	RTYPE_NUM | 18}, \
-+    {"x19",	RTYPE_NUM | 19}, \
-+    {"x20",	RTYPE_NUM | 20}, \
-+    {"x21",	RTYPE_NUM | 21}, \
-+    {"x22",	RTYPE_NUM | 22}, \
-+    {"x23",	RTYPE_NUM | 23}, \
-+    {"x24",	RTYPE_NUM | 24}, \
-+    {"x25",	RTYPE_NUM | 25}, \
-+    {"x26",	RTYPE_NUM | 26}, \
-+    {"x27",	RTYPE_NUM | 27}, \
-+    {"x28",	RTYPE_NUM | 28}, \
-+    {"x29",	RTYPE_NUM | 29}, \
-+    {"x30",	RTYPE_NUM | 30}, \
-+    {"x31",	RTYPE_NUM | 31} 
-+
-+#define F_REGISTER_NUMBERS       \
-+    {"f0",	RTYPE_FPU | 0},  \
-+    {"f1",	RTYPE_FPU | 1},  \
-+    {"f2",	RTYPE_FPU | 2},  \
-+    {"f3",	RTYPE_FPU | 3},  \
-+    {"f4",	RTYPE_FPU | 4},  \
-+    {"f5",	RTYPE_FPU | 5},  \
-+    {"f6",	RTYPE_FPU | 6},  \
-+    {"f7",	RTYPE_FPU | 7},  \
-+    {"f8",	RTYPE_FPU | 8},  \
-+    {"f9",	RTYPE_FPU | 9},  \
-+    {"f10",	RTYPE_FPU | 10}, \
-+    {"f11",	RTYPE_FPU | 11}, \
-+    {"f12",	RTYPE_FPU | 12}, \
-+    {"f13",	RTYPE_FPU | 13}, \
-+    {"f14",	RTYPE_FPU | 14}, \
-+    {"f15",	RTYPE_FPU | 15}, \
-+    {"f16",	RTYPE_FPU | 16}, \
-+    {"f17",	RTYPE_FPU | 17}, \
-+    {"f18",	RTYPE_FPU | 18}, \
-+    {"f19",	RTYPE_FPU | 19}, \
-+    {"f20",	RTYPE_FPU | 20}, \
-+    {"f21",	RTYPE_FPU | 21}, \
-+    {"f22",	RTYPE_FPU | 22}, \
-+    {"f23",	RTYPE_FPU | 23}, \
-+    {"f24",	RTYPE_FPU | 24}, \
-+    {"f25",	RTYPE_FPU | 25}, \
-+    {"f26",	RTYPE_FPU | 26}, \
-+    {"f27",	RTYPE_FPU | 27}, \
-+    {"f28",	RTYPE_FPU | 28}, \
-+    {"f29",	RTYPE_FPU | 29}, \
-+    {"f30",	RTYPE_FPU | 30}, \
-+    {"f31",	RTYPE_FPU | 31}
-+
-+/* Remaining symbolic register names */
-+#define X_REGISTER_NAMES \
-+  { "zero",	 0 | RTYPE_GP }, \
-+  { "ra",	 1 | RTYPE_GP }, \
-+  { "s0",	 2 | RTYPE_GP }, \
-+  { "s1",	 3 | RTYPE_GP }, \
-+  { "s2",	 4 | RTYPE_GP }, \
-+  { "s3",	 5 | RTYPE_GP }, \
-+  { "s4",	 6 | RTYPE_GP }, \
-+  { "s5",	 7 | RTYPE_GP }, \
-+  { "s6",	 8 | RTYPE_GP }, \
-+  { "s7",	 9 | RTYPE_GP }, \
-+  { "s8",	10 | RTYPE_GP }, \
-+  { "s9",	11 | RTYPE_GP }, \
-+  { "s10",	12 | RTYPE_GP }, \
-+  { "s11",	13 | RTYPE_GP }, \
-+  { "sp",	14 | RTYPE_GP }, \
-+  { "tp",	15 | RTYPE_GP }, \
-+  { "v0",	16 | RTYPE_GP }, \
-+  { "v1",	17 | RTYPE_GP }, \
-+  { "a0",	18 | RTYPE_GP }, \
-+  { "a1",	19 | RTYPE_GP }, \
-+  { "a2",	20 | RTYPE_GP }, \
-+  { "a3",	21 | RTYPE_GP }, \
-+  { "a4",	22 | RTYPE_GP }, \
-+  { "a5",	23 | RTYPE_GP }, \
-+  { "a6",	24 | RTYPE_GP }, \
-+  { "a7",	25 | RTYPE_GP }, \
-+  { "t0",	26 | RTYPE_GP }, \
-+  { "t1",	27 | RTYPE_GP }, \
-+  { "t2",	28 | RTYPE_GP }, \
-+  { "t3",	29 | RTYPE_GP }, \
-+  { "t4",	30 | RTYPE_GP }, \
-+  { "gp",	31 | RTYPE_GP }
-+
-+#define F_REGISTER_NAMES  \
-+  { "fs0",	 0 | RTYPE_FPU }, \
-+  { "fs1",	 1 | RTYPE_FPU }, \
-+  { "fs2",	 2 | RTYPE_FPU }, \
-+  { "fs3",	 3 | RTYPE_FPU }, \
-+  { "fs4",	 4 | RTYPE_FPU }, \
-+  { "fs5",	 5 | RTYPE_FPU }, \
-+  { "fs6",	 6 | RTYPE_FPU }, \
-+  { "fs7",	 7 | RTYPE_FPU }, \
-+  { "fs8",	 8 | RTYPE_FPU }, \
-+  { "fs9",	 9 | RTYPE_FPU }, \
-+  { "fs10",	10 | RTYPE_FPU }, \
-+  { "fs11",	11 | RTYPE_FPU }, \
-+  { "fs12",	12 | RTYPE_FPU }, \
-+  { "fs13",	13 | RTYPE_FPU }, \
-+  { "fs14",	14 | RTYPE_FPU }, \
-+  { "fs15",	15 | RTYPE_FPU }, \
-+  { "fv0",	16 | RTYPE_FPU }, \
-+  { "fv1",	17 | RTYPE_FPU }, \
-+  { "fa0",	18 | RTYPE_FPU }, \
-+  { "fa1",	19 | RTYPE_FPU }, \
-+  { "fa2",	20 | RTYPE_FPU }, \
-+  { "fa3",	21 | RTYPE_FPU }, \
-+  { "fa4",	22 | RTYPE_FPU }, \
-+  { "fa5",	23 | RTYPE_FPU }, \
-+  { "fa6",	24 | RTYPE_FPU }, \
-+  { "fa7",	25 | RTYPE_FPU }, \
-+  { "ft0",	26 | RTYPE_FPU }, \
-+  { "ft1",	27 | RTYPE_FPU }, \
-+  { "ft2",	28 | RTYPE_FPU }, \
-+  { "ft3",	29 | RTYPE_FPU }, \
-+  { "ft4",	30 | RTYPE_FPU }, \
-+  { "ft5",	31 | RTYPE_FPU }
-+
-+#define RISCV_VEC_GR_REGISTER_NAMES \
-+    {"vx0",	RTYPE_VGR_REG | 0}, \
-+    {"vx1",	RTYPE_VGR_REG | 1}, \
-+    {"vx2",	RTYPE_VGR_REG | 2}, \
-+    {"vx3",	RTYPE_VGR_REG | 3}, \
-+    {"vx4",	RTYPE_VGR_REG | 4}, \
-+    {"vx5",	RTYPE_VGR_REG | 5}, \
-+    {"vx6",	RTYPE_VGR_REG | 6}, \
-+    {"vx7",	RTYPE_VGR_REG | 7}, \
-+    {"vx8",	RTYPE_VGR_REG | 8}, \
-+    {"vx9",	RTYPE_VGR_REG | 9}, \
-+    {"vx10",	RTYPE_VGR_REG | 10}, \
-+    {"vx11",	RTYPE_VGR_REG | 11}, \
-+    {"vx12",	RTYPE_VGR_REG | 12}, \
-+    {"vx13",	RTYPE_VGR_REG | 13}, \
-+    {"vx14",	RTYPE_VGR_REG | 14}, \
-+    {"vx15",	RTYPE_VGR_REG | 15}, \
-+    {"vx16",	RTYPE_VGR_REG | 16}, \
-+    {"vx17",	RTYPE_VGR_REG | 17}, \
-+    {"vx18",	RTYPE_VGR_REG | 18}, \
-+    {"vx19",	RTYPE_VGR_REG | 19}, \
-+    {"vx20",	RTYPE_VGR_REG | 20}, \
-+    {"vx21",	RTYPE_VGR_REG | 21}, \
-+    {"vx22",	RTYPE_VGR_REG | 22}, \
-+    {"vx23",	RTYPE_VGR_REG | 23}, \
-+    {"vx24",	RTYPE_VGR_REG | 24}, \
-+    {"vx25",	RTYPE_VGR_REG | 25}, \
-+    {"vx26",	RTYPE_VGR_REG | 26}, \
-+    {"vx27",	RTYPE_VGR_REG | 27}, \
-+    {"vx28",	RTYPE_VGR_REG | 28}, \
-+    {"vx29",	RTYPE_VGR_REG | 29}, \
-+    {"vx30",	RTYPE_VGR_REG | 30}, \
-+    {"vx31",	RTYPE_VGR_REG | 31}
-+
-+#define RISCV_VEC_GR_SYMBOLIC_REGISTER_NAMES \
-+    {"vzero",	RTYPE_VGR_REG | 0}, \
-+    {"vra",	RTYPE_VGR_REG | 1}, \
-+    {"vs0",	RTYPE_VGR_REG | 2}, \
-+    {"vs1",	RTYPE_VGR_REG | 3}, \
-+    {"vs2",	RTYPE_VGR_REG | 4}, \
-+    {"vs3",	RTYPE_VGR_REG | 5}, \
-+    {"vs4",	RTYPE_VGR_REG | 6}, \
-+    {"vs5",	RTYPE_VGR_REG | 7}, \
-+    {"vs6",	RTYPE_VGR_REG | 8}, \
-+    {"vs7",	RTYPE_VGR_REG | 9}, \
-+    {"vs8",	RTYPE_VGR_REG | 10}, \
-+    {"vs9",	RTYPE_VGR_REG | 11}, \
-+    {"vs10",	RTYPE_VGR_REG | 12}, \
-+    {"vs11",	RTYPE_VGR_REG | 13}, \
-+    {"vsp",	RTYPE_VGR_REG | 14}, \
-+    {"vtp",	RTYPE_VGR_REG | 15}, \
-+    {"vv0",	RTYPE_VGR_REG | 16}, \
-+    {"vv1",	RTYPE_VGR_REG | 17}, \
-+    {"va0",	RTYPE_VGR_REG | 18}, \
-+    {"va1",	RTYPE_VGR_REG | 19}, \
-+    {"va2",	RTYPE_VGR_REG | 20}, \
-+    {"va3",	RTYPE_VGR_REG | 21}, \
-+    {"va4",	RTYPE_VGR_REG | 22}, \
-+    {"va5",	RTYPE_VGR_REG | 23}, \
-+    {"va6",	RTYPE_VGR_REG | 24}, \
-+    {"va7",	RTYPE_VGR_REG | 25}, \
-+    {"vt0",	RTYPE_VGR_REG | 26}, \
-+    {"vt1",	RTYPE_VGR_REG | 27}, \
-+    {"vt2",	RTYPE_VGR_REG | 28}, \
-+    {"vt3",	RTYPE_VGR_REG | 29}, \
-+    {"vt4",	RTYPE_VGR_REG | 30}, \
-+    {"vgp",	RTYPE_VGR_REG | 31}
-+
-+#define RISCV_VEC_FP_REGISTER_NAMES \
-+    {"vf0",	RTYPE_VFP_REG | 0}, \
-+    {"vf1",	RTYPE_VFP_REG | 1}, \
-+    {"vf2",	RTYPE_VFP_REG | 2}, \
-+    {"vf3",	RTYPE_VFP_REG | 3}, \
-+    {"vf4",	RTYPE_VFP_REG | 4}, \
-+    {"vf5",	RTYPE_VFP_REG | 5}, \
-+    {"vf6",	RTYPE_VFP_REG | 6}, \
-+    {"vf7",	RTYPE_VFP_REG | 7}, \
-+    {"vf8",	RTYPE_VFP_REG | 8}, \
-+    {"vf9",	RTYPE_VFP_REG | 9}, \
-+    {"vf10",	RTYPE_VFP_REG | 10}, \
-+    {"vf11",	RTYPE_VFP_REG | 11}, \
-+    {"vf12",	RTYPE_VFP_REG | 12}, \
-+    {"vf13",	RTYPE_VFP_REG | 13}, \
-+    {"vf14",	RTYPE_VFP_REG | 14}, \
-+    {"vf15",	RTYPE_VFP_REG | 15}, \
-+    {"vf16",	RTYPE_VFP_REG | 16}, \
-+    {"vf17",	RTYPE_VFP_REG | 17}, \
-+    {"vf18",	RTYPE_VFP_REG | 18}, \
-+    {"vf19",	RTYPE_VFP_REG | 19}, \
-+    {"vf20",	RTYPE_VFP_REG | 20}, \
-+    {"vf21",	RTYPE_VFP_REG | 21}, \
-+    {"vf22",	RTYPE_VFP_REG | 22}, \
-+    {"vf23",	RTYPE_VFP_REG | 23}, \
-+    {"vf24",	RTYPE_VFP_REG | 24}, \
-+    {"vf25",	RTYPE_VFP_REG | 25}, \
-+    {"vf26",	RTYPE_VFP_REG | 26}, \
-+    {"vf27",	RTYPE_VFP_REG | 27}, \
-+    {"vf28",	RTYPE_VFP_REG | 28}, \
-+    {"vf29",	RTYPE_VFP_REG | 29}, \
-+    {"vf30",	RTYPE_VFP_REG | 30}, \
-+    {"vf31",	RTYPE_VFP_REG | 31}
-+
-+static const struct regname reg_names[] = {
-+  X_REGISTER_NUMBERS,
-+  X_REGISTER_NAMES,
-+
-+  F_REGISTER_NUMBERS,
-+  F_REGISTER_NAMES,
-+
-+#define DECLARE_CSR(name, num) {#name, RTYPE_CP0 | num},
-+#include "opcode/riscv-opc.h"
-+#undef DECLARE_CSR
-+
-+  RISCV_VEC_GR_REGISTER_NAMES,
-+  RISCV_VEC_FP_REGISTER_NAMES,
-+  RISCV_VEC_GR_SYMBOLIC_REGISTER_NAMES,
-+
-+  {0, 0}
++enum reg_class {
++  RCLASS_GPR,
++  RCLASS_FPR,
++  RCLASS_CSR,
++  RCLASS_VEC_GPR,
++  RCLASS_VEC_FPR,
++  RCLASS_MAX
 +};
 +
 +static struct hash_control *reg_names_hash = NULL;
 +
-+static int
-+reg_lookup (char **s, unsigned int types, unsigned int *regnop)
++#define ENCODE_REG_HASH(cls, n) (void*)(uintptr_t)((n)*RCLASS_MAX + (cls) + 1)
++#define DECODE_REG_CLASS(hash) (((uintptr_t)(hash) - 1) % RCLASS_MAX)
++#define DECODE_REG_NUM(hash) (((uintptr_t)(hash) - 1) / RCLASS_MAX)
++
++static void
++hash_reg_name (enum reg_class class, const char *name, unsigned n)
 +{
-+  struct regname *r;
++  void *hash = ENCODE_REG_HASH (class, n);
++  const char *retval = hash_insert (reg_names_hash, name, hash);
++  if (retval != NULL)
++    as_fatal (_("internal error: can't hash `%s': %s"), name, retval);
++}
++
++static void
++hash_reg_names (enum reg_class class, const char * const names[], unsigned n)
++{
++  unsigned i;
++  for (i = 0; i < n; i++)
++    hash_reg_name (class, names[i], i);
++}
++
++static int
++reg_lookup (char **s, enum reg_class class, unsigned int *regnop)
++{
++  void *r;
 +  char *e;
 +  char save_c;
 +  int reg = -1;
@@ -5113,9 +4519,9 @@ index 0000000..1016819
 +  *e = '\0';
 +
 +  /* Look for the register.  */
-+  r = (struct regname *) hash_find (reg_names_hash, *s);
-+  if (r != NULL && (r->num & types))
-+    reg = r->num & RNUM_MASK;
++  r = hash_find (reg_names_hash, *s);
++  if (r != NULL && DECODE_REG_CLASS (r) == class)
++    reg = DECODE_REG_NUM (r);
 +
 +  /* Advance to next token if a register was recognised.  */
 +  if (reg >= 0)
@@ -5128,11 +4534,12 @@ index 0000000..1016819
 +}
 +
 +static unsigned int
-+reg_lookup_assert (const char *s, unsigned int types)
++reg_lookup_assert (const char *s, enum reg_class class)
 +{
 +  struct regname *r = (struct regname *) hash_find (reg_names_hash, s);
-+  gas_assert (r != NULL && (r->num & types));
-+  return r->num & RNUM_MASK;
++  if (r == NULL || DECODE_REG_CLASS (r) != class)
++    as_bad (_("unknown register `%s'"), s);
++  return DECODE_REG_NUM (r);
 +}
 +
 +static int
@@ -5297,18 +4704,16 @@ index 0000000..1016819
 +    }
 +
 +  reg_names_hash = hash_new ();
-+  for (i = 0; reg_names[i].name; i++)
-+    {
-+      retval = hash_insert (reg_names_hash, reg_names[i].name,
-+			    (void*) &reg_names[i]);
-+      if (retval != NULL)
-+	{
-+	  fprintf (stderr, _("internal error: can't hash `%s': %s\n"),
-+		   reg_names[i].name, retval);
-+	  /* Probably a memory allocation problem?  Give up now.  */
-+	  as_fatal (_("Broken assembler.  No assembly attempted."));
-+	}
-+    }
++  hash_reg_names (RCLASS_GPR, riscv_gpr_names_numeric, NGPR);
++  hash_reg_names (RCLASS_GPR, riscv_gpr_names_abi, NGPR);
++  hash_reg_names (RCLASS_FPR, riscv_fpr_names_numeric, NFPR);
++  hash_reg_names (RCLASS_FPR, riscv_fpr_names_abi, NFPR);
++  hash_reg_names (RCLASS_VEC_GPR, riscv_vec_gpr_names, NVGPR);
++  hash_reg_names (RCLASS_VEC_FPR, riscv_vec_fpr_names, NVFPR);
++
++#define DECLARE_CSR(name, num) hash_reg_name (RCLASS_CSR, #name, num);
++#include "opcode/riscv-opc.h"
++#undef DECLARE_CSR
 +
 +  /* set the default alignment for the text section (2**2) */
 +  record_alignment (text_section, 2);
@@ -5573,7 +4978,7 @@ index 0000000..1016819
 +    }
 +  else
 +    {
-+      int hi_reg = ZERO;
++      int hi_reg = 0;
 +
 +      if (upper.X_add_number != 0)
 +	{
@@ -5581,7 +4986,7 @@ index 0000000..1016819
 +	  hi_reg = reg;
 +	}
 +
-+      if (lower.X_add_number != 0 || hi_reg == ZERO)
++      if (lower.X_add_number != 0 || hi_reg == 0)
 +        macro_build (ep, ADD32_INSN, "d,s,j", reg, hi_reg,
 +		     BFD_RELOC_RISCV_LO12_I);
 +    }
@@ -5715,9 +5120,9 @@ index 0000000..1016819
 +      rd = 0;
 +      goto do_call;
 +    case M_CALL:
-+      rd = LINK_REG;
++      rd = X_RA;
 +do_call:
-+      rs1 = reg_lookup_assert ("t0", RTYPE_GP);
++      rs1 = reg_lookup_assert ("t0", RCLASS_GPR);
 +      riscv_call (rd, rs1, &offset_expr, offset_reloc);
 +      break;
 +
@@ -5871,7 +5276,6 @@ index 0000000..1016819
 +  unsigned int regno;
 +  char save_c = 0;
 +  int argnum;
-+  unsigned int rtype;
 +  const struct percent_op_match *p;
 +
 +  insn_error = NULL;
@@ -6007,49 +5411,49 @@ index 0000000..1016819
 +                  s = expr_end;
 +                  continue;
 +                case 'd':
-+                  ok = reg_lookup( &s, RTYPE_NUM|RTYPE_VGR_REG, &regno );
++                  ok = reg_lookup( &s, RCLASS_VEC_GPR, &regno );
 +                  if ( !ok )
 +                    as_bad( _( "Invalid vector register" ) );
 +                  INSERT_OPERAND( VRD, *ip, regno );
 +                  continue;
 +                case 's':
-+                  ok = reg_lookup( &s, RTYPE_NUM|RTYPE_VGR_REG, &regno );
++                  ok = reg_lookup( &s, RCLASS_VEC_GPR, &regno );
 +                  if ( !ok )
 +                    as_bad( _( "Invalid vector register" ) );
 +                  INSERT_OPERAND( VRS, *ip, regno );
 +                  continue;
 +                case 't':
-+                  ok = reg_lookup( &s, RTYPE_NUM|RTYPE_VGR_REG, &regno );
++                  ok = reg_lookup( &s, RCLASS_VEC_GPR, &regno );
 +                  if ( !ok )
 +                    as_bad( _( "Invalid vector register" ) );
 +                  INSERT_OPERAND( VRT, *ip, regno );
 +                  continue;
 +                case 'r':
-+                  ok = reg_lookup( &s, RTYPE_NUM|RTYPE_VGR_REG, &regno );
++                  ok = reg_lookup( &s, RCLASS_VEC_GPR, &regno );
 +                  if ( !ok )
 +                    as_bad( _( "Invalid vector register" ) );
 +                  INSERT_OPERAND( VRR, *ip, regno );
 +                  continue;
 +                case 'D':
-+                  ok = reg_lookup( &s, RTYPE_NUM|RTYPE_VFP_REG, &regno );
++                  ok = reg_lookup( &s, RCLASS_VEC_FPR, &regno );
 +                  if ( !ok )
 +                    as_bad( _( "Invalid vector register" ) );
 +                  INSERT_OPERAND( VFD, *ip, regno );
 +                  continue;
 +                case 'S':
-+                  ok = reg_lookup( &s, RTYPE_NUM|RTYPE_VFP_REG, &regno );
++                  ok = reg_lookup( &s, RCLASS_VEC_FPR, &regno );
 +                  if ( !ok )
 +                    as_bad( _( "Invalid vector register" ) );
 +                  INSERT_OPERAND( VFS, *ip, regno );
 +                  continue;
 +                case 'T':
-+                  ok = reg_lookup( &s, RTYPE_NUM|RTYPE_VFP_REG, &regno );
++                  ok = reg_lookup( &s, RCLASS_VEC_FPR, &regno );
 +                  if ( !ok )
 +                    as_bad( _( "Invalid vector register" ) );
 +                  INSERT_OPERAND( VFT, *ip, regno );
 +                  continue;
 +                case 'R':
-+                  ok = reg_lookup( &s, RTYPE_NUM|RTYPE_VFP_REG, &regno );
++                  ok = reg_lookup( &s, RCLASS_VEC_FPR, &regno );
 +                  if ( !ok )
 +                    as_bad( _( "Invalid vector register" ) );
 +                  INSERT_OPERAND( VFR, *ip, regno );
@@ -6106,7 +5510,7 @@ index 0000000..1016819
 +	      continue;
 +
 +	    case 'E':		/* Control register.  */
-+	      ok = reg_lookup (&s, RTYPE_NUM | RTYPE_CP0, &regno);
++	      ok = reg_lookup (&s, RCLASS_CSR, &regno);
 +	      INSERT_OPERAND (CSR, *ip, regno);
 +	      if (ok) 
 +		continue;
@@ -6136,7 +5540,7 @@ index 0000000..1016819
 +	    case 'd':		/* destination register */
 +	    case 's':		/* source register */
 +	    case 't':		/* target register */
-+	      ok = reg_lookup (&s, RTYPE_NUM | RTYPE_GP, &regno);
++	      ok = reg_lookup (&s, RCLASS_GPR, &regno);
 +	      if (ok)
 +		{
 +		  c = *args;
@@ -6166,8 +5570,7 @@ index 0000000..1016819
 +	    case 'T':		/* floating point rs2 */
 +	    case 'U':		/* floating point rs1 and rs2 */
 +	    case 'R':		/* floating point rs3 */
-+	      rtype = RTYPE_FPU;
-+	      if (reg_lookup (&s, rtype, &regno))
++	      if (reg_lookup (&s, RCLASS_FPR, &regno))
 +		{
 +		  c = *args;
 +		  if (*s == ' ')
@@ -6780,19 +6183,13 @@ index 0000000..1016819
 +void
 +riscv_cfi_frame_initial_instructions (void)
 +{
-+  cfi_add_CFA_def_cfa_register (SP);
++  cfi_add_CFA_def_cfa_register (X_SP);
 +}
 +
 +int
 +tc_riscv_regname_to_dw2regnum (char *regname)
 +{
-+  unsigned int regnum = -1;
-+  unsigned int reg;
-+
-+  if (reg_lookup (&regname, RTYPE_GP | RTYPE_NUM, &reg))
-+    regnum = reg;
-+
-+  return regnum;
++  return reg_lookup_assert (regname, RCLASS_GPR);
 +}
 +
 +void
@@ -6842,11 +6239,9 @@ index 0000000..1016819
 +
 +  pop_insert (riscv_pseudo_table);
 +}
-diff --git a/gas/config/tc-riscv.h b/gas/config/tc-riscv.h
-new file mode 100644
-index 0000000..2cd7c78
---- /dev/null
-+++ b/gas/config/tc-riscv.h
+diff -Nur original-binutils/gas/config/tc-riscv.h binutils/gas/config/tc-riscv.h
+--- original-binutils/gas/config/tc-riscv.h	1969-12-31 16:00:00.000000000 -0800
++++ binutils/gas/config/tc-riscv.h	2014-12-09 14:38:38.665778707 -0800
 @@ -0,0 +1,105 @@
 +/* tc-riscv.h -- header file for tc-riscv.c.
 +   Copyright 2011-2014 Free Software Foundation, Inc.
@@ -6946,71 +6341,16 @@ index 0000000..2cd7c78
 +#define tc_regname_to_dw2regnum tc_riscv_regname_to_dw2regnum
 +extern int tc_riscv_regname_to_dw2regnum (char *regname);
 +
-+#define DWARF2_DEFAULT_RETURN_COLUMN LINK_REG
++#define DWARF2_DEFAULT_RETURN_COLUMN X_RA
 +#define DWARF2_CIE_DATA_ALIGNMENT (-4)
 +
 +#define elf_tc_final_processing riscv_elf_final_processing
 +extern void riscv_elf_final_processing (void);
 +
 +#endif /* TC_RISCV */
-diff --git a/gas/configure.tgt b/gas/configure.tgt
-index 77c1d9b..2961470 100644
---- a/gas/configure.tgt
-+++ b/gas/configure.tgt
-@@ -84,6 +84,7 @@ case ${cpu} in
-   pj*)			cpu_type=pj endian=big ;;
-   powerpc*le*)		cpu_type=ppc endian=little ;;
-   powerpc*)		cpu_type=ppc endian=big ;;
-+  riscv*)		cpu_type=riscv endian=little ;;
-   rs6000*)		cpu_type=ppc ;;
-   rl78*)		cpu_type=rl78 ;;
-   rx)			cpu_type=rx ;;
-@@ -375,6 +376,8 @@ case ${generic_target} in
-   ppc-*-kaos*)				fmt=elf ;;
-   ppc-*-lynxos*)			fmt=elf em=lynx ;;
- 
-+  riscv*-*-*)			fmt=elf endian=little em=linux bfd_gas=yes ;;
-+
-   s390-*-linux-*)			fmt=elf em=linux ;;
-   s390-*-tpf*)				fmt=elf ;;
- 
-diff --git a/include/dis-asm.h b/include/dis-asm.h
-index 78e9fc0..0c21ecd 100644
---- a/include/dis-asm.h
-+++ b/include/dis-asm.h
-@@ -257,6 +257,7 @@ extern int print_insn_little_mips	(bfd_vma, disassemble_info *);
- extern int print_insn_little_nios2	(bfd_vma, disassemble_info *);
- extern int print_insn_little_or32	(bfd_vma, disassemble_info *);
- extern int print_insn_little_powerpc	(bfd_vma, disassemble_info *);
-+extern int print_insn_riscv		(bfd_vma, disassemble_info *);
- extern int print_insn_little_score      (bfd_vma, disassemble_info *); 
- extern int print_insn_lm32		(bfd_vma, disassemble_info *);
- extern int print_insn_m32c	        (bfd_vma, disassemble_info *);
-@@ -315,6 +316,7 @@ extern void print_aarch64_disassembler_options (FILE *);
- extern void print_i386_disassembler_options (FILE *);
- extern void print_mips_disassembler_options (FILE *);
- extern void print_ppc_disassembler_options (FILE *);
-+extern void print_riscv_disassembler_options (FILE *);
- extern void print_arm_disassembler_options (FILE *);
- extern void parse_arm_disassembler_option (char *);
- extern void print_s390_disassembler_options (FILE *);
-diff --git a/include/elf/common.h b/include/elf/common.h
-index cd3bcdd..426201e 100644
---- a/include/elf/common.h
-+++ b/include/elf/common.h
-@@ -301,6 +301,7 @@
- #define EM_INTEL207	207	/* Reserved by Intel */
- #define EM_INTEL208	208	/* Reserved by Intel */
- #define EM_INTEL209	209	/* Reserved by Intel */
-+#define EM_RISCV	243	/* Reserved by Intel */
- 
- /* If it is necessary to assign new unofficial EM_* values, please pick large
-    random numbers (0x8523, 0xa7f2, etc.) to minimize the chances of collision
-diff --git a/include/elf/riscv.h b/include/elf/riscv.h
-new file mode 100644
-index 0000000..607269e
---- /dev/null
-+++ b/include/elf/riscv.h
+diff -Nur original-binutils/include/elf/riscv.h binutils/include/elf/riscv.h
+--- original-binutils/include/elf/riscv.h	1969-12-31 16:00:00.000000000 -0800
++++ binutils/include/elf/riscv.h	2014-12-09 14:32:35.932301937 -0800
 @@ -0,0 +1,137 @@
 +/* RISC-V ELF support for BFD.
 +   Copyright 2011-2014 Free Software Foundation, Inc.
@@ -7149,11 +6489,334 @@ index 0000000..607269e
 +}
 +
 +#endif /* _ELF_RISCV_H */
-diff --git a/include/opcode/riscv-opc.h b/include/opcode/riscv-opc.h
-new file mode 100644
-index 0000000..eb29d3e
---- /dev/null
-+++ b/include/opcode/riscv-opc.h
+diff -Nur original-binutils/include/opcode/riscv.h binutils/include/opcode/riscv.h
+--- original-binutils/include/opcode/riscv.h	1969-12-31 16:00:00.000000000 -0800
++++ binutils/include/opcode/riscv.h	2014-12-09 14:38:38.665778707 -0800
+@@ -0,0 +1,321 @@
++/* riscv.h.  RISC-V opcode list for GDB, the GNU debugger.
++   Copyright 2011
++   Free Software Foundation, Inc.
++   Contributed by Andrew Waterman 
++
++This file is part of GDB, GAS, and the GNU binutils.
++
++GDB, GAS, and the GNU binutils are free software; you can redistribute
++them and/or modify them under the terms of the GNU General Public
++License as published by the Free Software Foundation; either version
++1, or (at your option) any later version.
++
++GDB, GAS, and the GNU binutils are distributed in the hope that they
++will be useful, but WITHOUT ANY WARRANTY; without even the implied
++warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See
++the GNU General Public License for more details.
++
++You should have received a copy of the GNU General Public License
++along with this file; see the file COPYING.  If not, write to the Free
++Software Foundation, 51 Franklin Street - Fifth Floor, Boston, MA 02110-1301, USA.  */
++
++#ifndef _RISCV_H_
++#define _RISCV_H_
++
++#include "riscv-opc.h"
++#include <stdlib.h>
++#include <stdint.h>
++
++/* RVC fields */
++
++#define OP_MASK_CRD		0x1f
++#define OP_SH_CRD		5
++#define OP_MASK_CRS2	0x1f
++#define OP_SH_CRS2	5
++#define OP_MASK_CRS1	0x1f
++#define OP_SH_CRS1	10
++#define OP_MASK_CRDS		0x7
++#define OP_SH_CRDS		13
++#define OP_MASK_CRS2S	0x7
++#define OP_SH_CRS2S	13
++#define OP_MASK_CRS2BS	0x7
++#define OP_SH_CRS2BS	5
++#define OP_MASK_CRS1S	0x7
++#define OP_SH_CRS1S	10
++#define OP_MASK_CIMM6	0x3f
++#define OP_SH_CIMM6	10
++#define OP_MASK_CIMM5	0x1f
++#define OP_SH_CIMM5	5
++#define OP_MASK_CIMM10	0x3ff
++#define OP_SH_CIMM10	5
++
++static const char rvc_rs1_regmap[8] = { 20, 21, 2, 3, 4, 5, 6, 7 };
++#define rvc_rd_regmap rvc_rs1_regmap
++#define rvc_rs2b_regmap rvc_rs1_regmap
++static const char rvc_rs2_regmap[8] = { 20, 21, 2, 3, 4, 5, 6, 0 };
++
++typedef uint64_t insn_t;
++
++static inline unsigned int riscv_insn_length (insn_t insn)
++{
++  if ((insn & 0x3) != 3) /* RVC */
++    return 2;
++  if ((insn & 0x1f) != 0x1f) /* base ISA and extensions in 32-bit space */
++    return 4;
++  if ((insn & 0x3f) == 0x1f) /* 48-bit extensions */
++    return 6;
++  if ((insn & 0x7f) == 0x3f) /* 64-bit extensions */
++    return 8;
++  /* longer instructions not supported at the moment */
++  return 2;
++}
++
++static const char * const riscv_rm[8] = {
++  "rne", "rtz", "rdn", "rup", "rmm", 0, 0, "dyn"
++};
++static const char* const riscv_pred_succ[16] = {
++  0,   "w",  "r",  "rw",  "o",  "ow",  "or",  "orw",
++  "i", "iw", "ir", "irw", "io", "iow", "ior", "iorw",
++};
++
++#define RVC_JUMP_BITS 10
++#define RVC_JUMP_ALIGN_BITS 1
++#define RVC_JUMP_ALIGN (1 << RVC_JUMP_ALIGN_BITS)
++#define RVC_JUMP_REACH ((1ULL<<RVC_JUMP_BITS)*RVC_JUMP_ALIGN)
++
++#define RVC_BRANCH_BITS 5
++#define RVC_BRANCH_ALIGN_BITS RVC_JUMP_ALIGN_BITS
++#define RVC_BRANCH_ALIGN (1 << RVC_BRANCH_ALIGN_BITS)
++#define RVC_BRANCH_REACH ((1ULL<<RVC_BRANCH_BITS)*RVC_BRANCH_ALIGN)
++
++#define RV_X(x, s, n) (((x) >> (s)) & ((1<<(n))-1))
++#define RV_IMM_SIGN(x) (-(((x) >> 31) & 1))
++
++#define EXTRACT_ITYPE_IMM(x) \
++  (RV_X(x, 20, 12) | (RV_IMM_SIGN(x) << 12))
++#define EXTRACT_STYPE_IMM(x) \
++  (RV_X(x, 7, 5) | (RV_X(x, 25, 7) << 5) | (RV_IMM_SIGN(x) << 12))
++#define EXTRACT_SBTYPE_IMM(x) \
++  ((RV_X(x, 8, 4) << 1) | (RV_X(x, 25, 6) << 5) | (RV_X(x, 7, 1) << 11) | (RV_IMM_SIGN(x) << 12))
++#define EXTRACT_UTYPE_IMM(x) \
++  ((RV_X(x, 12, 20) << 12) | (RV_IMM_SIGN(x) << 32))
++#define EXTRACT_UJTYPE_IMM(x) \
++  ((RV_X(x, 21, 10) << 1) | (RV_X(x, 20, 1) << 11) | (RV_X(x, 12, 8) << 12) | (RV_IMM_SIGN(x) << 20))
++
++#define ENCODE_ITYPE_IMM(x) \
++  (RV_X(x, 0, 12) << 20)
++#define ENCODE_STYPE_IMM(x) \
++  ((RV_X(x, 0, 5) << 7) | (RV_X(x, 5, 7) << 25))
++#define ENCODE_SBTYPE_IMM(x) \
++  ((RV_X(x, 1, 4) << 8) | (RV_X(x, 5, 6) << 25) | (RV_X(x, 11, 1) << 7) | (RV_X(x, 12, 1) << 31))
++#define ENCODE_UTYPE_IMM(x) \
++  (RV_X(x, 12, 20) << 12)
++#define ENCODE_UJTYPE_IMM(x) \
++  ((RV_X(x, 1, 10) << 21) | (RV_X(x, 11, 1) << 20) | (RV_X(x, 12, 8) << 12) | (RV_X(x, 20, 1) << 31))
++
++#define VALID_ITYPE_IMM(x) (EXTRACT_ITYPE_IMM(ENCODE_ITYPE_IMM(x)) == (x))
++#define VALID_STYPE_IMM(x) (EXTRACT_STYPE_IMM(ENCODE_STYPE_IMM(x)) == (x))
++#define VALID_SBTYPE_IMM(x) (EXTRACT_SBTYPE_IMM(ENCODE_SBTYPE_IMM(x)) == (x))
++#define VALID_UTYPE_IMM(x) (EXTRACT_UTYPE_IMM(ENCODE_UTYPE_IMM(x)) == (x))
++#define VALID_UJTYPE_IMM(x) (EXTRACT_UJTYPE_IMM(ENCODE_UJTYPE_IMM(x)) == (x))
++
++#define RISCV_RTYPE(insn, rd, rs1, rs2) \
++  ((MATCH_ ## insn) | ((rd) << OP_SH_RD) | ((rs1) << OP_SH_RS1) | ((rs2) << OP_SH_RS2))
++#define RISCV_ITYPE(insn, rd, rs1, imm) \
++  ((MATCH_ ## insn) | ((rd) << OP_SH_RD) | ((rs1) << OP_SH_RS1) | ENCODE_ITYPE_IMM(imm))
++#define RISCV_STYPE(insn, rs1, rs2, imm) \
++  ((MATCH_ ## insn) | ((rs1) << OP_SH_RS1) | ((rs2) << OP_SH_RS2) | ENCODE_STYPE_IMM(imm))
++#define RISCV_SBTYPE(insn, rs1, rs2, target) \
++  ((MATCH_ ## insn) | ((rs1) << OP_SH_RS1) | ((rs2) << OP_SH_RS2) | ENCODE_SBTYPE_IMM(target))
++#define RISCV_UTYPE(insn, rd, bigimm) \
++  ((MATCH_ ## insn) | ((rd) << OP_SH_RD) | ENCODE_UTYPE_IMM(bigimm))
++#define RISCV_UJTYPE(insn, rd, target) \
++  ((MATCH_ ## insn) | ((rd) << OP_SH_RD) | ENCODE_UJTYPE_IMM(target))
++
++#define RISCV_NOP RISCV_ITYPE(ADDI, 0, 0, 0)
++
++#define RISCV_CONST_HIGH_PART(VALUE) \
++  (((VALUE) + (RISCV_IMM_REACH/2)) & ~(RISCV_IMM_REACH-1))
++#define RISCV_CONST_LOW_PART(VALUE) ((VALUE) - RISCV_CONST_HIGH_PART (VALUE))
++#define RISCV_PCREL_HIGH_PART(VALUE, PC) RISCV_CONST_HIGH_PART((VALUE) - (PC))
++#define RISCV_PCREL_LOW_PART(VALUE, PC) RISCV_CONST_LOW_PART((VALUE) - (PC))
++
++/* RV fields */
++
++#define OP_MASK_OP		0x7f
++#define OP_SH_OP		0
++#define OP_MASK_RS2		0x1f
++#define OP_SH_RS2		20
++#define OP_MASK_RS1		0x1f
++#define OP_SH_RS1		15
++#define OP_MASK_RS3		0x1f
++#define OP_SH_RS3		27
++#define OP_MASK_RD		0x1f
++#define OP_SH_RD		7
++#define OP_MASK_SHAMT		0x3f
++#define OP_SH_SHAMT		20
++#define OP_MASK_SHAMTW		0x1f
++#define OP_SH_SHAMTW		20
++#define OP_MASK_RM		0x7
++#define OP_SH_RM		12
++#define OP_MASK_PRED		0xf
++#define OP_SH_PRED		24
++#define OP_MASK_SUCC		0xf
++#define OP_SH_SUCC		20
++#define OP_MASK_AQ		0x1
++#define OP_SH_AQ		26
++#define OP_MASK_RL		0x1
++#define OP_SH_RL		25
++
++#define OP_MASK_VRD		0x1f
++#define OP_SH_VRD		7
++#define OP_MASK_VRS		0x1f
++#define OP_SH_VRS		15
++#define OP_MASK_VRT		0x1f
++#define OP_SH_VRT		20
++#define OP_MASK_VRR		0x1f
++#define OP_SH_VRR		27
++
++#define OP_MASK_VFD		0x1f
++#define OP_SH_VFD		7
++#define OP_MASK_VFS		0x1f
++#define OP_SH_VFS		15
++#define OP_MASK_VFT		0x1f
++#define OP_SH_VFT		20
++#define OP_MASK_VFR		0x1f
++#define OP_SH_VFR		27
++
++#define OP_MASK_IMMNGPR         0x3f
++#define OP_SH_IMMNGPR           20
++#define OP_MASK_IMMNFPR         0x3f
++#define OP_SH_IMMNFPR           26
++#define OP_MASK_IMMSEGNELM      0x7
++#define OP_SH_IMMSEGNELM        29
++#define OP_MASK_CUSTOM_IMM      0x7f
++#define OP_SH_CUSTOM_IMM        25
++#define OP_MASK_CSR             0xfff
++#define OP_SH_CSR               20
++
++#define X_RA 1
++#define X_SP 2
++#define X_GP 3
++#define X_TP 4
++#define X_T0 5
++#define X_T1 6
++#define X_T2 7
++#define X_T3 28
++
++#define NGPR 32
++#define NFPR 32
++#define NVGPR 32
++#define NVFPR 32
++
++#define RISCV_JUMP_BITS RISCV_BIGIMM_BITS
++#define RISCV_JUMP_ALIGN_BITS 1
++#define RISCV_JUMP_ALIGN (1 << RISCV_JUMP_ALIGN_BITS)
++#define RISCV_JUMP_REACH ((1ULL<<RISCV_JUMP_BITS)*RISCV_JUMP_ALIGN)
++
++#define RISCV_IMM_BITS 12
++#define RISCV_BIGIMM_BITS (32-RISCV_IMM_BITS)
++#define RISCV_IMM_REACH (1LL<<RISCV_IMM_BITS)
++#define RISCV_BIGIMM_REACH (1LL<<RISCV_BIGIMM_BITS)
++#define RISCV_BRANCH_BITS RISCV_IMM_BITS
++#define RISCV_BRANCH_ALIGN_BITS RISCV_JUMP_ALIGN_BITS
++#define RISCV_BRANCH_ALIGN (1 << RISCV_BRANCH_ALIGN_BITS)
++#define RISCV_BRANCH_REACH (RISCV_IMM_REACH*RISCV_BRANCH_ALIGN)
++
++/* This structure holds information for a particular instruction.  */
++
++struct riscv_opcode
++{
++  /* The name of the instruction.  */
++  const char *name;
++  /* The ISA subset name (I, M, A, F, D, Xextension). */
++  const char *subset;
++  /* A string describing the arguments for this instruction.  */
++  const char *args;
++  /* The basic opcode for the instruction.  When assembling, this
++     opcode is modified by the arguments to produce the actual opcode
++     that is used.  If pinfo is INSN_MACRO, then this is 0.  */
++  insn_t match;
++  /* If pinfo is not INSN_MACRO, then this is a bit mask for the
++     relevant portions of the opcode when disassembling.  If the
++     actual opcode anded with the match field equals the opcode field,
++     then we have found the correct instruction.  If pinfo is
++     INSN_MACRO, then this field is the macro identifier.  */
++  insn_t mask;
++  /* A function to determine if a word corresponds to this instruction.
++     Usually, this computes ((word & mask) == match). */
++  int (*match_func)(const struct riscv_opcode *op, insn_t word);
++  /* For a macro, this is INSN_MACRO.  Otherwise, it is a collection
++     of bits describing the instruction, notably any relevant hazard
++     information.  */
++  unsigned long pinfo;
++};
++
++#define INSN_WRITE_GPR_D            0x00000001
++#define INSN_WRITE_GPR_RA           0x00000004
++#define INSN_WRITE_FPR_D            0x00000008
++#define INSN_READ_GPR_S             0x00000040
++#define INSN_READ_GPR_T             0x00000080
++#define INSN_READ_FPR_S             0x00000100
++#define INSN_READ_FPR_T             0x00000200
++#define INSN_READ_FPR_R        	    0x00000400
++/* Instruction is a simple alias (I.E. "move" for daddu/addu/or) */
++#define	INSN_ALIAS		    0x00001000
++/* Instruction is actually a macro.  It should be ignored by the
++   disassembler, and requires special treatment by the assembler.  */
++#define INSN_MACRO                  0xffffffff
++
++/* This is a list of macro expanded instructions.
++
++   _I appended means immediate
++   _A appended means address
++   _AB appended means address with base register
++   _D appended means 64 bit floating point constant
++   _S appended means 32 bit floating point constant.  */
++
++enum
++{
++  M_LA,
++  M_LLA,
++  M_LA_TLS_GD,
++  M_LA_TLS_IE,
++  M_LB,
++  M_LBU,
++  M_LH,
++  M_LHU,
++  M_LW,
++  M_LWU,
++  M_LD,
++  M_SB,
++  M_SH,
++  M_SW,
++  M_SD,
++  M_FLW,
++  M_FLD,
++  M_FSW,
++  M_FSD,
++  M_CALL,
++  M_JUMP,
++  M_J,
++  M_LI,
++  M_VF,
++  M_NUM_MACROS
++};
++
++
++extern const char * const riscv_gpr_names_numeric[NGPR];
++extern const char * const riscv_gpr_names_abi[NGPR];
++extern const char * const riscv_fpr_names_numeric[NFPR];
++extern const char * const riscv_fpr_names_abi[NFPR];
++extern const char * const riscv_vec_gpr_names[NVGPR];
++extern const char * const riscv_vec_fpr_names[NVFPR];
++
++extern const struct riscv_opcode riscv_builtin_opcodes[];
++extern const int bfd_riscv_num_builtin_opcodes;
++extern struct riscv_opcode *riscv_opcodes;
++extern int bfd_riscv_num_opcodes;
++#define NUMOPCODES bfd_riscv_num_opcodes
++
++#endif /* _RISCV_H_ */
+diff -Nur original-binutils/include/opcode/riscv-opc.h binutils/include/opcode/riscv-opc.h
+--- original-binutils/include/opcode/riscv-opc.h	1969-12-31 16:00:00.000000000 -0800
++++ binutils/include/opcode/riscv-opc.h	2014-12-09 14:31:16.735857672 -0800
 @@ -0,0 +1,1216 @@
 +/* Automatically generated by parse-opcodes */
 +#ifndef RISCV_ENCODING_H
@@ -8371,449 +8034,9 @@ index 0000000..eb29d3e
 +DECLARE_CAUSE("timeh", CAUSE_TIMEH)
 +DECLARE_CAUSE("instreth", CAUSE_INSTRETH)
 +#endif
-diff --git a/include/opcode/riscv.h b/include/opcode/riscv.h
-new file mode 100644
-index 0000000..91aa07f
---- /dev/null
-+++ b/include/opcode/riscv.h
-@@ -0,0 +1,316 @@
-+/* riscv.h.  RISC-V opcode list for GDB, the GNU debugger.
-+   Copyright 2011
-+   Free Software Foundation, Inc.
-+   Contributed by Andrew Waterman 
-+
-+This file is part of GDB, GAS, and the GNU binutils.
-+
-+GDB, GAS, and the GNU binutils are free software; you can redistribute
-+them and/or modify them under the terms of the GNU General Public
-+License as published by the Free Software Foundation; either version
-+1, or (at your option) any later version.
-+
-+GDB, GAS, and the GNU binutils are distributed in the hope that they
-+will be useful, but WITHOUT ANY WARRANTY; without even the implied
-+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See
-+the GNU General Public License for more details.
-+
-+You should have received a copy of the GNU General Public License
-+along with this file; see the file COPYING.  If not, write to the Free
-+Software Foundation, 51 Franklin Street - Fifth Floor, Boston, MA 02110-1301, USA.  */
-+
-+#ifndef _RISCV_H_
-+#define _RISCV_H_
-+
-+#include "riscv-opc.h"
-+#include <stdlib.h>
-+#include <stdint.h>
-+
-+/* RVC fields */
-+
-+#define OP_MASK_COP		0x1f
-+#define OP_SH_COP		0
-+#define OP_MASK_CRD		0x1f
-+#define OP_SH_CRD		5
-+#define OP_MASK_CRS2	0x1f
-+#define OP_SH_CRS2	5
-+#define OP_MASK_CRS1	0x1f
-+#define OP_SH_CRS1	10
-+#define OP_MASK_CRDS		0x7
-+#define OP_SH_CRDS		13
-+#define OP_MASK_CRS2S	0x7
-+#define OP_SH_CRS2S	13
-+#define OP_MASK_CRS2BS	0x7
-+#define OP_SH_CRS2BS	5
-+#define OP_MASK_CRS1S	0x7
-+#define OP_SH_CRS1S	10
-+#define OP_MASK_CIMM6	0x3f
-+#define OP_SH_CIMM6	10
-+#define OP_MASK_CIMM5	0x1f
-+#define OP_SH_CIMM5	5
-+#define OP_MASK_CIMM10	0x3ff
-+#define OP_SH_CIMM10	5
-+
-+static const char rvc_rs1_regmap[8] = { 20, 21, 2, 3, 4, 5, 6, 7 };
-+#define rvc_rd_regmap rvc_rs1_regmap
-+#define rvc_rs2b_regmap rvc_rs1_regmap
-+static const char rvc_rs2_regmap[8] = { 20, 21, 2, 3, 4, 5, 6, 0 };
-+
-+typedef uint64_t insn_t;
-+
-+static inline unsigned int riscv_insn_length (insn_t insn)
-+{
-+  if ((insn & 0x3) != 3) /* RVC */
-+    return 2;
-+  if ((insn & 0x1f) != 0x1f) /* base ISA and extensions in 32-bit space */
-+    return 4;
-+  if ((insn & 0x3f) == 0x1f) /* 48-bit extensions */
-+    return 6;
-+  if ((insn & 0x7f) == 0x3f) /* 64-bit extensions */
-+    return 8;
-+  /* longer instructions not supported at the moment */
-+  return 2;
-+}
-+
-+static const char * const riscv_rm[8] = {
-+  "rne", "rtz", "rdn", "rup", "rmm", 0, 0, "dyn"
-+};
-+static const char* const riscv_pred_succ[16] = {
-+  0,   "w",  "r",  "rw",  "o",  "ow",  "or",  "orw",
-+  "i", "iw", "ir", "irw", "io", "iow", "ior", "iorw",
-+};
-+
-+#define RVC_JUMP_BITS 10
-+#define RVC_JUMP_ALIGN_BITS 1
-+#define RVC_JUMP_ALIGN (1 << RVC_JUMP_ALIGN_BITS)
-+#define RVC_JUMP_REACH ((1ULL<<RVC_JUMP_BITS)*RVC_JUMP_ALIGN)
-+
-+#define RVC_BRANCH_BITS 5
-+#define RVC_BRANCH_ALIGN_BITS RVC_JUMP_ALIGN_BITS
-+#define RVC_BRANCH_ALIGN (1 << RVC_BRANCH_ALIGN_BITS)
-+#define RVC_BRANCH_REACH ((1ULL<<RVC_BRANCH_BITS)*RVC_BRANCH_ALIGN)
-+
-+#define RV_X(x, s, n) (((x) >> (s)) & ((1<<(n))-1))
-+#define RV_IMM_SIGN(x) (-(((x) >> 31) & 1))
-+
-+#define EXTRACT_ITYPE_IMM(x) \
-+  (RV_X(x, 20, 12) | (RV_IMM_SIGN(x) << 12))
-+#define EXTRACT_STYPE_IMM(x) \
-+  (RV_X(x, 7, 5) | (RV_X(x, 25, 7) << 5) | (RV_IMM_SIGN(x) << 12))
-+#define EXTRACT_SBTYPE_IMM(x) \
-+  ((RV_X(x, 8, 4) << 1) | (RV_X(x, 25, 6) << 5) | (RV_X(x, 7, 1) << 11) | (RV_IMM_SIGN(x) << 12))
-+#define EXTRACT_UTYPE_IMM(x) \
-+  ((RV_X(x, 12, 20) << 12) | (RV_IMM_SIGN(x) << 32))
-+#define EXTRACT_UJTYPE_IMM(x) \
-+  ((RV_X(x, 21, 10) << 1) | (RV_X(x, 20, 1) << 11) | (RV_X(x, 12, 8) << 12) | (RV_IMM_SIGN(x) << 20))
-+
-+#define ENCODE_ITYPE_IMM(x) \
-+  (RV_X(x, 0, 12) << 20)
-+#define ENCODE_STYPE_IMM(x) \
-+  ((RV_X(x, 0, 5) << 7) | (RV_X(x, 5, 7) << 25))
-+#define ENCODE_SBTYPE_IMM(x) \
-+  ((RV_X(x, 1, 4) << 8) | (RV_X(x, 5, 6) << 25) | (RV_X(x, 11, 1) << 7) | (RV_X(x, 12, 1) << 31))
-+#define ENCODE_UTYPE_IMM(x) \
-+  (RV_X(x, 12, 20) << 12)
-+#define ENCODE_UJTYPE_IMM(x) \
-+  ((RV_X(x, 1, 10) << 21) | (RV_X(x, 11, 1) << 20) | (RV_X(x, 12, 8) << 12) | (RV_X(x, 20, 1) << 31))
-+
-+#define VALID_ITYPE_IMM(x) (EXTRACT_ITYPE_IMM(ENCODE_ITYPE_IMM(x)) == (x))
-+#define VALID_STYPE_IMM(x) (EXTRACT_STYPE_IMM(ENCODE_STYPE_IMM(x)) == (x))
-+#define VALID_SBTYPE_IMM(x) (EXTRACT_SBTYPE_IMM(ENCODE_SBTYPE_IMM(x)) == (x))
-+#define VALID_UTYPE_IMM(x) (EXTRACT_UTYPE_IMM(ENCODE_UTYPE_IMM(x)) == (x))
-+#define VALID_UJTYPE_IMM(x) (EXTRACT_UJTYPE_IMM(ENCODE_UJTYPE_IMM(x)) == (x))
-+
-+#define RISCV_RTYPE(insn, rd, rs1, rs2) \
-+  ((MATCH_ ## insn) | ((rd) << OP_SH_RD) | ((rs1) << OP_SH_RS1) | ((rs2) << OP_SH_RS2))
-+#define RISCV_ITYPE(insn, rd, rs1, imm) \
-+  ((MATCH_ ## insn) | ((rd) << OP_SH_RD) | ((rs1) << OP_SH_RS1) | ENCODE_ITYPE_IMM(imm))
-+#define RISCV_STYPE(insn, rs1, rs2, imm) \
-+  ((MATCH_ ## insn) | ((rs1) << OP_SH_RS1) | ((rs2) << OP_SH_RS2) | ENCODE_STYPE_IMM(imm))
-+#define RISCV_SBTYPE(insn, rs1, rs2, target) \
-+  ((MATCH_ ## insn) | ((rs1) << OP_SH_RS1) | ((rs2) << OP_SH_RS2) | ENCODE_SBTYPE_IMM(target))
-+#define RISCV_UTYPE(insn, rd, bigimm) \
-+  ((MATCH_ ## insn) | ((rd) << OP_SH_RD) | ENCODE_UTYPE_IMM(bigimm))
-+#define RISCV_UJTYPE(insn, rd, target) \
-+  ((MATCH_ ## insn) | ((rd) << OP_SH_RD) | ENCODE_UJTYPE_IMM(target))
-+
-+#define RISCV_NOP RISCV_ITYPE(ADDI, 0, 0, 0)
-+
-+#define RISCV_CONST_HIGH_PART(VALUE) \
-+  (((VALUE) + (RISCV_IMM_REACH/2)) & ~(RISCV_IMM_REACH-1))
-+#define RISCV_CONST_LOW_PART(VALUE) ((VALUE) - RISCV_CONST_HIGH_PART (VALUE))
-+#define RISCV_PCREL_HIGH_PART(VALUE, PC) RISCV_CONST_HIGH_PART((VALUE) - (PC))
-+#define RISCV_PCREL_LOW_PART(VALUE, PC) RISCV_CONST_LOW_PART((VALUE) - (PC))
-+
-+/* RV fields */
-+
-+#define OP_MASK_OP		0x7f
-+#define OP_SH_OP		0
-+#define OP_MASK_RS2		0x1f
-+#define OP_SH_RS2		20
-+#define OP_MASK_RS1		0x1f
-+#define OP_SH_RS1		15
-+#define OP_MASK_RS3		0x1f
-+#define OP_SH_RS3		27
-+#define OP_MASK_RD		0x1f
-+#define OP_SH_RD		7
-+#define OP_MASK_SHAMT		0x3f
-+#define OP_SH_SHAMT		20
-+#define OP_MASK_SHAMTW		0x1f
-+#define OP_SH_SHAMTW		20
-+#define OP_MASK_RM		0x7
-+#define OP_SH_RM		12
-+#define OP_MASK_PRED		0xf
-+#define OP_SH_PRED		24
-+#define OP_MASK_SUCC		0xf
-+#define OP_SH_SUCC		20
-+#define OP_MASK_AQ		0x1
-+#define OP_SH_AQ		26
-+#define OP_MASK_RL		0x1
-+#define OP_SH_RL		25
-+
-+#define OP_MASK_VRD		0x1f
-+#define OP_SH_VRD		7
-+#define OP_MASK_VRS		0x1f
-+#define OP_SH_VRS		15
-+#define OP_MASK_VRT		0x1f
-+#define OP_SH_VRT		20
-+#define OP_MASK_VRR		0x1f
-+#define OP_SH_VRR		27
-+
-+#define OP_MASK_VFD		0x1f
-+#define OP_SH_VFD		7
-+#define OP_MASK_VFS		0x1f
-+#define OP_SH_VFS		15
-+#define OP_MASK_VFT		0x1f
-+#define OP_SH_VFT		20
-+#define OP_MASK_VFR		0x1f
-+#define OP_SH_VFR		27
-+
-+#define OP_MASK_IMMNGPR         0x3f
-+#define OP_SH_IMMNGPR           20
-+#define OP_MASK_IMMNFPR         0x3f
-+#define OP_SH_IMMNFPR           26
-+#define OP_MASK_IMMSEGNELM      0x7
-+#define OP_SH_IMMSEGNELM        29
-+#define OP_MASK_CUSTOM_IMM      0x7f
-+#define OP_SH_CUSTOM_IMM        25
-+#define OP_MASK_CSR             0xfff
-+#define OP_SH_CSR               20
-+
-+#define LINK_REG 1
-+#define TP_REG 15
-+#define GP_REG 31
-+
-+#define RISCV_JUMP_BITS RISCV_BIGIMM_BITS
-+#define RISCV_JUMP_ALIGN_BITS 1
-+#define RISCV_JUMP_ALIGN (1 << RISCV_JUMP_ALIGN_BITS)
-+#define RISCV_JUMP_REACH ((1ULL<<RISCV_JUMP_BITS)*RISCV_JUMP_ALIGN)
-+
-+#define RISCV_IMM_BITS 12
-+#define RISCV_BIGIMM_BITS (32-RISCV_IMM_BITS)
-+#define RISCV_IMM_REACH (1LL<<RISCV_IMM_BITS)
-+#define RISCV_BIGIMM_REACH (1LL<<RISCV_BIGIMM_BITS)
-+#define RISCV_BRANCH_BITS RISCV_IMM_BITS
-+#define RISCV_BRANCH_ALIGN_BITS RISCV_JUMP_ALIGN_BITS
-+#define RISCV_BRANCH_ALIGN (1 << RISCV_BRANCH_ALIGN_BITS)
-+#define RISCV_BRANCH_REACH (RISCV_IMM_REACH*RISCV_BRANCH_ALIGN)
-+
-+/* This structure holds information for a particular instruction.  */
-+
-+struct riscv_opcode
-+{
-+  /* The name of the instruction.  */
-+  const char *name;
-+  /* The ISA subset name (I, M, A, F, D, Xextension). */
-+  const char *subset;
-+  /* A string describing the arguments for this instruction.  */
-+  const char *args;
-+  /* The basic opcode for the instruction.  When assembling, this
-+     opcode is modified by the arguments to produce the actual opcode
-+     that is used.  If pinfo is INSN_MACRO, then this is 0.  */
-+  insn_t match;
-+  /* If pinfo is not INSN_MACRO, then this is a bit mask for the
-+     relevant portions of the opcode when disassembling.  If the
-+     actual opcode anded with the match field equals the opcode field,
-+     then we have found the correct instruction.  If pinfo is
-+     INSN_MACRO, then this field is the macro identifier.  */
-+  insn_t mask;
-+  /* A function to determine if a word corresponds to this instruction.
-+     Usually, this computes ((word & mask) == match). */
-+  int (*match_func)(const struct riscv_opcode *op, insn_t word);
-+  /* For a macro, this is INSN_MACRO.  Otherwise, it is a collection
-+     of bits describing the instruction, notably any relevant hazard
-+     information.  */
-+  unsigned long pinfo;
-+};
-+
-+#define INSN_WRITE_GPR_D            0x00000001
-+#define INSN_WRITE_GPR_RA           0x00000004
-+#define INSN_WRITE_FPR_D            0x00000008
-+#define INSN_READ_GPR_S             0x00000040
-+#define INSN_READ_GPR_T             0x00000080
-+#define INSN_READ_FPR_S             0x00000100
-+#define INSN_READ_FPR_T             0x00000200
-+#define INSN_READ_FPR_R        	    0x00000400
-+/* Instruction is a simple alias (I.E. "move" for daddu/addu/or) */
-+#define	INSN_ALIAS		    0x00001000
-+/* Instruction is actually a macro.  It should be ignored by the
-+   disassembler, and requires special treatment by the assembler.  */
-+#define INSN_MACRO                  0xffffffff
-+
-+/* This is a list of macro expanded instructions.
-+
-+   _I appended means immediate
-+   _A appended means address
-+   _AB appended means address with base register
-+   _D appended means 64 bit floating point constant
-+   _S appended means 32 bit floating point constant.  */
-+
-+enum
-+{
-+  M_LA,
-+  M_LLA,
-+  M_LA_TLS_GD,
-+  M_LA_TLS_IE,
-+  M_LB,
-+  M_LBU,
-+  M_LH,
-+  M_LHU,
-+  M_LW,
-+  M_LWU,
-+  M_LD,
-+  M_SB,
-+  M_SH,
-+  M_SW,
-+  M_SD,
-+  M_FLW,
-+  M_FLD,
-+  M_FSW,
-+  M_FSD,
-+  M_CALL,
-+  M_JUMP,
-+  M_J,
-+  M_LI,
-+  M_VF,
-+  M_NUM_MACROS
-+};
-+
-+
-+/* The order of overloaded instructions matters.  Label arguments and
-+   register arguments look the same. Instructions that can have either
-+   for arguments must apear in the correct order in this table for the
-+   assembler to pick the right one. In other words, entries with
-+   immediate operands must apear after the same instruction with
-+   registers.
-+
-+   Many instructions are short hand for other instructions (i.e., The
-+   jal <register> instruction is short for jalr <register>).  */
-+
-+extern const struct riscv_opcode riscv_builtin_opcodes[];
-+extern const int bfd_riscv_num_builtin_opcodes;
-+extern struct riscv_opcode *riscv_opcodes;
-+extern int bfd_riscv_num_opcodes;
-+#define NUMOPCODES bfd_riscv_num_opcodes
-+
-+#endif /* _RISCV_H_ */
-diff --git a/ld/Makefile.am b/ld/Makefile.am
-index b2b2a6e..521aa7c 100644
---- a/ld/Makefile.am
-+++ b/ld/Makefile.am
-@@ -251,6 +251,7 @@ ALL_EMULATION_SOURCES = \
- 	eelf32ppcsim.c \
- 	eelf32ppcvxworks.c \
- 	eelf32ppcwindiss.c \
-+	eelf32lriscv.c \
- 	eelf32rl78.c \
- 	eelf32rx.c \
- 	eelf32tilegx.c \
-@@ -510,6 +511,7 @@ ALL_64_EMULATION_SOURCES = \
- 	eelf64btsmip_fbsd.c \
- 	eelf64hppa.c \
- 	eelf64lppc.c \
-+	eelf64lriscv.c \
- 	eelf64ltsmip.c \
- 	eelf64ltsmip_fbsd.c \
- 	eelf64mmix.c \
-@@ -1123,6 +1125,10 @@ eelf32lppcsim.c: $(srcdir)/emulparams/elf32lppcsim.sh \
-   ldemul-list.h \
-   $(ELF_DEPS) $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
- 	${GENSCRIPTS} elf32lppcsim "$(tdir_elf32lppcsim)"
-+eelf32lriscv.c: $(srcdir)/emulparams/elf32lriscv.sh \
-+  $(srcdir)/emulparams/elf32lriscv-defs.sh $(ELF_DEPS) \
-+  $(srcdir)/emultempl/riscvelf.em $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
-+	${GENSCRIPTS} elf32lriscv "$(tdir_elf32lriscv)"
- eelf32lsmip.c: $(srcdir)/emulparams/elf32lsmip.sh \
-   $(srcdir)/emulparams/elf32lmip.sh $(srcdir)/emulparams/elf32bmip.sh \
-   $(ELF_DEPS) $(srcdir)/emultempl/mipself.em $(srcdir)/scripttempl/elf.sc \
-@@ -2088,6 +2094,11 @@ eelf64lppc.c: $(srcdir)/emulparams/elf64lppc.sh \
-   ldemul-list.h \
-   $(ELF_DEPS) $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
- 	${GENSCRIPTS} elf64lppc "$(tdir_elf64lppc)"
-+eelf64lriscv.c: $(srcdir)/emulparams/elf64lriscv.sh \
-+  $(srcdir)/emulparams/elf64lriscv-defs.sh \
-+  $(srcdir)/emulparams/elf32lriscv-defs.sh $(ELF_DEPS) \
-+  $(srcdir)/emultempl/riscvelf.em $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
-+	${GENSCRIPTS} elf64lriscv "$(tdir_elf64lriscv)"
- eelf64ltsmip.c: $(srcdir)/emulparams/elf64ltsmip.sh \
-   $(srcdir)/emulparams/elf64btsmip.sh $(srcdir)/emulparams/elf64bmip-defs.sh \
-   $(srcdir)/emulparams/elf32bmipn32-defs.sh $(ELF_DEPS) \
-diff --git a/ld/Makefile.in b/ld/Makefile.in
-index b95a3d1..c76fa85 100644
---- a/ld/Makefile.in
-+++ b/ld/Makefile.in
-@@ -542,6 +542,7 @@ ALL_EMULATION_SOURCES = \
- 	eelf32lppclinux.c \
- 	eelf32lppcnto.c \
- 	eelf32lppcsim.c \
-+	eelf32lriscv.c \
- 	eelf32m32c.c \
- 	eelf32mb_linux.c \
- 	eelf32mcore.c \
-@@ -817,6 +818,7 @@ ALL_64_EMULATION_SOURCES = \
- 	eelf64btsmip_fbsd.c \
- 	eelf64hppa.c \
- 	eelf64lppc.c \
-+	eelf64lriscv.c \
- 	eelf64ltsmip.c \
- 	eelf64ltsmip_fbsd.c \
- 	eelf64mmix.c \
-@@ -1194,6 +1196,7 @@ distclean-compile:
- @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf32lppclinux.Po@am__quote@
- @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf32lppcnto.Po@am__quote@
- @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf32lppcsim.Po@am__quote@
-+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf32lriscv.Po@am__quote@
- @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf32lr5900.Po@am__quote@
- @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf32lr5900n32.Po@am__quote@
- @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf32lsmip.Po@am__quote@
-@@ -1246,6 +1249,7 @@ distclean-compile:
- @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64btsmip_fbsd.Po@am__quote@
- @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64hppa.Po@am__quote@
- @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64lppc.Po@am__quote@
-+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64lriscv.Po@am__quote@
- @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64ltsmip.Po@am__quote@
- @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64ltsmip_fbsd.Po@am__quote@
- @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64mmix.Po@am__quote@
-@@ -2607,6 +2611,10 @@ eelf32lppcsim.c: $(srcdir)/emulparams/elf32lppcsim.sh \
-   ldemul-list.h \
-   $(ELF_DEPS) $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
- 	${GENSCRIPTS} elf32lppcsim "$(tdir_elf32lppcsim)"
-+eelf32lriscv.c: $(srcdir)/emulparams/elf32lriscv.sh \
-+  $(srcdir)/emulparams/elf32lriscv-defs.sh $(ELF_DEPS) \
-+  $(srcdir)/emultempl/mipself.em $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
-+	${GENSCRIPTS} elf32lriscv "$(tdir_elf32lriscv)"
- eelf32lsmip.c: $(srcdir)/emulparams/elf32lsmip.sh \
-   $(srcdir)/emulparams/elf32lmip.sh $(srcdir)/emulparams/elf32bmip.sh \
-   $(ELF_DEPS) $(srcdir)/emultempl/mipself.em $(srcdir)/scripttempl/elf.sc \
-@@ -3572,6 +3580,11 @@ eelf64lppc.c: $(srcdir)/emulparams/elf64lppc.sh \
-   ldemul-list.h \
-   $(ELF_DEPS) $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
- 	${GENSCRIPTS} elf64lppc "$(tdir_elf64lppc)"
-+eelf64lriscv.c: $(srcdir)/emulparams/elf64lriscv.sh \
-+  $(srcdir)/emulparams/elf64lriscv-defs.sh \
-+  $(srcdir)/emulparams/elf32lriscv-defs.sh $(ELF_DEPS) \
-+  $(srcdir)/emultempl/mipself.em $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
-+	${GENSCRIPTS} elf64lriscv "$(tdir_elf64lriscv)"
- eelf64ltsmip.c: $(srcdir)/emulparams/elf64ltsmip.sh \
-   $(srcdir)/emulparams/elf64btsmip.sh $(srcdir)/emulparams/elf64bmip-defs.sh \
-   $(srcdir)/emulparams/elf32bmipn32-defs.sh $(ELF_DEPS) \
-diff --git a/ld/configure.tgt b/ld/configure.tgt
-index c50730b..b882e29 100644
---- a/ld/configure.tgt
-+++ b/ld/configure.tgt
-@@ -592,6 +592,9 @@ powerpc-*-aix*)		targ_emul=aixppc ;;
- powerpc-*-beos*)	targ_emul=aixppc ;;
- powerpc-*-windiss*)	targ_emul=elf32ppcwindiss ;;
- powerpc-*-lynxos*)	targ_emul=ppclynx ;;
-+riscv*-*-*)		targ_emul=elf64lriscv
-+			targ_extra_emuls="elf32lriscv"
-+			targ_extra_libpath=$targ_extra_emuls ;;
- rs6000-*-aix[5-9]*)	targ_emul=aix5rs6 ;;
- rs6000-*-aix*)		targ_emul=aixrs6
- 			;;
-diff --git a/ld/emulparams/elf32lriscv-defs.sh b/ld/emulparams/elf32lriscv-defs.sh
-new file mode 100644
-index 0000000..c7e1719
---- /dev/null
-+++ b/ld/emulparams/elf32lriscv-defs.sh
+diff -Nur original-binutils/ld/emulparams/elf32lriscv-defs.sh binutils/ld/emulparams/elf32lriscv-defs.sh
+--- original-binutils/ld/emulparams/elf32lriscv-defs.sh	1969-12-31 16:00:00.000000000 -0800
++++ binutils/ld/emulparams/elf32lriscv-defs.sh	2014-12-09 14:31:16.735857672 -0800
 @@ -0,0 +1,41 @@
 +# This is an ELF platform.
 +SCRIPT_NAME=elf
@@ -8856,11 +8079,9 @@ index 0000000..c7e1719
 +fi
 +
 +TEXT_DYNAMIC=
-diff --git a/ld/emulparams/elf32lriscv.sh b/ld/emulparams/elf32lriscv.sh
-new file mode 100644
-index 0000000..11ef663
---- /dev/null
-+++ b/ld/emulparams/elf32lriscv.sh
+diff -Nur original-binutils/ld/emulparams/elf32lriscv.sh binutils/ld/emulparams/elf32lriscv.sh
+--- original-binutils/ld/emulparams/elf32lriscv.sh	1969-12-31 16:00:00.000000000 -0800
++++ binutils/ld/emulparams/elf32lriscv.sh	2014-12-09 14:31:16.735857672 -0800
 @@ -0,0 +1,9 @@
 +. ${srcdir}/emulparams/elf32lriscv-defs.sh
 +OUTPUT_FORMAT="elf32-littleriscv"
@@ -8871,27 +8092,21 @@ index 0000000..11ef663
 +  .gptab.sdata : { *(.gptab.data) *(.gptab.sdata) }
 +  .gptab.sbss : { *(.gptab.bss) *(.gptab.sbss) }
 +'
-diff --git a/ld/emulparams/elf64lriscv-defs.sh b/ld/emulparams/elf64lriscv-defs.sh
-new file mode 100644
-index 0000000..abaf766
---- /dev/null
-+++ b/ld/emulparams/elf64lriscv-defs.sh
+diff -Nur original-binutils/ld/emulparams/elf64lriscv-defs.sh binutils/ld/emulparams/elf64lriscv-defs.sh
+--- original-binutils/ld/emulparams/elf64lriscv-defs.sh	1969-12-31 16:00:00.000000000 -0800
++++ binutils/ld/emulparams/elf64lriscv-defs.sh	2014-12-09 14:31:16.735857672 -0800
 @@ -0,0 +1,2 @@
 +. ${srcdir}/emulparams/elf32lriscv-defs.sh
 +COMMONPAGESIZE="CONSTANT (COMMONPAGESIZE)"
-diff --git a/ld/emulparams/elf64lriscv.sh b/ld/emulparams/elf64lriscv.sh
-new file mode 100644
-index 0000000..3a6a652
---- /dev/null
-+++ b/ld/emulparams/elf64lriscv.sh
+diff -Nur original-binutils/ld/emulparams/elf64lriscv.sh binutils/ld/emulparams/elf64lriscv.sh
+--- original-binutils/ld/emulparams/elf64lriscv.sh	1969-12-31 16:00:00.000000000 -0800
++++ binutils/ld/emulparams/elf64lriscv.sh	2014-12-09 14:31:16.735857672 -0800
 @@ -0,0 +1,2 @@
 +. ${srcdir}/emulparams/elf64lriscv-defs.sh
 +OUTPUT_FORMAT="elf64-littleriscv"
-diff --git a/ld/emultempl/riscvelf.em b/ld/emultempl/riscvelf.em
-new file mode 100644
-index 0000000..a19899d
---- /dev/null
-+++ b/ld/emultempl/riscvelf.em
+diff -Nur original-binutils/ld/emultempl/riscvelf.em binutils/ld/emultempl/riscvelf.em
+--- original-binutils/ld/emultempl/riscvelf.em	1969-12-31 16:00:00.000000000 -0800
++++ binutils/ld/emultempl/riscvelf.em	2014-12-09 14:32:35.932301937 -0800
 @@ -0,0 +1,42 @@
 +# This shell script emits a C file. -*- C -*-
 +#   Copyright 2004, 2006, 2007, 2008 Free Software Foundation, Inc.
@@ -8935,62 +8150,10 @@ index 0000000..a19899d
 +EOF
 +
 +LDEMUL_BEFORE_ALLOCATION=riscv_before_allocation
-diff --git a/opcodes/configure b/opcodes/configure
-index 47bc29b..29105d2 100755
---- a/opcodes/configure
-+++ b/opcodes/configure
-@@ -12555,6 +12555,7 @@ if test x${all_targets} = xfalse ; then
- 	bfd_powerpc_arch)	ta="$ta ppc-dis.lo ppc-opc.lo" ;;
- 	bfd_powerpc_64_arch)	ta="$ta ppc-dis.lo ppc-opc.lo" ;;
- 	bfd_pyramid_arch)	;;
-+	bfd_riscv_arch)		ta="$ta riscv-dis.lo riscv-opc.lo" ;;
- 	bfd_romp_arch)		;;
- 	bfd_rs6000_arch)	ta="$ta ppc-dis.lo ppc-opc.lo" ;;
- 	bfd_rl78_arch)		ta="$ta rl78-dis.lo rl78-decode.lo";;
-diff --git a/opcodes/configure.in b/opcodes/configure.in
-index 8309373..7b7872e 100644
---- a/opcodes/configure.in
-+++ b/opcodes/configure.in
-@@ -302,6 +302,7 @@ if test x${all_targets} = xfalse ; then
- 	bfd_powerpc_arch)	ta="$ta ppc-dis.lo ppc-opc.lo" ;;
- 	bfd_powerpc_64_arch)	ta="$ta ppc-dis.lo ppc-opc.lo" ;;
- 	bfd_pyramid_arch)	;;
-+	bfd_riscv_arch)		ta="$ta riscv-dis.lo riscv-opc.lo" ;;
- 	bfd_romp_arch)		;;
- 	bfd_rs6000_arch)	ta="$ta ppc-dis.lo ppc-opc.lo" ;;
- 	bfd_rl78_arch)		ta="$ta rl78-dis.lo rl78-decode.lo";;
-diff --git a/opcodes/disassemble.c b/opcodes/disassemble.c
-index 55a44ec..6c336c7 100644
---- a/opcodes/disassemble.c
-+++ b/opcodes/disassemble.c
-@@ -378,6 +378,11 @@ disassembler (abfd)
- 	disassemble = print_insn_little_powerpc;
-       break;
- #endif
-+#ifdef ARCH_riscv
-+    case bfd_arch_riscv:
-+      disassemble = print_insn_riscv;
-+      break;
-+#endif
- #ifdef ARCH_rs6000
-     case bfd_arch_rs6000:
-       if (bfd_get_mach (abfd) == bfd_mach_ppc_620)
-@@ -550,6 +555,9 @@ disassembler_usage (stream)
- #ifdef ARCH_powerpc
-   print_ppc_disassembler_options (stream);
- #endif
-+#ifdef ARCH_riscv
-+  print_riscv_disassembler_options (stream);
-+#endif
- #ifdef ARCH_i386
-   print_i386_disassembler_options (stream);
- #endif
-diff --git a/opcodes/riscv-dis.c b/opcodes/riscv-dis.c
-new file mode 100644
-index 0000000..e8f463d
---- /dev/null
-+++ b/opcodes/riscv-dis.c
-@@ -0,0 +1,537 @@
+diff -Nur original-binutils/opcodes/riscv-dis.c binutils/opcodes/riscv-dis.c
+--- original-binutils/opcodes/riscv-dis.c	1969-12-31 16:00:00.000000000 -0800
++++ binutils/opcodes/riscv-dis.c	2014-12-09 14:38:38.665778707 -0800
+@@ -0,0 +1,488 @@
 +/* RISC-V disassembler
 +   Copyright 2011-2014 Free Software Foundation, Inc.
 +
@@ -9024,55 +8187,6 @@ index 0000000..e8f463d
 +
 +#include <stdint.h>
 +#include <assert.h>
-+
-+/* FIXME: These should be shared with gdb somehow.  */
-+
-+static const char * const riscv_gpr_names_numeric[32] =
-+{
-+  "x0",   "x1",   "x2",   "x3",   "x4",   "x5",   "x6",   "x7",
-+  "x8",   "x9",   "x10",  "x11",  "x12",  "x13",  "x14",  "x15",
-+  "x16",  "x17",  "x18",  "x19",  "x20",  "x21",  "x22",  "x23",
-+  "x24",  "x25",  "x26",  "x27",  "x28",  "x29",  "x30",  "x31"
-+};
-+
-+static const char * const riscv_gpr_names_abi[32] = {
-+  "zero", "ra", "s0", "s1",  "s2",  "s3",  "s4",  "s5",
-+  "s6",   "s7", "s8", "s9", "s10", "s11",  "sp",  "tp",
-+  "v0",   "v1", "a0", "a1",  "a2",  "a3",  "a4",  "a5",
-+  "a6",   "a7", "t0", "t1",  "t2",  "t3",  "t4",  "gp"
-+};
-+
-+
-+static const char * const riscv_fpr_names_numeric[32] =
-+{
-+  "f0",   "f1",   "f2",   "f3",   "f4",   "f5",   "f6",   "f7",
-+  "f8",   "f9",   "f10",  "f11",  "f12",  "f13",  "f14",  "f15",
-+  "f16",  "f17",  "f18",  "f19",  "f20",  "f21",  "f22",  "f23",
-+  "f24",  "f25",  "f26",  "f27",  "f28",  "f29",  "f30",  "f31"
-+};
-+
-+static const char * const riscv_fpr_names_abi[32] = {
-+  "fs0", "fs1",  "fs2",  "fs3",  "fs4",  "fs5",  "fs6",  "fs7",
-+  "fs8", "fs9", "fs10", "fs11", "fs12", "fs13", "fs14", "fs15",
-+  "fv0", "fv1", "fa0",   "fa1",  "fa2",  "fa3",  "fa4",  "fa5",
-+  "fa6", "fa7", "ft0",   "ft1",  "ft2",  "ft3",  "ft4",  "ft5"
-+};
-+
-+static const char * const riscv_vgr_reg_names_riscv[32] =
-+{
-+  "vx0",  "vx1",  "vx2",  "vx3",  "vx4",  "vx5",  "vx6",  "vx7",
-+  "vx8",  "vx9",  "vx10", "vx11", "vx12", "vx13", "vx14", "vx15",
-+  "vx16", "vx17", "vx18", "vx19", "vx20", "vx21", "vx22", "vx23",
-+  "vx24", "vx25", "vx26", "vx27", "vx28", "vx29", "vx30", "vx31"
-+};
-+
-+static const char * const riscv_vfp_reg_names_riscv[32] =
-+{
-+  "vf0",  "vf1",  "vf2",  "vf3",  "vf4",  "vf5",  "vf6",  "vf7",
-+  "vf8",  "vf9",  "vf10", "vf11", "vf12", "vf13", "vf14", "vf15",
-+  "vf16", "vf17", "vf18", "vf19", "vf20", "vf21", "vf22", "vf23",
-+  "vf24", "vf25", "vf26", "vf27", "vf28", "vf29", "vf30", "vf31"
-+};
 +
 +struct riscv_private_data
 +{
@@ -9145,9 +8259,9 @@ index 0000000..e8f463d
 +      pd->print_addr = pd->hi_addr[base_reg] + offset;
 +      pd->hi_addr[base_reg] = -1;
 +    }
-+  else if (base_reg == GP_REG && pd->gp != (bfd_vma)-1)
++  else if (base_reg == X_GP && pd->gp != (bfd_vma)-1)
 +    pd->print_addr = pd->gp + offset;
-+  else if (base_reg == TP_REG)
++  else if (base_reg == X_TP)
 +    pd->print_addr = offset;
 +}
 +
@@ -9214,42 +8328,42 @@ index 0000000..e8f463d
 +            case 'd':
 +              (*info->fprintf_func)
 +                ( info->stream, "%s",
-+                  riscv_vgr_reg_names_riscv[(l >> OP_SH_VRD) & OP_MASK_VRD]);
++                  riscv_vec_gpr_names[(l >> OP_SH_VRD) & OP_MASK_VRD]);
 +              break;
 +            case 's':
 +              (*info->fprintf_func)
 +                ( info->stream, "%s",
-+                  riscv_vgr_reg_names_riscv[(l >> OP_SH_VRS) & OP_MASK_VRS]);
++                  riscv_vec_gpr_names[(l >> OP_SH_VRS) & OP_MASK_VRS]);
 +              break;
 +            case 't':
 +              (*info->fprintf_func)
 +                ( info->stream, "%s",
-+                  riscv_vgr_reg_names_riscv[(l >> OP_SH_VRT) & OP_MASK_VRT]);
++                  riscv_vec_gpr_names[(l >> OP_SH_VRT) & OP_MASK_VRT]);
 +              break;
 +            case 'r':
 +              (*info->fprintf_func)
 +                ( info->stream, "%s",
-+                  riscv_vgr_reg_names_riscv[(l >> OP_SH_VRR) & OP_MASK_VRR]);
++                  riscv_vec_gpr_names[(l >> OP_SH_VRR) & OP_MASK_VRR]);
 +              break;
 +            case 'D':
 +              (*info->fprintf_func)
 +                ( info->stream, "%s",
-+                  riscv_vfp_reg_names_riscv[(l >> OP_SH_VFD) & OP_MASK_VFD]);
++                  riscv_vec_fpr_names[(l >> OP_SH_VFD) & OP_MASK_VFD]);
 +              break;
 +            case 'S':
 +              (*info->fprintf_func)
 +                ( info->stream, "%s",
-+                  riscv_vfp_reg_names_riscv[(l >> OP_SH_VFS) & OP_MASK_VFS]);
++                  riscv_vec_fpr_names[(l >> OP_SH_VFS) & OP_MASK_VFS]);
 +              break;
 +            case 'T':
 +              (*info->fprintf_func)
 +                ( info->stream, "%s",
-+                  riscv_vfp_reg_names_riscv[(l >> OP_SH_VFT) & OP_MASK_VFT]);
++                  riscv_vec_fpr_names[(l >> OP_SH_VFT) & OP_MASK_VFT]);
 +              break;
 +            case 'R':
 +              (*info->fprintf_func)
 +                ( info->stream, "%s",
-+                  riscv_vfp_reg_names_riscv[(l >> OP_SH_VFR) & OP_MASK_VFR]);
++                  riscv_vec_fpr_names[(l >> OP_SH_VFR) & OP_MASK_VFR]);
 +              break;
 +          }
 +          break;
@@ -9528,12 +8642,10 @@ index 0000000..e8f463d
 +
 +  fprintf (stream, _("\n"));
 +}
-diff --git a/opcodes/riscv-opc.c b/opcodes/riscv-opc.c
-new file mode 100644
-index 0000000..c4aece8
---- /dev/null
-+++ b/opcodes/riscv-opc.c
-@@ -0,0 +1,683 @@
+diff -Nur original-binutils/opcodes/riscv-opc.c binutils/opcodes/riscv-opc.c
+--- original-binutils/opcodes/riscv-opc.c	1969-12-31 16:00:00.000000000 -0800
++++ binutils/opcodes/riscv-opc.c	2014-12-09 14:38:38.665778707 -0800
+@@ -0,0 +1,729 @@
 +/* RISC-V opcode list
 +   Copyright 2011-2014 Free Software Foundation, Inc.
 +
@@ -9561,7 +8673,53 @@ index 0000000..c4aece8
 +#include "opcode/riscv.h"
 +#include <stdio.h>
 +
-+/* Short hand so the lines aren't too long.  */
++/* Register names used by gas and objdump.  */
++
++const char * const riscv_gpr_names_numeric[32] =
++{
++  "x0",   "x1",   "x2",   "x3",   "x4",   "x5",   "x6",   "x7",
++  "x8",   "x9",   "x10",  "x11",  "x12",  "x13",  "x14",  "x15",
++  "x16",  "x17",  "x18",  "x19",  "x20",  "x21",  "x22",  "x23",
++  "x24",  "x25",  "x26",  "x27",  "x28",  "x29",  "x30",  "x31"
++};
++
++const char * const riscv_gpr_names_abi[32] = {
++  "zero", "ra", "sp",  "gp",  "tp", "t0",  "t1",  "t2",
++  "s0",   "s1", "a0",  "a1",  "a2", "a3",  "a4",  "a5",
++  "a6",   "a7", "s2",  "s3",  "s4", "s5",  "s6",  "s7",
++  "s8",   "s9", "s10", "s11", "t3", "t4",  "t5",  "t6"
++};
++
++const char * const riscv_fpr_names_numeric[32] =
++{
++  "f0",   "f1",   "f2",   "f3",   "f4",   "f5",   "f6",   "f7",
++  "f8",   "f9",   "f10",  "f11",  "f12",  "f13",  "f14",  "f15",
++  "f16",  "f17",  "f18",  "f19",  "f20",  "f21",  "f22",  "f23",
++  "f24",  "f25",  "f26",  "f27",  "f28",  "f29",  "f30",  "f31"
++};
++
++const char * const riscv_fpr_names_abi[32] = {
++  "ft0", "ft1", "ft2",  "ft3",  "ft4", "ft5", "ft6",  "ft7",
++  "fs0", "fs1", "fa0",  "fa1",  "fa2", "fa3", "fa4",  "fa5",
++  "fa6", "fa7", "fs2",  "fs3",  "fs4", "fs5", "fs6",  "fs7",
++  "fs8", "fs9", "fs10", "fs11", "ft8", "ft9", "ft10", "ft11"
++};
++
++const char * const riscv_vec_gpr_names[32] =
++{
++  "vx0",  "vx1",  "vx2",  "vx3",  "vx4",  "vx5",  "vx6",  "vx7",
++  "vx8",  "vx9",  "vx10", "vx11", "vx12", "vx13", "vx14", "vx15",
++  "vx16", "vx17", "vx18", "vx19", "vx20", "vx21", "vx22", "vx23",
++  "vx24", "vx25", "vx26", "vx27", "vx28", "vx29", "vx30", "vx31"
++};
++
++const char * const riscv_vec_fpr_names[32] =
++{
++  "vf0",  "vf1",  "vf2",  "vf3",  "vf4",  "vf5",  "vf6",  "vf7",
++  "vf8",  "vf9",  "vf10", "vf11", "vf12", "vf13", "vf14", "vf15",
++  "vf16", "vf17", "vf18", "vf19", "vf20", "vf21", "vf22", "vf23",
++  "vf24", "vf25", "vf26", "vf27", "vf28", "vf29", "vf30", "vf31"
++};
 +
 +/* The order of overloaded instructions matters.  Label arguments and
 +   register arguments look the same. Instructions that can have either
@@ -9661,16 +8819,16 @@ index 0000000..c4aece8
 +{"sra",       "I",   "d,s,t",   MATCH_SRA, MASK_SRA, match_opcode,   WR_xd|RD_xs1|RD_xs2 },
 +{"sra",       "I",   "d,s,>",   MATCH_SRAI, MASK_SRAI, match_opcode,   INSN_ALIAS|WR_xd|RD_xs1 },
 +{"sub",       "I",   "d,s,t",  MATCH_SUB, MASK_SUB, match_opcode,   WR_xd|RD_xs1|RD_xs2 },
-+{"ret",       "I",   "",  MATCH_JALR | (LINK_REG << OP_SH_RS1), MASK_JALR | MASK_RD | MASK_RS1 | MASK_IMM, match_opcode,   INSN_ALIAS|WR_xd|RD_xs1 },
++{"ret",       "I",   "",  MATCH_JALR | (X_RA << OP_SH_RS1), MASK_JALR | MASK_RD | MASK_RS1 | MASK_IMM, match_opcode,   INSN_ALIAS|WR_xd|RD_xs1 },
 +{"j",         "I",   "a",  MATCH_JAL, MASK_JAL | MASK_RD, match_opcode,   INSN_ALIAS },
-+{"jal",       "I",   "a",  MATCH_JAL | (LINK_REG << OP_SH_RD), MASK_JAL | MASK_RD, match_opcode,   INSN_ALIAS|WR_xd },
++{"jal",       "I",   "a",  MATCH_JAL | (X_RA << OP_SH_RD), MASK_JAL | MASK_RD, match_opcode,   INSN_ALIAS|WR_xd },
 +{"jal",       "I",   "d,a",  MATCH_JAL, MASK_JAL, match_opcode,   WR_xd },
 +{"call",      "I",   "c",  0,    (int) M_CALL,  match_never, INSN_MACRO },
 +{"jump",      "I",   "c",  0,    (int) M_JUMP,  match_never, INSN_MACRO },
 +{"jr",        "I",   "s",  MATCH_JALR, MASK_JALR | MASK_RD | MASK_IMM, match_opcode,   INSN_ALIAS|WR_xd|RD_xs1 },
 +{"jr",        "I",   "s,j",  MATCH_JALR, MASK_JALR | MASK_RD, match_opcode,   INSN_ALIAS|WR_xd|RD_xs1 },
-+{"jalr",      "I",   "s",  MATCH_JALR | (LINK_REG << OP_SH_RD), MASK_JALR | MASK_RD | MASK_IMM, match_opcode,   INSN_ALIAS|WR_xd|RD_xs1 },
-+{"jalr",      "I",   "s,j",  MATCH_JALR | (LINK_REG << OP_SH_RD), MASK_JALR | MASK_RD, match_opcode,   INSN_ALIAS|WR_xd|RD_xs1 },
++{"jalr",      "I",   "s",  MATCH_JALR | (X_RA << OP_SH_RD), MASK_JALR | MASK_RD | MASK_IMM, match_opcode,   INSN_ALIAS|WR_xd|RD_xs1 },
++{"jalr",      "I",   "s,j",  MATCH_JALR | (X_RA << OP_SH_RD), MASK_JALR | MASK_RD, match_opcode,   INSN_ALIAS|WR_xd|RD_xs1 },
 +{"jalr",      "I",   "d,s",  MATCH_JALR, MASK_JALR | MASK_IMM, match_opcode,   INSN_ALIAS|WR_xd|RD_xs1 },
 +{"jalr",      "I",   "d,s,j",  MATCH_JALR, MASK_JALR, match_opcode,   WR_xd|RD_xs1 },
 +{"lb",        "I",   "d,o(s)",  MATCH_LB, MASK_LB, match_opcode,   WR_xd|RD_xs1 },
