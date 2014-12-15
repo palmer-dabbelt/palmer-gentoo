@@ -123,6 +123,8 @@ src_prepare() {
 	# change rules back to group uucp instead of dialout for now wrt #454556
 	sed -i -e 's/GROUP="dialout"/GROUP="uucp"/' rules/*.rules || die
 
+        epatch "${FILESDIR}"/${P}-riscv.patch
+
 	# apply user patches
 	epatch_user
 
