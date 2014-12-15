@@ -41,7 +41,7 @@ src_prepare() {
 	epatch "${FILESDIR}"/${P}-emutramp_pax_proc.patch #457194
         epatch "${FILESDIR}"/${P}-riscv.patch
 	epatch_user
-	elibtoolize
+	eautoreconf
 }
 
 multilib_src_configure() {
