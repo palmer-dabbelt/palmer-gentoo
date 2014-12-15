@@ -1,0 +1,23 @@
+commit 8609ec1847615fa43f0c97354f4a773ee76f4c1e
+Author: Palmer Dabbelt <palmer.dabbelt@eecs.berkeley.edu>
+Date:   Mon Dec 15 13:21:54 2014 -0800
+
+    Attempt to support FFI closures
+    
+    This at least makes them appear in the FFI header file.  I don't know
+    what's actually required to make them work, but maybe they won't be
+    necessary for portage?
+
+diff --git a/src/riscv/ffitarget.h b/src/riscv/ffitarget.h
+index d56eb59..65ad65b 100644
+--- a/src/riscv/ffitarget.h
++++ b/src/riscv/ffitarget.h
+@@ -66,7 +66,7 @@ typedef enum ffi_abi {
+ 
+ /* ---- Definitions for closures ----------------------------------------- */
+ 
+-#define FFI_CLOSURES 0
++#define FFI_CLOSURES 1
+ #define FFI_TRAMPOLINE_SIZE 48
+ #define FFI_NATIVE_RAW_API 0
+ 

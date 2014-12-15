@@ -40,6 +40,7 @@ src_prepare() {
 	sed -i 's:@toolexeclibdir@:$(libdir):g' Makefile.in || die #462814
 	epatch "${FILESDIR}"/${P}-emutramp_pax_proc.patch #457194
         epatch "${FILESDIR}"/${P}-riscv.patch
+        epatch "${FILESDIR}"/${PN}-3.2-riscv-closure.patch
 	epatch_user
 	eautoreconf
 }
