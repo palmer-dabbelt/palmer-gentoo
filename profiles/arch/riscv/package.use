@@ -1,0 +1,2 @@
+# For some reason, Python doesn't appear to without ncurses[unicode]
+sys-libs/ncurses unicode
