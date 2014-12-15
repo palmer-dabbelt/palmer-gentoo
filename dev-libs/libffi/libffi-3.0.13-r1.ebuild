@@ -3,7 +3,7 @@
 # $Header: /var/cvsroot/gentoo-x86/dev-libs/libffi/libffi-3.0.13-r1.ebuild,v 1.15 2014/08/10 20:35:34 slyfox Exp $
 
 EAPI=5
-inherit eutils libtool multilib toolchain-funcs multilib-minimal
+inherit autotools eutils libtool multilib toolchain-funcs multilib-minimal
 
 DESCRIPTION="a portable, high level programming interface to various calling conventions"
 HOMEPAGE="http://sourceware.org/libffi/"
