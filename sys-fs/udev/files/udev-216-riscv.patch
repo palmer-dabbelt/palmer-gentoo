@@ -1,0 +1,34 @@
+diff -ur systemd-216.orig/src/shared/architecture.c systemd-216/src/shared/architecture.c
+--- systemd-216.orig/src/shared/architecture.c	2014-12-15 15:24:41.739621295 -0800
++++ systemd-216/src/shared/architecture.c	2014-12-15 15:27:51.501240165 -0800
+@@ -116,6 +116,9 @@
+                 { "tilegx",     ARCHITECTURE_TILEGX   },
+ #elif defined(__cris__)
+                 { "crisv32",    ARCHITECTURE_CRIS     },
++#elif defined(__riscv__)
++                { "riscv32",    ARCHITECTURE_RISCV    },
++                { "riscv64",    ARCHITECTURE_RISCV    },
+ #else
+ #error "Please register your architecture here!"
+ #endif
+diff -ur systemd-216.orig/src/shared/architecture.h systemd-216/src/shared/architecture.h
+--- systemd-216.orig/src/shared/architecture.h	2014-12-15 15:24:41.739621295 -0800
++++ systemd-216/src/shared/architecture.h	2014-12-15 15:28:08.000511227 -0800
+@@ -58,6 +58,7 @@
+         ARCHITECTURE_M68K,
+         ARCHITECTURE_TILEGX,
+         ARCHITECTURE_CRIS,
++        ARCHITECTURE_RISCV,
+         _ARCHITECTURE_MAX,
+         _ARCHITECTURE_INVALID = -1
+ } Architecture;
+@@ -184,6 +185,9 @@
+ #elif defined(__cris__)
+ #  define native_architecture() ARCHITECTURE_CRIS
+ #  error "Missing LIB_ARCH_TUPLE for CRIS"
++#elif defined(__riscv__)
++#  define native_architecture() ARCHITECTURE_RISCV
++#  define LIB_ARCH_TUPLE "riscv64-unknown-linux-gnu"
+ #else
+ #error "Please register your architecture here!"
+ #endif
