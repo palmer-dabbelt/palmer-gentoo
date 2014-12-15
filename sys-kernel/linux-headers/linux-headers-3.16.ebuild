@@ -27,6 +27,7 @@ src_unpack() {
 
 src_prepare() {
 	[[ -n ${PATCH_VER} ]] && EPATCH_SUFFIX="patch" epatch "${WORKDIR}"/${PV}
+        epatch "${FILESDIR}"/${PN}-3.14-riscv.patch
 }
 
 src_install() {
