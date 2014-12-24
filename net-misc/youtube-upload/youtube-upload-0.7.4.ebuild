@@ -15,6 +15,6 @@ KEYWORDS="~amd64"
 LICENSE="GPLv3"
 SLOT="0"
 
-RDEPEND=dev-python/gdata[${PYTHON_USEDEP}]""
+RDEPEND="dev-python/gdata[${PYTHON_USEDEP}]"
 DEPEND="${RDEPEND}
 	dev-python/setuptools[${PYTHON_USEDEP}]"
