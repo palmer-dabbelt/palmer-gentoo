@@ -1,6 +1,6 @@
 diff -Nur original-gcc/config.sub gcc/config.sub
 --- original-gcc/config.sub	2013-10-01 09:50:56.000000000 -0700
-+++ gcc/config.sub	2014-12-10 10:46:00.343943141 -0800
++++ gcc/config.sub	2015-01-09 16:34:21.563635069 -0800
 @@ -334,6 +334,9 @@
  	ms1)
  		basic_machine=mt-unknown
@@ -13,7 +13,7 @@ diff -Nur original-gcc/config.sub gcc/config.sub
  		basic_machine=arm-unknown
 diff -Nur original-gcc/gcc/common/config/riscv/riscv-common.c gcc/gcc/common/config/riscv/riscv-common.c
 --- original-gcc/gcc/common/config/riscv/riscv-common.c	1969-12-31 16:00:00.000000000 -0800
-+++ gcc/gcc/common/config/riscv/riscv-common.c	2014-12-10 10:40:07.890984088 -0800
++++ gcc/gcc/common/config/riscv/riscv-common.c	2015-01-09 16:32:59.777534655 -0800
 @@ -0,0 +1,128 @@
 +/* Common hooks for RISC-V.
 +   Copyright (C) 1989-2014 Free Software Foundation, Inc.
@@ -145,8 +145,8 @@ diff -Nur original-gcc/gcc/common/config/riscv/riscv-common.c gcc/gcc/common/con
 +struct gcc_targetm_common targetm_common = TARGETM_COMMON_INITIALIZER;
 diff -Nur original-gcc/gcc/config/riscv/constraints.md gcc/gcc/config/riscv/constraints.md
 --- original-gcc/gcc/config/riscv/constraints.md	1969-12-31 16:00:00.000000000 -0800
-+++ gcc/gcc/config/riscv/constraints.md	2014-12-09 15:54:39.020723609 -0800
-@@ -0,0 +1,95 @@
++++ gcc/gcc/config/riscv/constraints.md	2015-01-09 16:32:59.777534655 -0800
+@@ -0,0 +1,90 @@
 +;; Constraint definitions for RISC-V target.
 +;; Copyright (C) 2011-2014 Free Software Foundation, Inc.
 +;; Contributed by Andrew Waterman (waterman@cs.berkeley.edu) at UC Berkeley.
@@ -209,15 +209,10 @@ diff -Nur original-gcc/gcc/config/riscv/constraints.md gcc/gcc/config/riscv/cons
 +  "@internal"
 +  (match_operand 0 "const_arith_operand"))
 +
-+(define_memory_constraint "YR"
++(define_memory_constraint "A"
 +  "An address that is held in a general-purpose register."
 +  (and (match_code "mem")
 +       (match_test "GET_CODE(XEXP(op,0)) == REG")))
-+
-+(define_memory_constraint "R"
-+  "An address that can be used in a non-macro load or store."
-+  (and (match_code "mem")
-+       (match_test "riscv_address_insns (XEXP (op, 0), mode, false) == 1")))
 +
 +(define_constraint "S"
 +  "@internal
@@ -242,9 +237,35 @@ diff -Nur original-gcc/gcc/config/riscv/constraints.md gcc/gcc/config/riscv/cons
 +   A vector zero."
 +  (and (match_code "const_vector")
 +       (match_test "op == CONST0_RTX (mode)")))
+diff -Nur original-gcc/gcc/config/riscv/default-32.h gcc/gcc/config/riscv/default-32.h
+--- original-gcc/gcc/config/riscv/default-32.h	1969-12-31 16:00:00.000000000 -0800
++++ gcc/gcc/config/riscv/default-32.h	2015-01-09 16:32:59.777534655 -0800
+@@ -0,0 +1,22 @@
++/* Definitions of target machine for GCC, for RISC-V,
++   defaulting to 32-bit code generation.
++
++   Copyright (C) 1999-2014 Free Software Foundation, Inc.
++
++This file is part of GCC.
++
++GCC is free software; you can redistribute it and/or modify
++it under the terms of the GNU General Public License as published by
++the Free Software Foundation; either version 3, or (at your option)
++any later version.
++
++GCC is distributed in the hope that it will be useful,
++but WITHOUT ANY WARRANTY; without even the implied warranty of
++MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++GNU General Public License for more details.
++
++You should have received a copy of the GNU General Public License
++along with GCC; see the file COPYING3.  If not see
++<http://www.gnu.org/licenses/>.  */
++
++#define TARGET_64BIT_DEFAULT 0
 diff -Nur original-gcc/gcc/config/riscv/elf.h gcc/gcc/config/riscv/elf.h
 --- original-gcc/gcc/config/riscv/elf.h	1969-12-31 16:00:00.000000000 -0800
-+++ gcc/gcc/config/riscv/elf.h	2014-12-09 15:54:39.020723609 -0800
++++ gcc/gcc/config/riscv/elf.h	2015-01-09 16:32:59.777534655 -0800
 @@ -0,0 +1,31 @@
 +/* Target macros for mips*-elf targets.
 +   Copyright (C) 1994, 1997, 1999, 2000, 2002, 2003, 2004, 2007, 2010
@@ -279,7 +300,7 @@ diff -Nur original-gcc/gcc/config/riscv/elf.h gcc/gcc/config/riscv/elf.h
 +#define NO_IMPLICIT_EXTERN_C 1
 diff -Nur original-gcc/gcc/config/riscv/generic.md gcc/gcc/config/riscv/generic.md
 --- original-gcc/gcc/config/riscv/generic.md	1969-12-31 16:00:00.000000000 -0800
-+++ gcc/gcc/config/riscv/generic.md	2014-12-09 15:54:39.020723609 -0800
++++ gcc/gcc/config/riscv/generic.md	2015-01-09 16:32:59.777534655 -0800
 @@ -0,0 +1,98 @@
 +;; Generic DFA-based pipeline description for RISC-V targets.
 +;; Copyright (C) 2011-2014 Free Software Foundation, Inc.
@@ -381,7 +402,7 @@ diff -Nur original-gcc/gcc/config/riscv/generic.md gcc/gcc/config/riscv/generic.
 +  "alu")
 diff -Nur original-gcc/gcc/config/riscv/linux64.h gcc/gcc/config/riscv/linux64.h
 --- original-gcc/gcc/config/riscv/linux64.h	1969-12-31 16:00:00.000000000 -0800
-+++ gcc/gcc/config/riscv/linux64.h	2014-12-09 15:54:39.020723609 -0800
++++ gcc/gcc/config/riscv/linux64.h	2015-01-09 16:32:59.777534655 -0800
 @@ -0,0 +1,44 @@
 +/* Definitions for MIPS running Linux-based GNU systems with ELF format
 +   using n32/64 abi.
@@ -429,7 +450,7 @@ diff -Nur original-gcc/gcc/config/riscv/linux64.h gcc/gcc/config/riscv/linux64.h
 +%{" OPT_ARCH32 ":-melf32lriscv}"
 diff -Nur original-gcc/gcc/config/riscv/linux.h gcc/gcc/config/riscv/linux.h
 --- original-gcc/gcc/config/riscv/linux.h	1969-12-31 16:00:00.000000000 -0800
-+++ gcc/gcc/config/riscv/linux.h	2014-12-09 15:54:39.020723609 -0800
++++ gcc/gcc/config/riscv/linux.h	2015-01-09 16:32:59.777534655 -0800
 @@ -0,0 +1,60 @@
 +/* Definitions for MIPS running Linux-based GNU systems with ELF format.
 +   Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -493,7 +514,7 @@ diff -Nur original-gcc/gcc/config/riscv/linux.h gcc/gcc/config/riscv/linux.h
 +   "%{shared|pie:crtendS.o%s;:crtend.o%s} crtn.o%s"
 diff -Nur original-gcc/gcc/config/riscv/opcode-riscv.h gcc/gcc/config/riscv/opcode-riscv.h
 --- original-gcc/gcc/config/riscv/opcode-riscv.h	1969-12-31 16:00:00.000000000 -0800
-+++ gcc/gcc/config/riscv/opcode-riscv.h	2014-12-09 15:54:39.020723609 -0800
++++ gcc/gcc/config/riscv/opcode-riscv.h	2015-01-09 16:32:59.777534655 -0800
 @@ -0,0 +1,149 @@
 +/* RISC-V ISA encoding.
 +   Copyright (C) 2011-2014 Free Software Foundation, Inc.
@@ -646,7 +667,7 @@ diff -Nur original-gcc/gcc/config/riscv/opcode-riscv.h gcc/gcc/config/riscv/opco
 +#endif /* _RISCV_H_ */
 diff -Nur original-gcc/gcc/config/riscv/peephole.md gcc/gcc/config/riscv/peephole.md
 --- original-gcc/gcc/config/riscv/peephole.md	1969-12-31 16:00:00.000000000 -0800
-+++ gcc/gcc/config/riscv/peephole.md	2014-12-09 16:17:00.442070823 -0800
++++ gcc/gcc/config/riscv/peephole.md	2015-01-09 16:32:59.777534655 -0800
 @@ -0,0 +1,100 @@
 +;;........................
 +;; DI -> SI optimizations
@@ -750,7 +771,7 @@ diff -Nur original-gcc/gcc/config/riscv/peephole.md gcc/gcc/config/riscv/peephol
 +  [(set (attr "length") (const_int 8))])
 diff -Nur original-gcc/gcc/config/riscv/predicates.md gcc/gcc/config/riscv/predicates.md
 --- original-gcc/gcc/config/riscv/predicates.md	1969-12-31 16:00:00.000000000 -0800
-+++ gcc/gcc/config/riscv/predicates.md	2014-12-09 15:54:39.020723609 -0800
++++ gcc/gcc/config/riscv/predicates.md	2015-01-09 16:32:59.777534655 -0800
 @@ -0,0 +1,182 @@
 +;; Predicate description for RISC-V target.
 +;; Copyright (C) 2011-2014 Free Software Foundation, Inc.
@@ -936,8 +957,8 @@ diff -Nur original-gcc/gcc/config/riscv/predicates.md gcc/gcc/config/riscv/predi
 +  (match_code "ordered,unordered"))
 diff -Nur original-gcc/gcc/config/riscv/riscv.c gcc/gcc/config/riscv/riscv.c
 --- original-gcc/gcc/config/riscv/riscv.c	1969-12-31 16:00:00.000000000 -0800
-+++ gcc/gcc/config/riscv/riscv.c	2014-12-10 10:40:07.900983606 -0800
-@@ -0,0 +1,4419 @@
++++ gcc/gcc/config/riscv/riscv.c	2015-01-09 16:32:59.777534655 -0800
+@@ -0,0 +1,4284 @@
 +/* Subroutines used for code generation for RISC-V.
 +   Copyright (C) 2011-2014 Free Software Foundation, Inc.
 +   Contributed by Andrew Waterman (waterman@cs.berkeley.edu) at UC Berkeley.
@@ -1179,18 +1200,14 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.c gcc/gcc/config/riscv/riscv.c
 +
 +struct riscv_tune_info
 +{
-+  unsigned short fp_add;
-+  unsigned short fp_mult_sf;
-+  unsigned short fp_mult_df;
-+  unsigned short fp_div_sf;
-+  unsigned short fp_div_df;
-+  unsigned short int_mult_si;
-+  unsigned short int_mult_di;
-+  unsigned short int_div_si;
-+  unsigned short int_div_di;
++  unsigned short fp_add[2];
++  unsigned short fp_mul[2];
++  unsigned short fp_div[2];
++  unsigned short int_mul[2];
++  unsigned short int_div[2];
 +  unsigned short issue_rate;
 +  unsigned short branch_cost;
-+  unsigned short memory_latency;
++  unsigned short memory_cost;
 +};
 +
 +/* Information about one CPU we know about.  */
@@ -1244,34 +1261,26 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.c gcc/gcc/config/riscv/riscv.c
 +
 +/* Costs to use when optimizing for size.  */
 +static const struct riscv_tune_info rocket_tune_info = {
-+  COSTS_N_INSNS (8),            /* fp_add */
-+  COSTS_N_INSNS (8),            /* fp_mult_sf */
-+  COSTS_N_INSNS (8),            /* fp_mult_df */
-+  COSTS_N_INSNS (20),           /* fp_div_sf */
-+  COSTS_N_INSNS (20),           /* fp_div_df */
-+  COSTS_N_INSNS (4),            /* int_mult_si */
-+  COSTS_N_INSNS (4),            /* int_mult_di */
-+  COSTS_N_INSNS (6),            /* int_div_si */
-+  COSTS_N_INSNS (6),            /* int_div_di */
-+		   1,           /* issue_rate */
-+		   2,           /* branch_cost */
-+		   7            /* memory_latency */
++  {COSTS_N_INSNS (4), COSTS_N_INSNS (5)},	/* fp_add */
++  {COSTS_N_INSNS (4), COSTS_N_INSNS (5)},	/* fp_mul */
++  {COSTS_N_INSNS (20), COSTS_N_INSNS (20)},	/* fp_div */
++  {COSTS_N_INSNS (4), COSTS_N_INSNS (4)},	/* int_mul */
++  {COSTS_N_INSNS (6), COSTS_N_INSNS (6)},	/* int_div */
++  1,						/* issue_rate */
++  3,						/* branch_cost */
++  5						/* memory_cost */
 +};
 +
 +/* Costs to use when optimizing for size.  */
 +static const struct riscv_tune_info optimize_size_tune_info = {
-+  COSTS_N_INSNS (1),            /* fp_add */
-+  COSTS_N_INSNS (1),            /* fp_mult_sf */
-+  COSTS_N_INSNS (1),            /* fp_mult_df */
-+  COSTS_N_INSNS (1),            /* fp_div_sf */
-+  COSTS_N_INSNS (1),            /* fp_div_df */
-+  COSTS_N_INSNS (1),            /* int_mult_si */
-+  COSTS_N_INSNS (1),            /* int_mult_di */
-+  COSTS_N_INSNS (1),            /* int_div_si */
-+  COSTS_N_INSNS (1),            /* int_div_di */
-+		   1,           /* issue_rate */
-+		   1,           /* branch_cost */
-+		   1            /* memory_latency */
++  {COSTS_N_INSNS (1), COSTS_N_INSNS (1)},	/* fp_add */
++  {COSTS_N_INSNS (1), COSTS_N_INSNS (1)},	/* fp_mul */
++  {COSTS_N_INSNS (1), COSTS_N_INSNS (1)},	/* fp_div */
++  {COSTS_N_INSNS (1), COSTS_N_INSNS (1)},	/* int_mul */
++  {COSTS_N_INSNS (1), COSTS_N_INSNS (1)},	/* int_div */
++  1,						/* issue_rate */
++  1,						/* branch_cost */
++  1						/* memory_cost */
 +};
 +
 +/* A table describing all the processors GCC knows about.  */
@@ -1751,8 +1760,8 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.c gcc/gcc/config/riscv/riscv.c
 +  if (mode != BLKmode && might_split_p)
 +    n += (GET_MODE_SIZE (mode) + UNITS_PER_WORD - 1) / UNITS_PER_WORD;
 +
-+  if (addr.type == ADDRESS_SYMBOLIC)
-+    n *= riscv_symbol_insns (addr.symbol_type);
++  if (addr.type == ADDRESS_LO_SUM)
++    n += riscv_symbol_insns (addr.symbol_type) - 1;
 +
 +  return n;
 +}
@@ -2284,10 +2293,6 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.c gcc/gcc/config/riscv/riscv.c
 +  return false;
 +}
 +
-+/* The cost of loading values from the constant pool.  It should be
-+   larger than the cost of any constant we want to synthesize inline.  */
-+#define CONSTANT_POOL_COST COSTS_N_INSNS (8)
-+
 +/* Return true if there is an instruction that implements CODE and accepts
 +   X as an immediate operand. */
 +
@@ -2336,31 +2341,11 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.c gcc/gcc/config/riscv/riscv.c
 +   DOUBLE_INSNS instructions.  */
 +
 +static int
-+riscv_binary_cost (rtx x, int single_insns, int double_insns, bool speed)
++riscv_binary_cost (rtx x, int single_insns, int double_insns)
 +{
-+  int cost = COSTS_N_INSNS (single_insns);
 +  if (GET_MODE_SIZE (GET_MODE (x)) == UNITS_PER_WORD * 2)
-+    cost = COSTS_N_INSNS (double_insns);
-+
-+  return (cost
-+	  + set_src_cost (XEXP (x, 0), speed)
-+	  + rtx_cost (XEXP (x, 1), GET_CODE (x), 1, speed));
-+}
-+
-+/* Return the cost of floating-point multiplications of mode MODE.  */
-+
-+static int
-+mips_fp_mult_cost (enum machine_mode mode)
-+{
-+  return mode == DFmode ? tune_info->fp_mult_df : tune_info->fp_mult_sf;
-+}
-+
-+/* Return the cost of floating-point divisions of mode MODE.  */
-+
-+static int
-+mips_fp_div_cost (enum machine_mode mode)
-+{
-+  return mode == DFmode ? tune_info->fp_div_df : tune_info->fp_div_sf;
++    return COSTS_N_INSNS (double_insns);
++  return COSTS_N_INSNS (single_insns);
 +}
 +
 +/* Return the cost of sign-extending OP to mode MODE, not including the
@@ -2409,7 +2394,6 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.c gcc/gcc/config/riscv/riscv.c
 +  enum machine_mode mode = GET_MODE (x);
 +  bool float_mode_p = FLOAT_MODE_P (mode);
 +  int cost;
-+  rtx addr;
 +
 +  switch (code)
 +    {
@@ -2425,40 +2409,20 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.c gcc/gcc/config/riscv/riscv.c
 +    case LABEL_REF:
 +    case CONST_DOUBLE:
 +    case CONST:
-+      /* When not optimizing for size, we care more about the cost
-+         of hot code, and hot code is often in a loop.  If a constant
-+         operand needs to be forced into a register, we will often be
-+         able to hoist the constant load out of the loop, so the load
-+         should not contribute to the cost.  */
 +      if (speed)
-+	{
-+	  *total = 0;
-+	  return true;
-+	}
-+
-+      cost = riscv_const_insns (x);
-+      if (cost > 0)
-+	{
-+	  /* If the constant is likely to be stored in a GPR, SETs of
-+	     single-insn constants are as cheap as register sets; we
-+	     never want to CSE them. */
-+	  if (cost == 1 && outer_code == SET && code == CONST_INT)
-+	    cost = 0;
-+	  *total = COSTS_N_INSNS (cost);
-+	  return true;
-+	}
-+      /* The value will need to be fetched from the constant pool.  */
-+      *total = CONSTANT_POOL_COST;
++	*total = 1;
++      else if ((cost = riscv_const_insns (x)) > 0)
++	*total = COSTS_N_INSNS (cost);
++      else /* The instruction will be fetched from the constant pool.  */
++	*total = COSTS_N_INSNS (riscv_symbol_insns (SYMBOL_ABSOLUTE));
 +      return true;
 +
 +    case MEM:
 +      /* If the address is legitimate, return the number of
 +	 instructions it needs.  */
-+      addr = XEXP (x, 0);
-+      cost = riscv_address_insns (addr, mode, true);
-+      if (cost > 0)
++      if ((cost = riscv_address_insns (XEXP (x, 0), mode, true)) > 0)
 +	{
-+	  *total = COSTS_N_INSNS (cost + tune_info->memory_latency);
++	  *total = COSTS_N_INSNS (cost + tune_info->memory_cost);
 +	  return true;
 +	}
 +      /* Otherwise use the default handling.  */
@@ -2472,17 +2436,17 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.c gcc/gcc/config/riscv/riscv.c
 +    case IOR:
 +    case XOR:
 +      /* Double-word operations use two single-word operations.  */
-+      *total = riscv_binary_cost (x, 1, 2, speed);
-+      return true;
++      *total = riscv_binary_cost (x, 1, 2);
++      return false;
 +
 +    case ASHIFT:
 +    case ASHIFTRT:
 +    case LSHIFTRT:
-+      *total = riscv_binary_cost (x, 1, CONSTANT_P (XEXP (x,1)) ? 4 : 9, speed);
-+      return true;
++      *total = riscv_binary_cost (x, 1, CONSTANT_P (XEXP (x, 1)) ? 4 : 9);
++      return false;
 +
 +    case ABS:
-+      *total = float_mode_p ? tune_info->fp_add : COSTS_N_INSNS (3);
++      *total = COSTS_N_INSNS (float_mode_p ? 1 : 3);
 +      return false;
 +
 +    case LO_SUM:
@@ -2504,13 +2468,11 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.c gcc/gcc/config/riscv/riscv.c
 +      /* Branch comparisons have VOIDmode, so use the first operand's
 +	 mode instead.  */
 +      mode = GET_MODE (XEXP (x, 0));
-+      if (FLOAT_MODE_P (mode))
-+	{
-+	  *total = tune_info->fp_add;
-+	  return false;
-+	}
-+      *total = riscv_binary_cost (x, 1, 3, speed);
-+      return true;
++      if (float_mode_p)
++	*total = tune_info->fp_add[mode == DFmode];
++      else
++	*total = riscv_binary_cost (x, 1, 3);
++      return false;
 +
 +    case MINUS:
 +      if (float_mode_p
@@ -2523,7 +2485,7 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.c gcc/gcc/config/riscv/riscv.c
 +	  rtx op1 = XEXP (x, 1);
 +	  if (GET_CODE (op0) == MULT && GET_CODE (XEXP (op0, 0)) == NEG)
 +	    {
-+	      *total = (mips_fp_mult_cost (mode)
++	      *total = (tune_info->fp_mul[mode == DFmode]
 +			+ set_src_cost (XEXP (XEXP (op0, 0), 0), speed)
 +			+ set_src_cost (XEXP (op0, 1), speed)
 +			+ set_src_cost (op1, speed));
@@ -2531,7 +2493,7 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.c gcc/gcc/config/riscv/riscv.c
 +	    }
 +	  if (GET_CODE (op1) == MULT)
 +	    {
-+	      *total = (mips_fp_mult_cost (mode)
++	      *total = (tune_info->fp_mul[mode == DFmode]
 +			+ set_src_cost (op0, speed)
 +			+ set_src_cost (XEXP (op1, 0), speed)
 +			+ set_src_cost (XEXP (op1, 1), speed));
@@ -2542,19 +2504,10 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.c gcc/gcc/config/riscv/riscv.c
 +
 +    case PLUS:
 +      if (float_mode_p)
-+	{
-+	  /* If this is part of a MADD or MSUB, treat the PLUS as
-+	     being free.  */
-+	  if (GET_CODE (XEXP (x, 0)) == MULT)
-+	    *total = 0;
-+	  else
-+	    *total = tune_info->fp_add;
-+	  return false;
-+	}
-+
-+      /* Double-word operations require three ADDs and an SLTU. */
-+      *total = riscv_binary_cost (x, 1, 4, speed);
-+      return true;
++	*total = tune_info->fp_add[mode == DFmode];
++      else
++	*total = riscv_binary_cost (x, 1, 4);
++      return false;
 +
 +    case NEG:
 +      if (float_mode_p
@@ -2567,7 +2520,7 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.c gcc/gcc/config/riscv/riscv.c
 +	  if ((GET_CODE (op) == PLUS || GET_CODE (op) == MINUS)
 +	      && GET_CODE (XEXP (op, 0)) == MULT)
 +	    {
-+	      *total = (mips_fp_mult_cost (mode)
++	      *total = (tune_info->fp_mul[mode == DFmode]
 +			+ set_src_cost (XEXP (XEXP (op, 0), 0), speed)
 +			+ set_src_cost (XEXP (XEXP (op, 0), 1), speed)
 +			+ set_src_cost (XEXP (op, 1), speed));
@@ -2576,23 +2529,20 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.c gcc/gcc/config/riscv/riscv.c
 +	}
 +
 +      if (float_mode_p)
-+	*total = tune_info->fp_add;
++	*total = tune_info->fp_add[mode == DFmode];
 +      else
 +	*total = COSTS_N_INSNS (GET_MODE_SIZE (mode) > UNITS_PER_WORD ? 4 : 1);
 +      return false;
 +
 +    case MULT:
 +      if (float_mode_p)
-+	*total = mips_fp_mult_cost (mode);
-+      else if (mode == DImode && !TARGET_64BIT)
-+	/* We use a MUL and a MULH[[S]U]. */
-+	*total = tune_info->int_mult_si * 2;
++	*total = tune_info->fp_mul[mode == DFmode];
++      else if (GET_MODE_SIZE (mode) > UNITS_PER_WORD)
++	*total = 3 * tune_info->int_mul[0] + COSTS_N_INSNS (2);
 +      else if (!speed)
-+	*total = 1;
-+      else if (mode == DImode)
-+	*total = tune_info->int_mult_di;
++	*total = COSTS_N_INSNS (1);
 +      else
-+	*total = tune_info->int_mult_si;
++	*total = tune_info->int_mul[mode == DImode];
 +      return false;
 +
 +    case DIV:
@@ -2600,19 +2550,17 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.c gcc/gcc/config/riscv/riscv.c
 +    case MOD:
 +      if (float_mode_p)
 +	{
-+	  *total = mips_fp_div_cost (mode);
++	  *total = tune_info->fp_div[mode == DFmode];
 +	  return false;
 +	}
 +      /* Fall through.  */
 +
 +    case UDIV:
 +    case UMOD:
-+      if (!speed)
-+	*total = 1;
-+      else if (mode == DImode)
-+        *total = tune_info->int_div_di;
++      if (speed)
++	*total = tune_info->int_div[mode == DImode];
 +      else
-+	*total = tune_info->int_div_si;
++	*total = COSTS_N_INSNS (1);
 +      return false;
 +
 +    case SIGN_EXTEND:
@@ -2628,7 +2576,7 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.c gcc/gcc/config/riscv/riscv.c
 +    case FIX:
 +    case FLOAT_EXTEND:
 +    case FLOAT_TRUNCATE:
-+      *total = tune_info->fp_add;
++      *total = tune_info->fp_add[mode == DFmode];
 +      return false;
 +
 +    default:
@@ -3927,7 +3875,7 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.c gcc/gcc/config/riscv/riscv.c
 +  gcc_unreachable ();
 +}
 +
-+bool
++static bool
 +riscv_size_ok_for_small_data_p (int size)
 +{
 +  return g_switch_value && IN_RANGE (size, 1, g_switch_value);
@@ -4049,21 +3997,16 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.c gcc/gcc/config/riscv/riscv.c
 +	|                               |
 +	|  incoming stack arguments     |
 +	|                               |
-+	+-------------------------------+
-+	|                               |
-+	|  caller-allocated save area   |
-+      A |  for register arguments       |
-+	|                               |
 +	+-------------------------------+ <-- incoming stack pointer
 +	|                               |
 +	|  callee-allocated save area   |
-+      B |  for arguments that are       |
++	|  for arguments that are       |
 +	|  split between registers and  |
 +	|  the stack                    |
 +	|                               |
 +	+-------------------------------+ <-- arg_pointer_rtx
 +	|                               |
-+      C |  callee-allocated save area   |
++	|  callee-allocated save area   |
 +	|  for register varargs         |
 +	|                               |
 +	+-------------------------------+ <-- hard_frame_pointer_rtx;
@@ -4082,14 +4025,7 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.c gcc/gcc/config/riscv/riscv.c
 +	|                               |
 +	|  outgoing stack arguments     |
 +	|                               |
-+	+-------------------------------+
-+	|                               |
-+	|  caller-allocated save area   |
-+	|  for register arguments       |
-+	|                               |
 +	+-------------------------------+ <-- stack_pointer_rtx
-+
-+   At least two of A, B and C will be empty.
 +
 +   Dynamic stack allocations such as alloca insert data at point P.
 +   They decrease stack_pointer_rtx but leave frame_pointer_rtx and
@@ -4478,29 +4414,25 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.c gcc/gcc/config/riscv/riscv.c
 +static bool
 +riscv_hard_regno_mode_ok_p (unsigned int regno, enum machine_mode mode)
 +{
-+  unsigned int size;
-+  enum mode_class mclass;
++  unsigned int size = GET_MODE_SIZE (mode);
++  enum mode_class mclass = GET_MODE_CLASS (mode);
 +
 +  /* This is hella bogus but ira_build segfaults on RV32 without it. */
 +  if (VECTOR_MODE_P (mode))
 +    return true;
 +
-+  if (mode == CCmode)
-+    return GP_REG_P (regno);
-+
-+  size = GET_MODE_SIZE (mode);
-+  mclass = GET_MODE_CLASS (mode);
-+
 +  if (GP_REG_P (regno))
-+    /* Double-word values must be even-register-aligned. */
-+    return ((regno - GP_REG_FIRST) & 1) == 0 || size <= UNITS_PER_WORD;
++    {
++      if (size <= UNITS_PER_WORD)
++	return true;
++
++      /* Double-word values must be even-register-aligned.  */
++      if (size <= 2 * UNITS_PER_WORD)
++	return regno % 2 == 0;
++    }
 +
 +  if (FP_REG_P (regno))
 +    {
-+      /* Allow TFmode for CCmode reloads.  */
-+      if (mode == TFmode)
-+	return true;
-+
 +      if (mclass == MODE_FLOAT
 +	  || mclass == MODE_COMPLEX_FLOAT
 +	  || mclass == MODE_VECTOR_FLOAT)
@@ -4565,45 +4497,6 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.c gcc/gcc/config/riscv/riscv.c
 +  return rclass;
 +}
 +
-+/* Return the cost of moving a value of mode MODE from a register of
-+   class FROM to a GPR.  Return 0 for classes that are unions of other
-+   classes handled by this function.  */
-+
-+static int
-+mips_move_to_gpr_cost (reg_class_t from)
-+{
-+  switch (from)
-+    {
-+    case GENERAL_REGS:
-+      return 1;
-+
-+    case FP_REGS:
-+      /* FP->int moves can cause recoupling on decoupled implementations */
-+      return 4;
-+
-+    default:
-+      return 0;
-+    }
-+}
-+
-+/* Return the cost of moving a value of mode MODE from a GPR to a
-+   register of class TO.  Return 0 for classes that are unions of
-+   other classes handled by this function.  */
-+
-+static int
-+mips_move_from_gpr_cost (reg_class_t to)
-+{
-+  switch (to)
-+    {
-+    case GENERAL_REGS:
-+    case FP_REGS:
-+      return 1;
-+
-+    default:
-+      return 0;
-+    }
-+}
-+
 +/* Implement TARGET_REGISTER_MOVE_COST.  Return 0 for classes that are the
 +   maximum of the move costs for subclasses; regclass will work out
 +   the maximum for us.  */
@@ -4612,30 +4505,14 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.c gcc/gcc/config/riscv/riscv.c
 +mips_register_move_cost (enum machine_mode mode ATTRIBUTE_UNUSED,
 +			 reg_class_t from, reg_class_t to)
 +{
-+  int cost1, cost2;
-+
 +  from = mips_canonicalize_move_class (from);
 +  to = mips_canonicalize_move_class (to);
 +
-+  /* Handle moves that can be done without using general-purpose registers.  */
-+  if (from == FP_REGS && to == FP_REGS)
-+      /* fmv.fmt.  */
-+      return 1;
-+
-+  /* Handle cases in which only one class deviates from the ideal.  */
-+  if (from == GENERAL_REGS)
-+    return mips_move_from_gpr_cost (to);
-+  if (to == GENERAL_REGS)
-+    return mips_move_to_gpr_cost (from);
-+
-+  /* Handles cases that require a GPR temporary.  */
-+  cost1 = mips_move_to_gpr_cost (from);
-+  if (cost1 != 0)
-+    {
-+      cost2 = mips_move_from_gpr_cost (to);
-+      if (cost2 != 0)
-+	return cost1 + cost2;
-+    }
++  if ((from == GENERAL_REGS && to == GENERAL_REGS)
++      || (from == GENERAL_REGS && to == FP_REGS)
++      || (from == FP_REGS && to == GENERAL_REGS)
++      || (from == FP_REGS && to == FP_REGS))
++    return COSTS_N_INSNS (1);
 +
 +  return 0;
 +}
@@ -4645,7 +4522,7 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.c gcc/gcc/config/riscv/riscv.c
 +static int
 +mips_memory_move_cost (enum machine_mode mode, reg_class_t rclass, bool in)
 +{
-+  return (tune_info->memory_latency
++  return (tune_info->memory_cost
 +	  + memory_move_secondary_cost (mode, rclass, in));
 +} 
 +
@@ -5227,6 +5104,12 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.c gcc/gcc/config/riscv/riscv.c
 +  emit_insn (gen_clear_cache (addr, end_addr));
 +}
 +
++static bool
++riscv_lra_p (void)
++{
++  return riscv_lra_flag;
++}
++
 +/* Initialize the GCC target structure.  */
 +#undef TARGET_ASM_ALIGNED_HI_OP
 +#define TARGET_ASM_ALIGNED_HI_OP "\t.half\t"
@@ -5354,12 +5237,15 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.c gcc/gcc/config/riscv/riscv.c
 +#undef TARGET_MAX_ANCHOR_OFFSET
 +#define TARGET_MAX_ANCHOR_OFFSET (RISCV_IMM_REACH/2-1)
 +
++#undef TARGET_LRA_P
++#define TARGET_LRA_P riscv_lra_p
++
 +struct gcc_target targetm = TARGET_INITIALIZER;
 +
 +#include "gt-riscv.h"
 diff -Nur original-gcc/gcc/config/riscv/riscv-ftypes.def gcc/gcc/config/riscv/riscv-ftypes.def
 --- original-gcc/gcc/config/riscv/riscv-ftypes.def	1969-12-31 16:00:00.000000000 -0800
-+++ gcc/gcc/config/riscv/riscv-ftypes.def	2014-12-09 15:54:39.020723609 -0800
++++ gcc/gcc/config/riscv/riscv-ftypes.def	2015-01-09 16:32:59.777534655 -0800
 @@ -0,0 +1,39 @@
 +/* Definitions of prototypes for RISC-V built-in functions.
 +   Copyright (C) 2011-2014 Free Software Foundation, Inc.
@@ -5402,8 +5288,8 @@ diff -Nur original-gcc/gcc/config/riscv/riscv-ftypes.def gcc/gcc/config/riscv/ri
 +DEF_RISCV_FTYPE (1, (VOID, VOID))
 diff -Nur original-gcc/gcc/config/riscv/riscv.h gcc/gcc/config/riscv/riscv.h
 --- original-gcc/gcc/config/riscv/riscv.h	1969-12-31 16:00:00.000000000 -0800
-+++ gcc/gcc/config/riscv/riscv.h	2014-12-10 10:40:07.900983606 -0800
-@@ -0,0 +1,1133 @@
++++ gcc/gcc/config/riscv/riscv.h	2015-01-09 16:32:59.777534655 -0800
+@@ -0,0 +1,1127 @@
 +/* Definition of RISC-V target for GNU compiler.
 +   Copyright (C) 2011-2014 Free Software Foundation, Inc.
 +   Contributed by Andrew Waterman (waterman@cs.berkeley.edu) at UC Berkeley.
@@ -5604,17 +5490,14 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.h gcc/gcc/config/riscv/riscv.h
 +#define SUBTARGET_EXTRA_SPECS
 +#endif
 +
-+#ifndef PREFERRED_DEBUGGING_TYPE
-+#define PREFERRED_DEBUGGING_TYPE DWARF2_DEBUG
-+#endif
-+
-+#define DWARF2_ADDR_SIZE UNITS_PER_WORD
-+
 +/* By default, turn on GDB extensions.  */
 +#define DEFAULT_GDB_EXTENSIONS 1
 +
 +#define LOCAL_LABEL_PREFIX	"."
 +#define USER_LABEL_PREFIX	""
++
++#define DWARF2_DEBUGGING_INFO 1
++#define DWARF2_ASM_LINE_DEBUG_INFO 0
 +
 +/* The mapping from gcc register number to DWARF 2 CFA column number.  */
 +#define DWARF_FRAME_REGNUM(REGNO) \
@@ -5635,11 +5518,6 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.h gcc/gcc/config/riscv/riscv.h
 +  ((N) < 4 ? (N) + GP_ARG_FIRST : INVALID_REGNUM)
 +
 +#define EH_RETURN_STACKADJ_RTX  gen_rtx_REG (Pmode, GP_ARG_FIRST + 4)
-+
-+/* Offsets recorded in opcodes are a multiple of this alignment factor.
-+   The default for this in 64-bit mode is 8, which causes problems with
-+   SFmode register saves.  */
-+#define DWARF_CIE_DATA_ALIGNMENT -4
 +
 +/* Target machine storage layout */
 +
@@ -5870,7 +5748,7 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.h gcc/gcc/config/riscv/riscv.h
 +   signal handler context.  This means that to maintain backwards
 +   compatibility, no hard register can be assigned this column if it
 +   would need to be handled by the DWARF unwinder.  */
-+#define DWARF_ALT_FRAME_RETURN_COLUMN 66
++#define DWARF_ALT_FRAME_RETURN_COLUMN 64
 +
 +#define GP_REG_P(REGNO)	\
 +  ((unsigned int) ((int) (REGNO) - GP_REG_FIRST) < GP_REG_NUM)
@@ -6281,10 +6159,12 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.h gcc/gcc/config/riscv/riscv.h
 +
 +#define FUNCTION_MODE SImode
 +
-+/* A C expression for the cost of a branch instruction.  A value of
-+   1 is the default; other values are interpreted relative to that.  */
++/* A C expression for the cost of a branch instruction.  A value of 2
++   seems to minimize code size.  */
 +
-+#define BRANCH_COST(speed_p, predictable_p) ((speed_p) ? riscv_branch_cost : 1)
++#define BRANCH_COST(speed_p, predictable_p) \
++  ((!(speed_p) || (predictable_p)) ? 2 : riscv_branch_cost)
++
 +#define LOGICAL_OP_NON_SHORT_CIRCUIT 0
 +
 +/* Control the assembler format that we output.  */
@@ -6536,11 +6416,11 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.h gcc/gcc/config/riscv/riscv.h
 +#endif
 +
 +#define ASM_PREFERRED_EH_DATA_FORMAT(CODE,GLOBAL) \
-+  (((GLOBAL) ? DW_EH_PE_indirect : 0) | DW_EH_PE_absptr)
++  (((GLOBAL) ? DW_EH_PE_indirect : 0) | DW_EH_PE_pcrel | DW_EH_PE_sdata4)
 diff -Nur original-gcc/gcc/config/riscv/riscv.md gcc/gcc/config/riscv/riscv.md
 --- original-gcc/gcc/config/riscv/riscv.md	1969-12-31 16:00:00.000000000 -0800
-+++ gcc/gcc/config/riscv/riscv.md	2014-12-10 10:40:07.900983606 -0800
-@@ -0,0 +1,2437 @@
++++ gcc/gcc/config/riscv/riscv.md	2015-01-09 16:32:59.777534655 -0800
+@@ -0,0 +1,2423 @@
 +;; Machine description for RISC-V for GNU compiler.
 +;; Copyright (C) 2011-2014 Free Software Foundation, Inc.
 +;; Contributed by Andrew Waterman (waterman@cs.berkeley.edu) at UC Berkeley.
@@ -7259,7 +7139,7 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.md gcc/gcc/config/riscv/riscv.md
 +  [(set_attr "type" "imul")
 +   (set_attr "mode" "DI")])
 +
-+(define_insn_and_split "<u>mulsidi3"
++(define_expand "<u>mulsidi3"
 +  [(set (match_operand:DI 0 "register_operand" "=r")
 +	(mult:DI (any_extend:DI
 +		   (match_operand:SI 1 "register_operand" "r"))
@@ -7267,20 +7147,13 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.md gcc/gcc/config/riscv/riscv.md
 +		   (match_operand:SI 2 "register_operand" "r"))))
 +  (clobber (match_scratch:SI 3 "=r"))]
 +  "TARGET_MULDIV && !TARGET_64BIT"
-+  "#"
-+  "reload_completed"
-+  [
-+   (set (match_dup 3) (mult:SI (match_dup 1) (match_dup 2)))
-+   (set (match_dup 4) (truncate:SI
-+			(lshiftrt:DI
-+			  (mult:DI (any_extend:DI (match_dup 1))
-+				   (any_extend:DI (match_dup 2)))
-+			  (const_int 32))))
-+   (set (match_dup 5) (match_dup 3))
-+  ]
 +{
-+  operands[4] = mips_subword (operands[0], true);
-+  operands[5] = mips_subword (operands[0], false);
++  rtx temp = gen_reg_rtx (SImode);
++  emit_insn (gen_mulsi3 (temp, operands[1], operands[2]));
++  emit_insn (gen_<u>mulsi3_highpart (mips_subword (operands[0], true),
++				     operands[1], operands[2]));
++  emit_insn (gen_movsi (mips_subword (operands[0], false), temp));
++  DONE;
 +}
 +  )
 +
@@ -7299,7 +7172,7 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.md gcc/gcc/config/riscv/riscv.md
 +   (set_attr "mode" "SI")])
 +
 +
-+(define_insn_and_split "usmulsidi3"
++(define_expand "usmulsidi3"
 +  [(set (match_operand:DI 0 "register_operand" "=r")
 +	(mult:DI (zero_extend:DI
 +		   (match_operand:SI 1 "register_operand" "r"))
@@ -7307,20 +7180,13 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.md gcc/gcc/config/riscv/riscv.md
 +		   (match_operand:SI 2 "register_operand" "r"))))
 +  (clobber (match_scratch:SI 3 "=r"))]
 +  "TARGET_MULDIV && !TARGET_64BIT"
-+  "#"
-+  "reload_completed"
-+  [
-+   (set (match_dup 3) (mult:SI (match_dup 1) (match_dup 2)))
-+   (set (match_dup 4) (truncate:SI
-+			(lshiftrt:DI
-+			  (mult:DI (zero_extend:DI (match_dup 1))
-+				   (sign_extend:DI (match_dup 2)))
-+			  (const_int 32))))
-+   (set (match_dup 5) (match_dup 3))
-+  ]
 +{
-+  operands[4] = mips_subword (operands[0], true);
-+  operands[5] = mips_subword (operands[0], false);
++  rtx temp = gen_reg_rtx (SImode);
++  emit_insn (gen_mulsi3 (temp, operands[1], operands[2]));
++  emit_insn (gen_usmulsi3_highpart (mips_subword (operands[0], true),
++				     operands[1], operands[2]));
++  emit_insn (gen_movsi (mips_subword (operands[0], false), temp));
++  DONE;
 +}
 +  )
 +
@@ -8113,12 +7979,12 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.md gcc/gcc/config/riscv/riscv.md
 +})
 +
 +(define_insn "*movhi_internal"
-+  [(set (match_operand:HI 0 "nonimmediate_operand" "=r,r,r,m")
-+	(match_operand:HI 1 "move_operand"         "r,T,m,rJ"))]
++  [(set (match_operand:HI 0 "nonimmediate_operand" "=r,r,r,m,*f,*r")
++	(match_operand:HI 1 "move_operand"         "r,T,m,rJ,*r*J,*f"))]
 +  "(register_operand (operands[0], HImode)
 +    || reg_or_0_operand (operands[1], HImode))"
 +  { return mips_output_move (operands[0], operands[1]); }
-+  [(set_attr "move_type" "move,const,load,store")
++  [(set_attr "move_type" "move,const,load,store,mtc,mfc")
 +   (set_attr "mode" "HI")])
 +
 +;; HImode constant generation; see mips_move_integer for details.
@@ -8154,12 +8020,12 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.md gcc/gcc/config/riscv/riscv.md
 +})
 +
 +(define_insn "*movqi_internal"
-+  [(set (match_operand:QI 0 "nonimmediate_operand" "=r,r,r,m")
-+	(match_operand:QI 1 "move_operand"         "r,I,m,rJ"))]
++  [(set (match_operand:QI 0 "nonimmediate_operand" "=r,r,r,m,*f,*r")
++	(match_operand:QI 1 "move_operand"         "r,I,m,rJ,*r*J,*f"))]
 +  "(register_operand (operands[0], QImode)
 +    || reg_or_0_operand (operands[1], QImode))"
 +  { return mips_output_move (operands[0], operands[1]); }
-+  [(set_attr "move_type" "move,const,load,store")
++  [(set_attr "move_type" "move,const,load,store,mtc,mfc")
 +   (set_attr "mode" "QI")])
 +
 +;; 32-bit floating point moves
@@ -8843,8 +8709,8 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.md gcc/gcc/config/riscv/riscv.md
 +	 (match_operand 1 "" ""))]
 +  "SIBLING_CALL_P (insn)"
 +  { return REG_P (operands[0]) ? "jr\t%0"
-+	   : absolute_symbolic_operand (operands[0], VOIDmode) ? "jump\t%0"
-+	   : "jump\t%0@"; }
++	   : absolute_symbolic_operand (operands[0], VOIDmode) ? "tail\t%0"
++	   : "tail\t%0@"; }
 +  [(set_attr "type" "call")])
 +
 +(define_expand "sibcall_value"
@@ -8864,8 +8730,8 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.md gcc/gcc/config/riscv/riscv.md
 +              (match_operand 2 "" "")))]
 +  "SIBLING_CALL_P (insn)"
 +  { return REG_P (operands[1]) ? "jr\t%1"
-+	   : absolute_symbolic_operand (operands[1], VOIDmode) ? "jump\t%1"
-+	   : "jump\t%1@"; }
++	   : absolute_symbolic_operand (operands[1], VOIDmode) ? "tail\t%1"
++	   : "tail\t%1@"; }
 +  [(set_attr "type" "call")])
 +
 +(define_insn "sibcall_value_multiple_internal"
@@ -8878,8 +8744,8 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.md gcc/gcc/config/riscv/riscv.md
 +   (clobber (match_scratch:SI 4 "=j,j"))]
 +  "SIBLING_CALL_P (insn)"
 +  { return REG_P (operands[1]) ? "jr\t%1"
-+	   : absolute_symbolic_operand (operands[1], VOIDmode) ? "jump\t%1"
-+	   : "jump\t%1@"; }
++	   : absolute_symbolic_operand (operands[1], VOIDmode) ? "tail\t%1"
++	   : "tail\t%1@"; }
 +  [(set_attr "type" "call")])
 +
 +(define_expand "call"
@@ -8980,7 +8846,7 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.md gcc/gcc/config/riscv/riscv.md
 +(include "peephole.md")
 diff -Nur original-gcc/gcc/config/riscv/riscv-modes.def gcc/gcc/config/riscv/riscv-modes.def
 --- original-gcc/gcc/config/riscv/riscv-modes.def	1969-12-31 16:00:00.000000000 -0800
-+++ gcc/gcc/config/riscv/riscv-modes.def	2014-12-09 15:54:39.020723609 -0800
++++ gcc/gcc/config/riscv/riscv-modes.def	2015-01-09 16:32:59.777534655 -0800
 @@ -0,0 +1,26 @@
 +/* Extra machine modes for RISC-V target.
 +   Copyright (C) 2011-2014 Free Software Foundation, Inc.
@@ -9010,7 +8876,7 @@ diff -Nur original-gcc/gcc/config/riscv/riscv-modes.def gcc/gcc/config/riscv/ris
 +VECTOR_MODES (FLOAT, 4);      /*            V4HF V2SF */
 diff -Nur original-gcc/gcc/config/riscv/riscv-opc.h gcc/gcc/config/riscv/riscv-opc.h
 --- original-gcc/gcc/config/riscv/riscv-opc.h	1969-12-31 16:00:00.000000000 -0800
-+++ gcc/gcc/config/riscv/riscv-opc.h	2014-12-09 15:54:39.020723609 -0800
++++ gcc/gcc/config/riscv/riscv-opc.h	2015-01-09 16:32:59.777534655 -0800
 @@ -0,0 +1,1216 @@
 +/* Automatically generated by parse-opcodes */
 +#ifndef RISCV_ENCODING_H
@@ -10230,8 +10096,8 @@ diff -Nur original-gcc/gcc/config/riscv/riscv-opc.h gcc/gcc/config/riscv/riscv-o
 +#endif
 diff -Nur original-gcc/gcc/config/riscv/riscv.opt gcc/gcc/config/riscv/riscv.opt
 --- original-gcc/gcc/config/riscv/riscv.opt	1969-12-31 16:00:00.000000000 -0800
-+++ gcc/gcc/config/riscv/riscv.opt	2014-12-10 10:40:07.900983606 -0800
-@@ -0,0 +1,71 @@
++++ gcc/gcc/config/riscv/riscv.opt	2015-01-09 16:32:59.777534655 -0800
+@@ -0,0 +1,75 @@
 +; Options for the MIPS port of the compiler
 +;
 +; Copyright (C) 2005, 2007, 2008, 2010, 2011 Free Software Foundation, Inc.
@@ -10303,10 +10169,14 @@ diff -Nur original-gcc/gcc/config/riscv/riscv.opt gcc/gcc/config/riscv/riscv.opt
 +mmuldiv
 +Target Report Mask(MULDIV)
 +Use hardware instructions for integer multiplication and division.
++
++mlra
++Target Report Var(riscv_lra_flag) Init(0) Save
++Use LRA instead of reload
 diff -Nur original-gcc/gcc/config/riscv/riscv-protos.h gcc/gcc/config/riscv/riscv-protos.h
 --- original-gcc/gcc/config/riscv/riscv-protos.h	1969-12-31 16:00:00.000000000 -0800
-+++ gcc/gcc/config/riscv/riscv-protos.h	2014-12-09 16:14:22.230172182 -0800
-@@ -0,0 +1,91 @@
++++ gcc/gcc/config/riscv/riscv-protos.h	2015-01-09 16:32:59.777534655 -0800
+@@ -0,0 +1,89 @@
 +/* Definition of RISC-V target for GNU compiler.
 +   Copyright (C) 2011-2014 Free Software Foundation, Inc.
 +   Contributed by Andrew Waterman (waterman@cs.berkeley.edu) at UC Berkeley.
@@ -10395,13 +10265,11 @@ diff -Nur original-gcc/gcc/config/riscv/riscv-protos.h gcc/gcc/config/riscv/risc
 +
 +extern void riscv_expand_vector_init (rtx, rtx);
 +
-+extern bool riscv_size_ok_for_small_data_p (int size);
-+
 +#endif /* ! GCC_RISCV_PROTOS_H */
 diff -Nur original-gcc/gcc/config/riscv/sync.md gcc/gcc/config/riscv/sync.md
 --- original-gcc/gcc/config/riscv/sync.md	1969-12-31 16:00:00.000000000 -0800
-+++ gcc/gcc/config/riscv/sync.md	2014-12-09 15:54:39.020723609 -0800
-@@ -0,0 +1,197 @@
++++ gcc/gcc/config/riscv/sync.md	2015-01-09 16:32:59.777534655 -0800
+@@ -0,0 +1,198 @@
 +;; Machine description for RISC-V atomic operations.
 +;; Copyright (C) 2011-2014 Free Software Foundation, Inc.
 +;; Contributed by Andrew Waterman (waterman@cs.berkeley.edu) at UC Berkeley.
@@ -10475,7 +10343,7 @@ diff -Nur original-gcc/gcc/config/riscv/sync.md gcc/gcc/config/riscv/sync.md
 +
 +;; Implement atomic stores with amoswap.  Fall back to fences for atomic loads.
 +(define_insn "atomic_store<mode>"
-+  [(set (match_operand:GPR 0 "memory_operand" "=YR")
++  [(set (match_operand:GPR 0 "memory_operand" "=A")
 +    (unspec_volatile:GPR
 +      [(match_operand:GPR 1 "reg_or_0_operand" "rJ")
 +       (match_operand:SI 2 "const_int_operand")]      ;; model
@@ -10483,18 +10351,19 @@ diff -Nur original-gcc/gcc/config/riscv/sync.md gcc/gcc/config/riscv/sync.md
 +  "TARGET_ATOMIC"
 +  "amoswap.<amo>%A2 zero,%z1,%0")
 +
-+(define_insn "sync_<optab><mode>"
-+  [(set (match_operand:GPR 0 "memory_operand" "+YR")
++(define_insn "atomic_<atomic_optab><mode>"
++  [(set (match_operand:GPR 0 "memory_operand" "+A")
 +	(unspec_volatile:GPR
 +	  [(any_atomic:GPR (match_dup 0)
-+	   (match_operand:GPR 1 "reg_or_0_operand" "rJ"))]
-+	  UNSPEC_SYNC_OLD_OP))]
++		     (match_operand:GPR 1 "reg_or_0_operand" "rJ"))
++	   (match_operand:SI 2 "const_int_operand")] ;; model
++	 UNSPEC_SYNC_OLD_OP))]
 +  "TARGET_ATOMIC"
-+  "amo<insn>.<amo>.sc zero,%z1,%0")
++  "amo<insn>.<amo>%A2 zero,%z1,%0")
 +
 +(define_insn "atomic_fetch_<atomic_optab><mode>"
 +  [(set (match_operand:GPR 0 "register_operand" "=&r")
-+	(match_operand:GPR 1 "memory_operand" "+YR"))
++	(match_operand:GPR 1 "memory_operand" "+A"))
 +   (set (match_dup 1)
 +	(unspec_volatile:GPR
 +	  [(any_atomic:GPR (match_dup 1)
@@ -10507,7 +10376,7 @@ diff -Nur original-gcc/gcc/config/riscv/sync.md gcc/gcc/config/riscv/sync.md
 +(define_insn "atomic_exchange<mode>"
 +  [(set (match_operand:GPR 0 "register_operand" "=&r")
 +	(unspec_volatile:GPR
-+	  [(match_operand:GPR 1 "memory_operand" "+YR")
++	  [(match_operand:GPR 1 "memory_operand" "+A")
 +	   (match_operand:SI 3 "const_int_operand")] ;; model
 +	  UNSPEC_SYNC_EXCHANGE))
 +   (set (match_dup 1)
@@ -10517,7 +10386,7 @@ diff -Nur original-gcc/gcc/config/riscv/sync.md gcc/gcc/config/riscv/sync.md
 +
 +(define_insn "atomic_cas_value_strong<mode>"
 +  [(set (match_operand:GPR 0 "register_operand" "=&r")
-+	(match_operand:GPR 1 "memory_operand" "+YR"))
++	(match_operand:GPR 1 "memory_operand" "+A"))
 +   (set (match_dup 1)
 +	(unspec_volatile:GPR [(match_operand:GPR 2 "reg_or_0_operand" "rJ")
 +			      (match_operand:GPR 3 "reg_or_0_operand" "rJ")
@@ -10561,7 +10430,7 @@ diff -Nur original-gcc/gcc/config/riscv/sync.md gcc/gcc/config/riscv/sync.md
 +
 +(define_expand "atomic_test_and_set"
 +  [(match_operand:QI 0 "register_operand" "")     ;; bool output
-+   (match_operand:QI 1 "memory_operand" "+YR")    ;; memory
++   (match_operand:QI 1 "memory_operand" "+A")    ;; memory
 +   (match_operand:SI 2 "const_int_operand" "")]   ;; model
 +  "TARGET_ATOMIC"
 +{
@@ -10601,7 +10470,7 @@ diff -Nur original-gcc/gcc/config/riscv/sync.md gcc/gcc/config/riscv/sync.md
 +})
 diff -Nur original-gcc/gcc/config/riscv/t-elf gcc/gcc/config/riscv/t-elf
 --- original-gcc/gcc/config/riscv/t-elf	1969-12-31 16:00:00.000000000 -0800
-+++ gcc/gcc/config/riscv/t-elf	2014-12-09 15:54:39.020723609 -0800
++++ gcc/gcc/config/riscv/t-elf	2015-01-09 16:32:59.777534655 -0800
 @@ -0,0 +1,4 @@
 +# Build the libraries for both hard and soft floating point
 +
@@ -10609,7 +10478,7 @@ diff -Nur original-gcc/gcc/config/riscv/t-elf gcc/gcc/config/riscv/t-elf
 +MULTILIB_DIRNAMES = soft-float 64 32 no-atomic
 diff -Nur original-gcc/gcc/config/riscv/t-linux64 gcc/gcc/config/riscv/t-linux64
 --- original-gcc/gcc/config/riscv/t-linux64	1969-12-31 16:00:00.000000000 -0800
-+++ gcc/gcc/config/riscv/t-linux64	2014-12-09 15:54:39.020723609 -0800
++++ gcc/gcc/config/riscv/t-linux64	2015-01-09 16:32:59.777534655 -0800
 @@ -0,0 +1,5 @@
 +# Build the libraries for both hard and soft floating point
 +
@@ -10618,7 +10487,7 @@ diff -Nur original-gcc/gcc/config/riscv/t-linux64 gcc/gcc/config/riscv/t-linux64
 +MULTILIB_OSDIRNAMES = ../lib ../lib32
 diff -Nur original-gcc/gcc/config.gcc gcc/gcc/config.gcc
 --- original-gcc/gcc/config.gcc	2014-09-17 07:16:02.000000000 -0700
-+++ gcc/gcc/config.gcc	2014-12-10 10:46:00.343943141 -0800
++++ gcc/gcc/config.gcc	2015-01-09 16:34:21.563635069 -0800
 @@ -447,6 +447,9 @@
  	esac
  	extra_options="${extra_options} g.opt fused-madd.opt rs6000/rs6000-tables.opt"
@@ -10629,10 +10498,17 @@ diff -Nur original-gcc/gcc/config.gcc gcc/gcc/config.gcc
  rs6000*-*-*)
  	need_64bit_hwint=yes
  	extra_options="${extra_options} g.opt fused-madd.opt rs6000/rs6000-tables.opt"
-@@ -1949,6 +1952,20 @@
+@@ -1949,6 +1952,27 @@
  	cxx_target_objs="${cxx_target_objs} microblaze-c.o"
  	tmake_file="${tmake_file} microblaze/t-microblaze"
          ;;
++riscv32*-*-linux*)				# Linux RISC-V
++	tm_file="elfos.h gnu-user.h linux.h glibc-stdint.h riscv/default-32.h ${tm_file} riscv/linux.h riscv/linux64.h"
++	tmake_file="${tmake_file} riscv/t-linux64"
++	gnu_ld=yes
++	gas=yes
++	gcc_cv_initfini_array=yes
++	;;
 +riscv*-*-linux*)				# Linux RISC-V
 +	tm_file="elfos.h gnu-user.h linux.h glibc-stdint.h ${tm_file} riscv/linux.h riscv/linux64.h"
 +	tmake_file="${tmake_file} riscv/t-linux64"
@@ -10650,7 +10526,7 @@ diff -Nur original-gcc/gcc/config.gcc gcc/gcc/config.gcc
  mips*-*-netbsd*)			# NetBSD/mips, either endian.
  	target_cpu_default="MASK_ABICALLS"
  	tm_file="elfos.h ${tm_file} mips/elf.h netbsd.h netbsd-elf.h mips/netbsd.h"
-@@ -3756,6 +3773,31 @@
+@@ -3756,6 +3780,31 @@
  		done
  		;;
  
@@ -10684,7 +10560,7 @@ diff -Nur original-gcc/gcc/config.gcc gcc/gcc/config.gcc
  
 diff -Nur original-gcc/gcc/configure gcc/gcc/configure
 --- original-gcc/gcc/configure	2014-10-10 05:51:28.000000000 -0700
-+++ gcc/gcc/configure	2014-12-10 10:46:00.353942656 -0800
++++ gcc/gcc/configure	2015-01-09 16:34:21.573634591 -0800
 @@ -23515,6 +23515,25 @@
  	tls_first_minor=14
  	tls_as_opt="-a32 --fatal-warnings"
@@ -10713,7 +10589,7 @@ diff -Nur original-gcc/gcc/configure gcc/gcc/configure
  	.section ".tdata","awT",@progbits
 diff -Nur original-gcc/gcc/configure.ac gcc/gcc/configure.ac
 --- original-gcc/gcc/configure.ac	2014-10-10 05:51:28.000000000 -0700
-+++ gcc/gcc/configure.ac	2014-12-10 10:46:00.353942656 -0800
++++ gcc/gcc/configure.ac	2015-01-09 16:34:21.573634591 -0800
 @@ -3178,6 +3178,25 @@
  	tls_first_minor=14
  	tls_as_opt="-a32 --fatal-warnings"
@@ -10742,7 +10618,7 @@ diff -Nur original-gcc/gcc/configure.ac gcc/gcc/configure.ac
  	.section ".tdata","awT",@progbits
 diff -Nur original-gcc/gcc/testsuite/gcc.c-torture/execute/20101011-1.c gcc/gcc/testsuite/gcc.c-torture/execute/20101011-1.c
 --- original-gcc/gcc/testsuite/gcc.c-torture/execute/20101011-1.c	2013-12-30 23:05:35.000000000 -0800
-+++ gcc/gcc/testsuite/gcc.c-torture/execute/20101011-1.c	2014-12-10 10:46:00.353942656 -0800
++++ gcc/gcc/testsuite/gcc.c-torture/execute/20101011-1.c	2015-01-09 16:34:21.573634591 -0800
 @@ -6,6 +6,9 @@
  #elif defined (__powerpc__) || defined (__PPC__) || defined (__ppc__) || defined (__POWERPC__) || defined (__ppc)
    /* On PPC division by zero does not trap.  */
@@ -10755,7 +10631,7 @@ diff -Nur original-gcc/gcc/testsuite/gcc.c-torture/execute/20101011-1.c gcc/gcc/
  # define DO_TEST 0
 diff -Nur original-gcc/gcc/testsuite/gcc.dg/20020312-2.c gcc/gcc/testsuite/gcc.dg/20020312-2.c
 --- original-gcc/gcc/testsuite/gcc.dg/20020312-2.c	2013-12-30 23:05:35.000000000 -0800
-+++ gcc/gcc/testsuite/gcc.dg/20020312-2.c	2014-12-10 10:46:00.353942656 -0800
++++ gcc/gcc/testsuite/gcc.dg/20020312-2.c	2015-01-09 16:34:21.573634591 -0800
 @@ -66,6 +66,8 @@
  # else
  #  define PIC_REG  "30"
@@ -10767,7 +10643,7 @@ diff -Nur original-gcc/gcc/testsuite/gcc.dg/20020312-2.c gcc/gcc/testsuite/gcc.d
  #elif defined(__s390__)
 diff -Nur original-gcc/libatomic/cas_n.c gcc/libatomic/cas_n.c
 --- original-gcc/libatomic/cas_n.c	2014-02-20 09:43:53.000000000 -0800
-+++ gcc/libatomic/cas_n.c	2014-12-10 10:46:00.353942656 -0800
++++ gcc/libatomic/cas_n.c	2015-01-09 16:34:21.573634591 -0800
 @@ -70,7 +70,7 @@
        mask = -1;
      }
@@ -10779,7 +10655,7 @@ diff -Nur original-gcc/libatomic/cas_n.c gcc/libatomic/cas_n.c
    do
 diff -Nur original-gcc/libatomic/configure.tgt gcc/libatomic/configure.tgt
 --- original-gcc/libatomic/configure.tgt	2014-01-02 14:24:30.000000000 -0800
-+++ gcc/libatomic/configure.tgt	2014-12-10 10:46:00.353942656 -0800
++++ gcc/libatomic/configure.tgt	2015-01-09 16:34:21.573634591 -0800
 @@ -29,6 +29,7 @@
  case "${target_cpu}" in
    alpha*)		ARCH=alpha ;;
@@ -10790,17 +10666,17 @@ diff -Nur original-gcc/libatomic/configure.tgt gcc/libatomic/configure.tgt
    arm*)
 diff -Nur original-gcc/libgcc/config/riscv/crti.S gcc/libgcc/config/riscv/crti.S
 --- original-gcc/libgcc/config/riscv/crti.S	1969-12-31 16:00:00.000000000 -0800
-+++ gcc/libgcc/config/riscv/crti.S	2014-12-09 15:54:39.020723609 -0800
++++ gcc/libgcc/config/riscv/crti.S	2015-01-09 16:32:59.777534655 -0800
 @@ -0,0 +1 @@
 +/* crti.S is empty because .init_array/.fini_array are used exclusively. */
 diff -Nur original-gcc/libgcc/config/riscv/crtn.S gcc/libgcc/config/riscv/crtn.S
 --- original-gcc/libgcc/config/riscv/crtn.S	1969-12-31 16:00:00.000000000 -0800
-+++ gcc/libgcc/config/riscv/crtn.S	2014-12-09 15:54:39.020723609 -0800
++++ gcc/libgcc/config/riscv/crtn.S	2015-01-09 16:32:59.777534655 -0800
 @@ -0,0 +1 @@
 +/* crtn.S is empty because .init_array/.fini_array are used exclusively. */
 diff -Nur original-gcc/libgcc/config/riscv/div.S gcc/libgcc/config/riscv/div.S
 --- original-gcc/libgcc/config/riscv/div.S	1969-12-31 16:00:00.000000000 -0800
-+++ gcc/libgcc/config/riscv/div.S	2014-12-10 10:40:07.900983606 -0800
++++ gcc/libgcc/config/riscv/div.S	2015-01-09 16:32:59.777534655 -0800
 @@ -0,0 +1,121 @@
 +  .text
 +  .align 2
@@ -10925,7 +10801,7 @@ diff -Nur original-gcc/libgcc/config/riscv/div.S gcc/libgcc/config/riscv/div.S
 +#endif
 diff -Nur original-gcc/libgcc/config/riscv/mul.S gcc/libgcc/config/riscv/mul.S
 --- original-gcc/libgcc/config/riscv/mul.S	1969-12-31 16:00:00.000000000 -0800
-+++ gcc/libgcc/config/riscv/mul.S	2014-12-10 10:40:07.900983606 -0800
++++ gcc/libgcc/config/riscv/mul.S	2015-01-09 16:32:59.777534655 -0800
 @@ -0,0 +1,21 @@
 +  .text
 +  .align 2
@@ -10950,7 +10826,7 @@ diff -Nur original-gcc/libgcc/config/riscv/mul.S gcc/libgcc/config/riscv/mul.S
 +  ret
 diff -Nur original-gcc/libgcc/config/riscv/riscv-fp.c gcc/libgcc/config/riscv/riscv-fp.c
 --- original-gcc/libgcc/config/riscv/riscv-fp.c	1969-12-31 16:00:00.000000000 -0800
-+++ gcc/libgcc/config/riscv/riscv-fp.c	2014-12-09 15:54:39.020723609 -0800
++++ gcc/libgcc/config/riscv/riscv-fp.c	2015-01-09 16:32:59.777534655 -0800
 @@ -0,0 +1,178 @@
 +/* Functions needed for soft-float on riscv-linux.  Based on
 +   rs6000/ppc64-fp.c with TF types removed.
@@ -11132,7 +11008,7 @@ diff -Nur original-gcc/libgcc/config/riscv/riscv-fp.c gcc/libgcc/config/riscv/ri
 +#endif
 diff -Nur original-gcc/libgcc/config/riscv/t-dpbit gcc/libgcc/config/riscv/t-dpbit
 --- original-gcc/libgcc/config/riscv/t-dpbit	1969-12-31 16:00:00.000000000 -0800
-+++ gcc/libgcc/config/riscv/t-dpbit	2014-12-09 15:54:39.020723609 -0800
++++ gcc/libgcc/config/riscv/t-dpbit	2015-01-09 16:32:59.777534655 -0800
 @@ -0,0 +1,4 @@
 +LIB2ADD += dp-bit.c
 +
@@ -11140,14 +11016,14 @@ diff -Nur original-gcc/libgcc/config/riscv/t-dpbit gcc/libgcc/config/riscv/t-dpb
 +	cat $(srcdir)/fp-bit.c > dp-bit.c
 diff -Nur original-gcc/libgcc/config/riscv/t-elf gcc/libgcc/config/riscv/t-elf
 --- original-gcc/libgcc/config/riscv/t-elf	1969-12-31 16:00:00.000000000 -0800
-+++ gcc/libgcc/config/riscv/t-elf	2014-12-10 10:40:07.900983606 -0800
++++ gcc/libgcc/config/riscv/t-elf	2015-01-09 16:32:59.777534655 -0800
 @@ -0,0 +1,3 @@
 +LIB2ADD += $(srcdir)/config/riscv/riscv-fp.c \
 +	   $(srcdir)/config/riscv/mul.S \
 +	   $(srcdir)/config/riscv/div.S
 diff -Nur original-gcc/libgcc/config/riscv/t-fpbit gcc/libgcc/config/riscv/t-fpbit
 --- original-gcc/libgcc/config/riscv/t-fpbit	1969-12-31 16:00:00.000000000 -0800
-+++ gcc/libgcc/config/riscv/t-fpbit	2014-12-09 15:54:39.020723609 -0800
++++ gcc/libgcc/config/riscv/t-fpbit	2015-01-09 16:32:59.777534655 -0800
 @@ -0,0 +1,5 @@
 +LIB2ADD += fp-bit.c
 +
@@ -11156,14 +11032,20 @@ diff -Nur original-gcc/libgcc/config/riscv/t-fpbit gcc/libgcc/config/riscv/t-fpb
 +	cat $(srcdir)/fp-bit.c >> fp-bit.c
 diff -Nur original-gcc/libgcc/config/riscv/t-linux gcc/libgcc/config/riscv/t-linux
 --- original-gcc/libgcc/config/riscv/t-linux	1969-12-31 16:00:00.000000000 -0800
-+++ gcc/libgcc/config/riscv/t-linux	2014-12-10 10:40:07.900983606 -0800
++++ gcc/libgcc/config/riscv/t-linux	2015-01-09 16:32:59.777534655 -0800
 @@ -0,0 +1,3 @@
 +LIB2ADD += $(srcdir)/config/riscv/riscv-fp.c \
 +	   $(srcdir)/config/riscv/mul.S \
 +	   $(srcdir)/config/riscv/div.S
+diff -Nur original-gcc/libgcc/config/riscv/t-linux32 gcc/libgcc/config/riscv/t-linux32
+--- original-gcc/libgcc/config/riscv/t-linux32	1969-12-31 16:00:00.000000000 -0800
++++ gcc/libgcc/config/riscv/t-linux32	2015-01-09 16:32:59.777534655 -0800
+@@ -0,0 +1,2 @@
++HOST_LIBGCC2_CFLAGS += -m32
++CRTSTUFF_CFLAGS += -m32
 diff -Nur original-gcc/libgcc/config/riscv/t-tpbit gcc/libgcc/config/riscv/t-tpbit
 --- original-gcc/libgcc/config/riscv/t-tpbit	1969-12-31 16:00:00.000000000 -0800
-+++ gcc/libgcc/config/riscv/t-tpbit	2014-12-09 15:54:39.020723609 -0800
++++ gcc/libgcc/config/riscv/t-tpbit	2015-01-09 16:32:59.777534655 -0800
 @@ -0,0 +1,10 @@
 +LIB2ADD += tp-bit.c
 +
@@ -11177,7 +11059,7 @@ diff -Nur original-gcc/libgcc/config/riscv/t-tpbit gcc/libgcc/config/riscv/t-tpb
 +	echo '#endif' >> tp-bit.c
 diff -Nur original-gcc/libgcc/config.host gcc/libgcc/config.host
 --- original-gcc/libgcc/config.host	2014-03-27 08:40:31.000000000 -0700
-+++ gcc/libgcc/config.host	2014-12-10 10:46:00.353942656 -0800
++++ gcc/libgcc/config.host	2015-01-09 16:34:21.573634591 -0800
 @@ -167,6 +167,9 @@
  	;;
  rs6000*-*-*)
@@ -11188,10 +11070,14 @@ diff -Nur original-gcc/libgcc/config.host gcc/libgcc/config.host
  score*-*-*)
  	cpu_type=score
  	;;
-@@ -1002,6 +1005,14 @@
+@@ -1002,6 +1005,18 @@
  	tmake_file="${tmake_file} rs6000/t-ppccomm rs6000/t-crtstuff t-crtstuff-pic t-fdpbit"
  	extra_parts="$extra_parts crtbegin.o crtend.o crtbeginS.o crtendS.o crtbeginT.o ecrti.o ecrtn.o ncrti.o ncrtn.o"
  	;;
++riscv32*-*-linux*)
++	tmake_file="${tmake_file} riscv/t-fpbit riscv/t-dpbit riscv/t-tpbit riscv/t-linux riscv/t-linux32"
++	extra_parts="$extra_parts crtbegin.o crtend.o crti.o crtn.o crtendS.o crtbeginT.o"
++	;;
 +riscv*-*-linux*)
 +	tmake_file="${tmake_file} riscv/t-fpbit riscv/t-dpbit riscv/t-tpbit riscv/t-linux"
 +	extra_parts="$extra_parts crtbegin.o crtend.o crti.o crtn.o crtendS.o crtbeginT.o"
@@ -11205,7 +11091,7 @@ diff -Nur original-gcc/libgcc/config.host gcc/libgcc/config.host
  	tmake_file="t-fdpbit rs6000/t-ppc64-fp rs6000/t-slibgcc-aix rs6000/t-ibm-ldouble"
 diff -Nur original-gcc/libsanitizer/asan/asan_linux.cc gcc/libsanitizer/asan/asan_linux.cc
 --- original-gcc/libsanitizer/asan/asan_linux.cc	2013-12-05 01:18:38.000000000 -0800
-+++ gcc/libsanitizer/asan/asan_linux.cc	2014-12-10 10:46:00.353942656 -0800
++++ gcc/libsanitizer/asan/asan_linux.cc	2015-01-09 16:34:21.573634591 -0800
 @@ -98,6 +98,11 @@
    *pc = ucontext->uc_mcontext.gregs[31];
    *bp = ucontext->uc_mcontext.gregs[30];
@@ -11220,7 +11106,7 @@ diff -Nur original-gcc/libsanitizer/asan/asan_linux.cc gcc/libsanitizer/asan/asa
  #endif
 diff -Nur original-gcc/libsanitizer/sanitizer_common/sanitizer_platform_limits_linux.cc gcc/libsanitizer/sanitizer_common/sanitizer_platform_limits_linux.cc
 --- original-gcc/libsanitizer/sanitizer_common/sanitizer_platform_limits_linux.cc	2014-10-14 12:26:42.000000000 -0700
-+++ gcc/libsanitizer/sanitizer_common/sanitizer_platform_limits_linux.cc	2014-12-10 10:46:00.353942656 -0800
++++ gcc/libsanitizer/sanitizer_common/sanitizer_platform_limits_linux.cc	2015-01-09 16:34:21.573634591 -0800
 @@ -63,7 +63,7 @@
    unsigned struct_statfs64_sz = sizeof(struct statfs64);
  }  // namespace __sanitizer
@@ -11232,7 +11118,7 @@ diff -Nur original-gcc/libsanitizer/sanitizer_common/sanitizer_platform_limits_l
  
 diff -Nur original-gcc/libsanitizer/sanitizer_common/sanitizer_platform_limits_posix.h gcc/libsanitizer/sanitizer_common/sanitizer_platform_limits_posix.h
 --- original-gcc/libsanitizer/sanitizer_common/sanitizer_platform_limits_posix.h	2014-10-14 12:26:42.000000000 -0700
-+++ gcc/libsanitizer/sanitizer_common/sanitizer_platform_limits_posix.h	2014-12-10 10:46:00.353942656 -0800
++++ gcc/libsanitizer/sanitizer_common/sanitizer_platform_limits_posix.h	2015-01-09 16:34:21.573634591 -0800
 @@ -67,6 +67,10 @@
    const unsigned struct___old_kernel_stat_sz = 0;
    const unsigned struct_kernel_stat_sz = 144;
