@@ -40,8 +40,7 @@ src_prepare() {
 	epatch \
 		"${FILESDIR}"/${P}-execstack.patch \
 		"${FILESDIR}"/${P}-typing_error.patch \
-                "${FILESDIR}"/${P}-riscv.patch \
-                "${FILESDIR}"/${PN}-3.2-riscv-closure.patch
+                "${FILESDIR}"/${P}-riscv.patch
 
 	sed -i -e 's:@toolexeclibdir@:$(libdir):g' Makefile.in || die #462814
 	# http://sourceware.org/ml/libffi-discuss/2014/msg00060.html
