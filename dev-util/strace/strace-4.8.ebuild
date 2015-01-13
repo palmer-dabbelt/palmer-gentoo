@@ -4,7 +4,7 @@
 
 EAPI="4"
 
-inherit flag-o-matic eutils
+inherit flag-o-matic eutils autotools
 
 if [[ ${PV} == "9999" ]] ; then
 	EGIT_REPO_URI="git://strace.git.sourceforge.net/gitroot/strace/strace"
@@ -34,7 +34,6 @@ src_prepare() {
 	fi
 
         epatch "${FILESDIR}"/${P}-riscv.patch
-        eautoreconf
 
 	filter-lfs-flags # configure handles this sanely
 	use static && append-ldflags -static
