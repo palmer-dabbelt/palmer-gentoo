@@ -34,6 +34,7 @@ src_prepare() {
 	fi
 
         epatch "${FILESDIR}"/${P}-riscv.patch
+        eautoreconf
 
 	filter-lfs-flags # configure handles this sanely
 	use static && append-ldflags -static
