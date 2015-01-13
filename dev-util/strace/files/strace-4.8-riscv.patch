@@ -1,0 +1,13 @@
+diff -Nur strace-4.8.orig/configure.ac strace-4.8/configure.ac
+--- strace-4.8.orig/configure.ac	2015-01-13 11:49:36.746629692 -0800
++++ strace-4.8/configure.ac	2015-01-13 11:50:23.944507772 -0800
+@@ -126,6 +126,9 @@
+ 	arch=xtensa
+ 	AC_DEFINE([XTENSA], 1, [Define for the Xtensa architecture])
+ 	;;
++riscv*)
++	arch=riscv
++	AC_DEFINE([RISCV], 1, [Define for RISC-V])
+ 
+ *)
+ 	AC_MSG_RESULT([NO!])
