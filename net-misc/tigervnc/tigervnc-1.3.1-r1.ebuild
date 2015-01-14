@@ -107,6 +107,8 @@ src_prepare() {
 		rm "${WORKDIR}"/patches/*_server_*
 	fi
 
+        epatch "${FILESDIR}"/${P}-riscv.patch
+
 	EPATCH_SOURCE="${WORKDIR}/patches" EPATCH_SUFFIX="patch" \
 		EPATCH_FORCE="yes" epatch
 
