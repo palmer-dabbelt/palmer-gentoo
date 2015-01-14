@@ -10,6 +10,27 @@ diff -u -r tigervnc-1.3.1.orig/unix/xserver/hw/vnc/Makefile.am tigervnc-1.3.1/un
  
  libvnc_la_LDFLAGS = -module -avoid-version -Wl,-z,now
  
+diff -ur tigervnc-1.3.1.orig/unix/xserver/hw/vnc/Makefile.am tigervnc-1.3.1/unix/xserver/hw/vnc/Makefile.am
+--- tigervnc-1.3.1.orig/unix/xserver/hw/vnc/Makefile.am	2015-01-13 23:49:34.777485700 -0800
++++ tigervnc-1.3.1/unix/xserver/hw/vnc/Makefile.am	2015-01-13 23:50:14.995454668 -0800
+@@ -18,7 +18,7 @@
+ 
+ libvnccommon_la_CPPFLAGS = -DVENDOR_RELEASE="$(VENDOR_RELEASE)" \
+ 	-DVENDOR_STRING="\"$(VENDOR_STRING)\"" -I$(TIGERVNC_SRCDIR)/common -UHAVE_CONFIG_H \
+-	-I$(TIGERVNC_SRCDIR)/unix/vncconfig $(XVNC_CPPFLAGS) ${XSERVERLIBS_CFLAGS} -I$(includedir) \
++	-I$(TIGERVNC_SRCDIR)/unix/vncconfig $(XVNC_CPPFLAGS) ${XSERVERLIBS_CFLAGS} \
+ 	-I$(top_srcdir)/include
+ 
+ bin_PROGRAMS = Xvnc
+@@ -35,7 +35,7 @@
+ 	-UHAVE_CONFIG_H \
+ 	-DXFree86Server -DVENDOR_RELEASE="$(VENDOR_RELEASE)" \
+ 	-DVENDOR_STRING="\"$(VENDOR_STRING)\"" -I$(TIGERVNC_SRCDIR)/common \
+-	-I$(top_srcdir)/include ${XSERVERLIBS_CFLAGS} -I$(includedir)
++	-I$(top_srcdir)/include ${XSERVERLIBS_CFLAGS}
+ 
+ Xvnc_LDADD = $(XVNC_LIBS) libvnccommon.la $(COMMON_LIBS) \
+ 	$(XSERVER_LIBS) $(XSERVER_SYS_LIBS) $(XVNC_SYS_LIBS) -lX11
 diff -u -r tigervnc-1.3.1.orig/unix/xserver/include/misc.h tigervnc-1.3.1/unix/xserver/include/misc.h
 --- tigervnc-1.3.1.orig/unix/xserver/include/misc.h	2015-01-13 17:27:36.632502849 -0800
 +++ tigervnc-1.3.1/unix/xserver/include/misc.h	2015-01-13 17:44:26.643345836 -0800
