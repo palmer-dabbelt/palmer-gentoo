@@ -1,4 +1,4 @@
-# Config file for /etc/init.d/vnc
+# Config file for /etc/init.d/tigervnc
 
 # Specify the user(s) Xvnc(1) should be run for. The syntax is: "username:display".
 # example: "DISPLAYS="foo:1 bar:2" You can specify more users separated by space.
