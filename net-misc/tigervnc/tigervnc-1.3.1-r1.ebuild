@@ -126,8 +126,8 @@ src_configure() {
 		$(cmake-utils_use_enable gnutls GNUTLS)
 		$(cmake-utils_use_enable pam PAM)
 		$(cmake-utils_use_build java JAVA)
-                -DFLTK_IMAGES_LIBRARY=${EPREFIX}/usr/lib/fltk-1/libfltk_images.so
-                -DFLTK_BASE_LIBRARY=${EPREFIX}/usr/lib/fltk-1/libfltk.so
+                -DFLTK_IMAGES_LIBRARY=${ROOT}/${EPREFIX}/usr/lib/fltk-1/libfltk_images.so
+                -DFLTK_BASE_LIBRARY=${ROOT}/${EPREFIX}/usr/lib/fltk-1/libfltk.so
 	)
 
 	cmake-utils_src_configure
