@@ -1,0 +1,25 @@
+commit 1f34560136cfec61b56cc069ac5516510d292902
+Author: Palmer Dabbelt <palmer@dabbelt.com>
+Date:   Fri Dec 5 15:50:00 2014 -0800
+
+    Check the return code of system() in mhng-urls
+    
+    This isn't so interesting because we're just opening a web browser,
+    but I guess it's a tiny bit safer -- note that all I do here is print
+    a stderr message...
+
+diff --git a/src/mhng-urls.c++ b/src/mhng-urls.c++
+index a809e76..c364512 100644
+--- a/src/mhng-urls.c++
++++ b/src/mhng-urls.c++
+@@ -70,7 +70,9 @@ int main(int argc, const char **argv)
+                      getenv("BROWSER"),
+                      url.c_str()
+                 );
+-            system(command);
++            if (system(command) != 0)
++                fprintf(stderr, "command '%s' failed\n",
++                        command);
+         }
+     }
+     if (args->numbers().size() != 0)

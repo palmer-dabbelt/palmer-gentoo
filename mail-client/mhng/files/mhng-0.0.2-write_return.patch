@@ -1,0 +1,25 @@
+commit 012e86cc6f1744c6e712737a496abfdb62786433
+Author: Palmer Dabbelt <palmer@dabbelt.com>
+Date:   Fri Dec 5 15:45:19 2014 -0800
+
+    Always check write()'s return value
+    
+    Even if a write() of 1 can't fail here, I guess I still need to check
+    it...
+
+diff --git a/src/libmhng/mime/part.c++ b/src/libmhng/mime/part.c++
+index 268dfa5..4dfbc45 100644
+--- a/src/libmhng/mime/part.c++
++++ b/src/libmhng/mime/part.c++
+@@ -316,7 +316,10 @@ std::vector<std::string> mime::part::utf8(void) const
+                 written += wout;
+             }
+ 
+-            ::write(outfd, "\n", 1);
++            if (::write(outfd, "\n", 1) != 1) {
++                fprintf(stderr, "write of 1 failed\n");
++                abort();
++            }
+         }
+ 
+         close(outfd);
