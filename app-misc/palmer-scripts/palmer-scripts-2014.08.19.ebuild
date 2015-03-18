@@ -7,11 +7,11 @@ SRC_URI="https://github.com/palmer-dabbelt/scrpits/archive/v${PV}.tar.gz -> ${P}
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="amd64 amd64-linux"
-IUSE=""
+IUSE="v4l2"
 
 RDEPEND="sys-devel/pconfigure
 	 sys-devel/make
-	 media-libs/libv4l
+	 v4l2? ( media-libs/libv4l )
          net-dns/bind-tools
          net-analyzer/traceroute
          dev-util/indent
