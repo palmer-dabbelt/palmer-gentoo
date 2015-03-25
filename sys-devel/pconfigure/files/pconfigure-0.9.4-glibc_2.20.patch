@@ -1,0 +1,38 @@
+From d911ca41f0063b787491aeb656fafa70c8191e1d Mon Sep 17 00:00:00 2001
+From: Palmer Dabbelt <palmer@dabbelt.com>
+Date: Wed, 25 Mar 2015 14:22:41 -0700
+Subject: [PATCH] Define _DEFAULT_SOURCE in addition to _BSD_SOURCE
+
+This works around a warning from glibc-2.20, which changes _BSD_SOURCE
+to _DEFAUL_SOURCE.  The man pages recommend defining both, for
+compatibility with older glibc versions.
+---
+ src/pconfigure/generate.c | 1 +
+ src/pconfigure/main.c     | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/src/pconfigure/generate.c b/src/pconfigure/generate.c
+index a5b1ed7..c48b4b8 100644
+--- a/src/pconfigure/generate.c
++++ b/src/pconfigure/generate.c
+@@ -1,4 +1,5 @@
+ #define _BSD_SOURCE
++#define _DEFAULT_SOURCE
+ 
+ #include "generate.h"
+ #include <ctype.h>
+diff --git a/src/pconfigure/main.c b/src/pconfigure/main.c
+index 431e205..c96b81b 100644
+--- a/src/pconfigure/main.c
++++ b/src/pconfigure/main.c
+@@ -20,6 +20,7 @@
+  */
+ 
+ #define _BSD_SOURCE
++#define _DEFAULT_SOURCE
+ 
+ #include "clopts.h"
+ #include "contextstack.h"
+-- 
+2.0.5
+
