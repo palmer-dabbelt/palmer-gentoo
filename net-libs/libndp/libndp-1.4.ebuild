@@ -5,7 +5,7 @@
 EAPI=5
 GCONF_DEBUG="no"
 
-inherit gnome2 autotools-multilib
+inherit gnome2 multilib-minimal
 
 DESCRIPTION="Library for Neighbor Discovery Protocol"
 HOMEPAGE="http://libndp.org"
