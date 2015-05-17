@@ -16,10 +16,6 @@ RDEPEND="dev-java/sbt-bin
 
 DEPEND="${RDEPEND}"
 
-src_prepare() {
-        epatch "${FILESDIR}/${P}-Wall.patch"
-}
-
 src_configure() {
         cat >Configfile <<EOF
 PREFIX = ${EPREFIX}/usr
