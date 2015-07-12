@@ -1,0 +1,17 @@
+diff --git a/src/main/scala/Cpp.scala b/src/main/scala/Cpp.scala
+index 575b1d875eb8..27520c23491d 100644
+--- a/src/main/scala/Cpp.scala
++++ b/src/main/scala/Cpp.scala
+@@ -1843,9 +1843,9 @@ class CppBackend extends Backend {
+       }
+     }
+     /* Copy the emulator headers into the targetDirectory. */
+-    copyToTarget("emulator_mod.h")
+-    copyToTarget("emulator_api.h")
+-    copyToTarget("emulator.h")
++    //copyToTarget("emulator_mod.h")
++    //copyToTarget("emulator_api.h")
++    //copyToTarget("emulator.h")
+   }
+ 
+   // Return true if we want this node to be included in the main object.
