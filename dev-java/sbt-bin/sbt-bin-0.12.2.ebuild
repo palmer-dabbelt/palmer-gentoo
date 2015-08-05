@@ -11,7 +11,7 @@ MY_PV="${PV}"
 OUT_PN="${MY_PN}-${MY_PV}"
 DESCRIPTION="sbt is a build tool for Scala and Java projects that aims to do the basics well"
 HOMEPAGE="http://github.com/harrah/xsbt"
-SRC_URI="http://typesafe.artifactoryonline.com/typesafe/ivy-releases/org.scala-sbt/sbt-launch/${MY_PV}/${MY_PN}.jar -> ${OUT_PN}.jar"
+SRC_URI="http://repo.typesafe.com/typesafe/ivy-releases/org.scala-sbt/sbt-launch/${PV}/sbt-launch.jar -> ${OUT_PN}.jar"
 
 LICENSE="BSD"
 SLOT="0"
