@@ -22,9 +22,6 @@ DEPEND="${RDEPEND}"
 
 src_configure() {
 	echo "LANGUAGES += c" >> Configfile.local
-	for i in $(echo ${CFLAGS}); do
-		echo "COMPILEOPTS += ${i}" >> Configfile.local
-	done
 	echo "COMPILEOPTS += -DPBASHC_SHEBANG=\\\"\#\!${EPREFIX}/bin/bash\\\""\
 	     >> Configfile.local
 
