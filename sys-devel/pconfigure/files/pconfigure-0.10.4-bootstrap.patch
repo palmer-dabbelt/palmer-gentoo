@@ -1,0 +1,22 @@
+commit 56d6e3df21f0bfdd1a904a72cc8a8b0844f14bf0
+Author: Palmer Dabbelt <palmer@dabbelt.com>
+Date:   Mon Sep 7 23:44:39 2015 -0700
+
+    Fix bootstrap to work with __PCONFIGURE_LIBEXEC
+    
+    Now that I'm calling pconfigure++ I need to be able to find it.  Note
+    that this doesn't actually change the installed binary, it just works
+    around a bootstrap build bug.
+
+diff --git a/bootstrap.sh b/bootstrap.sh
+index 59ee16ec0513..e4e84a7c8d8f 100755
+--- a/bootstrap.sh
++++ b/bootstrap.sh
+@@ -85,6 +85,7 @@ gcc --std=gnu99 -Wall -Werror -g $CFLAGS \
+     $extrasrc $talloc $clang \
+     -Isrc/extern/ -Iinclude/ $extrahdr \
+     -I$BOOTSTRAP_DIR \
++    -D__PCONFIGURE__LIBEXEC=\"$BOOTSTRAP_DIR/../libexec\" \
+     -o "$BOOTSTRAP_DIR/pconfigure" || exit $?
+ 
+ # Runs pconfigure in order to build itself
