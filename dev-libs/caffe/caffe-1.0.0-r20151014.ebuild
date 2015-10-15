@@ -9,6 +9,7 @@ EGIT_REPO_URI="git://github.com/BVLC/caffe.git"
 EGIT_COMMIT="8c8e832e71985ba89dcb7c8a60697322c54b5f5b"
 EGIT_CLONE_TYPE="single"
 
+KEYWORDS="amd64 amd64-linux"
 SLOT="1/${PV}"
 
 DEPEND=">=dev-libs/boost-1.55
