@@ -8,7 +8,7 @@ SRC_URI="https://github.com/palmer-dabbelt/${PN}/archive/v${PV}.tar.gz -> ${P}.t
 LICENSE="GPL-2"
 SLOT="0/$PV"
 KEYWORDS="amd64 amd64-linux"
-IUSE="scala"
+IUSE=""
 
 RDEPEND="sys-devel/pconfigure
          dev-db/sqlite
