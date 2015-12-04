@@ -18,6 +18,8 @@ IUSE=""
 DEPEND=""
 RDEPEND="${DEPEND}"
 
+RESTRICT="strip"
+
 src_prepare() {
 		epatch "${FILESDIR}/${P}-java-1.7.patch"
 }
@@ -31,6 +33,6 @@ src_compile() {
 }
 
 src_install() {
-		mkdir -p ${ED}/bin
-		cp -a --reflink=auto output/${PN} ${ED}/bin/${PN}
+		mkdir -p ${ED}/usr/bin
+		cp -a --reflink=auto output/${PN} ${ED}/usr/bin/
 }
