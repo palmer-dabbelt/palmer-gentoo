@@ -35,4 +35,7 @@ src_compile() {
 src_install() {
 		mkdir -p ${ED}/usr/bin
 		cp -a --reflink=auto output/${PN} ${ED}/usr/bin/
+
+		mkdir -p ${ED}/usr/lib/${PN}
+		tar -h -c base_workspace | tar -C ${ED}/usr/lib/${PN} -x
 }
