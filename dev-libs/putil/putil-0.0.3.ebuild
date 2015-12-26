@@ -11,7 +11,7 @@ KEYWORDS="amd64 amd64-linux"
 IUSE=""
 
 DEPEND="sys-devel/pconfigure
-         "
+        dev-libs/putil"
 
 RDEPEND=""
 
