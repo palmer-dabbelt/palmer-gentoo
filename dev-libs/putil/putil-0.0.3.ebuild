@@ -10,8 +10,7 @@ SLOT="0/$PV"
 KEYWORDS="amd64 amd64-linux"
 IUSE=""
 
-DEPEND="sys-devel/pconfigure
-        dev-libs/putil"
+DEPEND="sys-devel/pconfigure"
 
 RDEPEND=""
 
