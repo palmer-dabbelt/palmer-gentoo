@@ -1,0 +1,39 @@
+diff --git a/src/pconfigure++/languages/bash.c++ b/src/pconfigure++/languages/bash.c++
+index 69b6df5..134b211 100644
+--- a/src/pconfigure++/languages/bash.c++
++++ b/src/pconfigure++/languages/bash.c++
+@@ -128,7 +128,7 @@ language_bash::targets(const context::ptr& ctx) const
+                                                              commands,
+                                                              comment);
+ 
+-        auto install_path = ctx->prefix + "/" + target;
++        auto install_path = "$(DESTDIR)/" + ctx->prefix + "/" + target;
+ 
+         auto global_install_targets = std::vector<makefile::global_targets>{
+             makefile::global_targets::INSTALL,
+diff --git a/src/pconfigure++/languages/cxx.c++ b/src/pconfigure++/languages/cxx.c++
+index 8c330c6..a6e22ed 100644
+--- a/src/pconfigure++/languages/cxx.c++
++++ b/src/pconfigure++/languages/cxx.c++
+@@ -581,7 +581,7 @@ language_cxx::link_objects(const context::ptr& ctx,
+      * Makefile, we build the "copy" targets that depend on the generated
+      * Makefile. */
+     auto cp_install_target = std::make_shared<cp_target>(
+-        ctx->prefix + "/" + bin_dir + "/" + ctx->cmd->data(),
++        "$(DESTDIR)/" + ctx->prefix + "/" + bin_dir + "/" + ctx->cmd->data(),
+         install_target,
+         language_cxx::install_target::TRUE,
+         shared_comments + std::vector<std::string>{"cp_install_target"}
+diff --git a/src/pconfigure++/languages/implicit_h.c++ b/src/pconfigure++/languages/implicit_h.c++
+index 323e21e..c56bc33 100644
+--- a/src/pconfigure++/languages/implicit_h.c++
++++ b/src/pconfigure++/languages/implicit_h.c++
+@@ -63,7 +63,7 @@ language_implicit_h::targets(const context::ptr& ctx) const
+             abort();
+         }
+ 
+-        auto install_path = ctx->prefix + "/" + ctx->hdr_dir + ctx->cmd->data();
++        auto install_path = "$(DESTDIR)/" + ctx->prefix + "/" + ctx->hdr_dir + ctx->cmd->data();
+         auto header_path = ctx->hdr_dir + "/" + ctx->cmd->data();
+         
+         auto global_install_targets = std::vector<makefile::global_targets>{
