@@ -1,5 +1,5 @@
 EAPI="5"
-inherit eutils
+inherit eutils user
 
 DESCRIPTION="A daemon-less hotplug management system"
 HOMEPAGE="http://github.com/palmer-dabbelt/pplug/"
@@ -23,7 +23,11 @@ src_configure() {
         pconfigure
 }
 
-pkg_postinst() {
+pkg_setup() {
         enewgroup pplug
+}
+
+src_install() {
+		emake DESTDIR="${ED}" install
 		doinitd "${FILESDIR}/pplug"
 }
