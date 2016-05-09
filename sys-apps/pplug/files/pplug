@@ -9,7 +9,8 @@ depend()
 
 start()
 {
-	mkdir /var/run/pplug
-	pplug-write "run" "on"
+	mkdir -p /var/run/pplug
+	pplug-change -p "run" -d "on"
 	chgrp -R pplug /var/run/pplug
+	chmod g+rw /var/run/pplug/*
 }
