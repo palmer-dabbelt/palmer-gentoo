@@ -24,7 +24,7 @@ src_unpack() {
 
 src_install() {
    INSTALLER_HOME="${EPREFIX}/opt/synopsys/installer/${INSTALLER_VERSION}"
-   PRODUCT="$(echo ${PN} | cut -d- -f2)"
+   PRODUCT=mw
    ${INSTALLER_HOME}/installer -install_as_root -batch_installer -source ${S} -target ${ED}/opt/synopsys
    test -d ${ED}/opt/synopsys/${PRODUCT} || die "installer failed"
 }
