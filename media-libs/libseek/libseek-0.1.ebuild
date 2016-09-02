@@ -4,7 +4,7 @@ inherit waf-utils
 DESCRIPTION="Seek"
 HOMEPAGE="https://github.com/zougloub/libseek/"
 SRC_URI="https://github.com/zougloub/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
-http://ftp.waf.io/pub/release/waf-1.8.5"
+http://www.freehackers.org/~tnagy/release/waf-1.8.5"
 
 LICENSE="GPL-2"
 SLOT="0"
