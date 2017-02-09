@@ -15,6 +15,7 @@ RDEPEND="app-crypt/gpgme
          >=dev-libs/psqlite-0.0.3:=
 		 >=dev-libs/putil-0.0.2:=
 		 dev-libs/libbase64:=
+		 mail-mta/msmtp
          net-libs/gnutls
          sys-apps/util-linux
          sys-libs/ncurses
